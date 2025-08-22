@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { page } from '$app/stores';
   import { writable, derived } from 'svelte/store';
-  import { fade, fly, scale } from 'svelte/transition';
-  import { elasticOut } from 'svelte/easing';
+  import { fade, fly } from 'svelte/transition';
+  import { goto } from '$app/navigation';
   import { 
     cart, 
     cartTotal, 
@@ -12,33 +13,38 @@
     updateQuantity,
     reloadCart,
     type Product 
-  } from '../stores/cart';
-  import { categories, loadCategories, type Category } from '../stores/categories';
+  } from '$lib/stores/cart';
+  import { categories, loadCategories, type Category } from '$lib/stores/categories';
 
-  // Component stores
+  // Stores
   const products = writable<Product[]>([]);
-  const selectedCategory = writable<string>('all');
-  const isCartOpen = writable<boolean>(false);
   const isLoading = writable<boolean>(true);
+  const isCartOpen = writable<boolean>(false);
 
-  // GitHub Pages configuration - ajusta con tu repo
+  // GitHub configuration
   const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/tu-usuario/tu-repo/main';
 
-  // Derived store for filtered products
-  const filteredProducts = derived(
-    [products, selectedCategory], 
-    ([$products, $selectedCategory]) => 
-      $selectedCategory === 'all' 
-        ? $products 
-        : $products.filter(p => p.category === $selectedCategory)
+  // Get category from URL
+  $: categorySlug = $page.params.slug;
+  
+  // Derived stores
+  const currentCategory = derived(
+    [categories, page],
+    ([$categories, $page]) => 
+      $categories.find(cat => cat.id === $page.params.slug) || null
   );
 
-  // Load products from GitHub Pages
+  const filteredProducts = derived(
+    [products, page], 
+    ([$products, $page]) => 
+      $products.filter(p => p.category === $page.params.slug)
+  );
+
+  // Load products
   async function loadProducts(): Promise<void> {
     try {
       isLoading.set(true);
       
-      // Fetch from your GitHub repo's products.json file
       const response = await fetch(`${GITHUB_REPO_URL}/data/products.json`);
       
       if (!response.ok) {
@@ -51,7 +57,7 @@
     } catch (error) {
       console.error('Error loading products:', error);
       
-      // Fallback mock data para desarrollo
+      // Fallback mock data
       const mockProducts: Product[] = [
         {
           id: 1,
@@ -79,24 +85,6 @@
           price: 74.99,
           images: ["w14_1.jpg", "w14_2.jpg", "w14_3.jpg"],
           imageFolder: "images/w14/"
-        },
-        {
-          id: 4,
-          name: "McLaren MCL60",
-          description: "El papaya speed de McLaren Racing con tecnología de vanguardia.",
-          category: "mclaren",
-          price: 69.99,
-          images: ["mcl60_1.jpg"],
-          imageFolder: "images/mcl60/"
-        },
-        {
-          id: 5,
-          name: "Aston Martin AMR23",
-          description: "El verde británico de Aston Martin con elegancia y velocidad.",
-          category: "aston",
-          price: 65.99,
-          images: ["amr23_1.jpg", "amr23_2.jpg"],
-          imageFolder: "images/amr23/"
         }
       ];
       
@@ -116,41 +104,16 @@
   }
 
   onMount(() => {
-    // Recargar carrito del localStorage
     reloadCart();
-    
-    // Cargar datos
     loadCategories();
     loadProducts();
   });
 </script>
 
-<!-- Hero Section -->
-<section class="relative overflow-hidden bg-gradient-to-br from-primary-500 via-secondary-500 to-tertiary-500 dark:from-primary-700 dark:via-secondary-700 dark:to-tertiary-700">
-  <div class="absolute inset-0 bg-black/30 dark:bg-black/50"></div>
-  <div class="relative container mx-auto px-4 py-20 text-center text-white">
-    <h1 
-      class="text-5xl md:text-7xl font-bold mb-6 font-heading-token"
-      in:fly={{ y: 50, duration: 800, delay: 200 }}
-    >
-      VELOCIDAD
-      <span class="block text-warning-400">SUPREMA</span>
-    </h1>
-    <p 
-      class="text-xl md:text-2xl mb-8 opacity-90"
-      in:fly={{ y: 30, duration: 800, delay: 400 }}
-    >
-      Colecciona los monoplazas más icónicos de la Fórmula 1
-    </p>
-    <div class="flex justify-center" in:scale={{ duration: 600, delay: 600, easing: elasticOut }}>
-      <div class="card variant-glass-surface p-4 rounded-container-token">
-        <span class="text-lg font-semibold">Edición Limitada Premium</span>
-      </div>
-    </div>
-  </div>
-  <!-- Racing stripe -->
-  <div class="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-error-500 via-warning-400 to-error-500"></div>
-</section>
+<svelte:head>
+  <title>{$currentCategory?.name || 'Categoría'} - Fast Lane F1 Shop</title>
+  <meta name="description" content="Descubre los mejores monoplazas de {$currentCategory?.name || 'esta categoría'} en nuestra colección exclusiva." />
+</svelte:head>
 
 <!-- Cart Button (Fixed) -->
 <button
@@ -165,19 +128,40 @@
   {/if}
 </button>
 
-<!-- Category Filter -->
-<section class="container mx-auto px-4 py-8">
-  <div class="flex flex-wrap gap-3 justify-center">
-    {#each $categories as category}
-      <button
-        class="btn {$selectedCategory === category.id ? category.variant : 'variant-soft-surface'} rounded-full"
-        on:click={() => selectedCategory.set(category.id)}
-      >
-        {category.name}
-      </button>
-    {/each}
-  </div>
+<!-- Breadcrumb -->
+<section class="container mx-auto px-4 py-4">
+  <nav class="breadcrumb">
+    <ol class="flex items-center space-x-2 text-sm text-surface-600-300-token dark:text-surface-300-600-token">
+      <li><a href="/" class="hover:text-primary-500 transition-colors">Inicio</a></li>
+      <li><iconify-icon icon="mdi:chevron-right" class="text-xs"></iconify-icon></li>
+      <li class="font-semibold text-surface-900-50-token dark:text-surface-50-900-token">
+        {$currentCategory?.name || categorySlug}
+      </li>
+    </ol>
+  </nav>
 </section>
+
+<!-- Category Hero -->
+{#if $currentCategory}
+  <section class="relative overflow-hidden bg-gradient-to-br from-primary-500 to-secondary-500 dark:from-primary-700 dark:to-secondary-700" transition:fade>
+    <div class="absolute inset-0 bg-black/20 dark:bg-black/40"></div>
+    <div class="relative container mx-auto px-4 py-16 text-center text-white">
+      <h1 class="text-4xl md:text-6xl font-bold mb-4 font-heading-token" in:fly={{ y: 30, duration: 600 }}>
+        {$currentCategory.name}
+      </h1>
+      {#if $currentCategory.description}
+        <p class="text-lg md:text-xl opacity-90 max-w-2xl mx-auto" in:fly={{ y: 20, duration: 600, delay: 200 }}>
+          {$currentCategory.description}
+        </p>
+      {/if}
+      <div class="mt-6" in:fly={{ y: 20, duration: 600, delay: 400 }}>
+        <span class="inline-block px-4 py-2 bg-white/20 rounded-full text-sm font-semibold backdrop-blur-sm">
+          {$filteredProducts.length} modelos disponibles
+        </span>
+      </div>
+    </div>
+  </section>
+{/if}
 
 <!-- Loading -->
 {#if $isLoading}
@@ -189,59 +173,80 @@
 
 <!-- Products Grid -->
 {#if !$isLoading}
-  <section class="container mx-auto px-4 py-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {#each $filteredProducts as product, i}
-        <div 
-          class="card card-hover overflow-hidden bg-surface-50-900-token dark:bg-surface-900-50-token"
-          in:fly={{ y: 50, duration: 500, delay: i * 100 }}
+  <section class="container mx-auto px-4 py-12">
+    {#if $filteredProducts.length === 0}
+      <div class="text-center py-16" in:fade>
+        <div class="text-6xl mb-4 opacity-30">F1</div>
+        <h3 class="text-2xl font-bold mb-2">No hay productos en esta categoría</h3>
+        <p class="text-surface-600-300-token dark:text-surface-300-600-token mb-6">
+          Aún no tenemos monoplazas disponibles en esta categoría.
+        </p>
+        <button 
+          class="btn variant-filled-primary"
+          on:click={() => goto('/')}
         >
-          <!-- Product Image -->
-          <header class="card-header relative overflow-hidden bg-surface-200-700-token dark:bg-surface-700-200-token h-48">
-            <img 
-              src={getProductImageUrl(product, 0)} 
-              alt={product.name}
-              class="w-full h-full object-cover"
-              on:error={(e) => {
-                e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0yMCAyMEM4Ljk1NDMgMjAgMCAyOC45NTQzIDAgNDBIMTBDMTAgMzQuNDc3MSAxNC40NzcxIDMwIDE5IDMwSDIxQzI1LjUyMjkgMzAgMzAgMzQuNDc3MSAzMCA0MEg0MEMzMCAyOC45NTQzIDMxLjA0NTcgMjAgMjAgMjBaIiBmaWxsPSIjQzNDM0MzIi8+Cjwvc3ZnPgo=';
-                e.currentTarget.classList.add('opacity-50');
-              }}
-            />
-            <div class="absolute top-3 right-3">
-              <span class="badge variant-filled-error text-xs">
-                #{product.id.toString().padStart(3, '0')}
-              </span>
-            </div>
-          </header>
-
-          <!-- Product Info -->
-          <div class="p-4">
-            <h3 class="h3 font-bold mb-2">{product.name}</h3>
-            <p class="text-surface-600-300-token dark:text-surface-300-600-token text-sm mb-4 line-clamp-3">
-              {product.description}
-            </p>
-            
-            <!-- Price and Add to Cart -->
-            <div class="flex items-center justify-between">
-              <div class="text-2xl font-bold text-success-600-300-token dark:text-success-300-600-token">
-                ${product.price}
+          Ver todos los productos
+        </button>
+      </div>
+    {:else}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {#each $filteredProducts as product, i}
+          <div 
+            class="card card-hover overflow-hidden bg-surface-50-900-token dark:bg-surface-900-50-token"
+            in:fly={{ y: 50, duration: 500, delay: i * 100 }}
+          >
+            <!-- Product Image -->
+            <header class="card-header relative overflow-hidden bg-surface-200-700-token dark:bg-surface-700-200-token h-48">
+              <img 
+                src={getProductImageUrl(product, 0)} 
+                alt={product.name}
+                class="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
+                on:error={(e) => {
+                  e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0yMCAyMEM4Ljk1NDMgMjAgMCAyOC45NTQzIDAgNDBIMTBDMTAgMzQuNDc3MSAxNC40NzcxIDMwIDE5IDMwSDIxQzI1LjUyMjkgMzAgMzAgMzQuNDc3MSAzMCA0MEg0MEMzMCAyOC45NTQzIDMxLjA0NTcgMjAgMjAgMjBaIiBmaWxsPSIjQzNDM0MzIi8+Cjwvc3ZnPgo=';
+                  e.currentTarget.classList.add('opacity-50');
+                }}
+              />
+              <div class="absolute top-3 right-3">
+                <span class="badge variant-filled-error text-xs">
+                  #{product.id.toString().padStart(3, '0')}
+                </span>
               </div>
-              <button
-                class="btn variant-filled-primary"
-                on:click={() => handleAddToCart(product)}
-              >
-                <iconify-icon icon="mdi:cart-plus" class="mr-2"></iconify-icon>
-                Añadir
-              </button>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <div class="text-white">
+                  <h3 class="font-bold text-sm">{product.name}</h3>
+                </div>
+              </div>
+            </header>
+
+            <!-- Product Info -->
+            <div class="p-4">
+              <h3 class="h4 font-bold mb-2">{product.name}</h3>
+              <p class="text-surface-600-300-token dark:text-surface-300-600-token text-sm mb-4 line-clamp-3">
+                {product.description}
+              </p>
+              
+              <!-- Price and Add to Cart -->
+              <div class="flex items-center justify-between">
+                <div class="text-2xl font-bold text-success-600-300-token dark:text-success-300-600-token">
+                  ${product.price}
+                </div>
+                <button
+                  class="btn variant-filled-primary btn-sm"
+                  on:click={() => handleAddToCart(product)}
+                >
+                  <iconify-icon icon="mdi:cart-plus" class="mr-1"></iconify-icon>
+                  Añadir
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      {/each}
-    </div>
+        {/each}
+      </div>
+    {/if}
   </section>
 {/if}
 
-<!-- Cart Drawer -->
+<!-- Cart Drawer (mismo que el componente principal) -->
 {#if $isCartOpen}
   <div class="fixed inset-0 z-50 overflow-hidden" transition:fade>
     <div class="absolute inset-0 bg-black/50 dark:bg-black/70" on:click={() => isCartOpen.set(false)}></div>

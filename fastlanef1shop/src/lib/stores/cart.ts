@@ -1,4 +1,5 @@
 import { writable, derived } from 'svelte/store';
+import { browser } from '$app/environment';
 import type { Writable, Readable } from 'svelte/store';
 
 export interface Product {
@@ -15,8 +16,26 @@ export interface CartItem extends Product {
   quantity: number;
 }
 
-// Cart store
-export const cart: Writable<CartItem[]> = writable([]);
+// Función para cargar el carrito desde localStorage
+function loadCartFromStorage(): CartItem[] {
+  if (!browser) return [];
+  try {
+    const stored = localStorage.getItem('f1-cart');
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+// Cart store con persistencia
+export const cart: Writable<CartItem[]> = writable(loadCartFromStorage());
+
+// Suscribirse a cambios y guardar en localStorage
+if (browser) {
+  cart.subscribe(items => {
+    localStorage.setItem('f1-cart', JSON.stringify(items));
+  });
+}
 
 // Cart derived stores
 export const cartTotal: Readable<number> = derived(
@@ -52,7 +71,7 @@ export function updateQuantity(productId: number, quantity: number): void {
     return;
   }
   cart.update(items => {
-    const item = items.find(item => item.id === productId);
+    const item = items.find(item => item.id !== productId);
     if (item) item.quantity = quantity;
     return items;
   });
@@ -60,4 +79,9 @@ export function updateQuantity(productId: number, quantity: number): void {
 
 export function clearCart(): void {
   cart.set([]);
+}
+
+// Función para recargar el carrito desde localStorage
+export function reloadCart(): void {
+  cart.set(loadCartFromStorage());
 }

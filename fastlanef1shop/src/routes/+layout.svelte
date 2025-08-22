@@ -1,6 +1,6 @@
 <script lang="ts">
   import '../app.postcss';
-  import { AppShell, AppBar, LightSwitch, Toast, Modal, initializeStores } from '@skeletonlabs/skeleton';
+  import { AppShell, AppBar, Toast, Modal, initializeStores } from '@skeletonlabs/skeleton';
   import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
   import { storePopup } from '@skeletonlabs/skeleton';
   import Formula1Icon from '~icons/arcticons/formula-1'
@@ -20,8 +20,8 @@
 <AppShell>
   <svelte:fragment slot="header">
     <AppBar 
-      background="bg-surface-50-900-token backdrop-blur-md" 
-      border="border-b border-surface-300-600-token"
+      background="bg-surface-50-900-token backdrop-blur-md dark:bg-surface-900-50-token" 
+      border="border-b border-surface-300-600-token dark:border-surface-600-300-token"
       padding="p-4"
       shadow="shadow-lg"
     >
@@ -32,16 +32,15 @@
           </div>
           <div class="flex flex-col">
             <h1 class="text-xl font-bold bg-gradient-to-br from-primary-500 to-secondary-500 bg-clip-text text-transparent">
-              F1 Racing Catalog
+              Fast Lane F1 Shop
             </h1>
-            <span class="text-xs text-surface-600-300-token">Edición 2023-2024</span>
-          </div>
+            </div>
         </div>
       </svelte:fragment>
       
       <svelte:fragment slot="trail">
         <div class="flex items-center space-x-4">
-          <LightSwitch />
+          <!-- Navegación puede ir aquí -->
         </div>
       </svelte:fragment>
     </AppBar>
@@ -52,7 +51,7 @@
 
   <!-- Footer -->
   <svelte:fragment slot="pageFooter">
-    <footer class="bg-surface-100-800-token py-16 mt-20 border-t border-surface-300-600-token">
+    <footer class="bg-surface-100-800-token dark:bg-surface-800-100-token py-16 mt-20 border-t border-surface-300-600-token dark:border-surface-600-300-token">
       <div class="container mx-auto px-4">
         <!-- Footer Content -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
@@ -62,9 +61,9 @@
               <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
                 <Formula1Icon class="text-white text-lg" />
               </div>
-              <span class="text-xl font-bold">F1 Racing Catalog</span>
+              <span class="text-xl font-bold">Fast Lane F1 Shop</span>
             </div>
-            <p class="text-surface-600-300-token mb-4 max-w-md">
+            <p class="text-surface-600-300-token dark:text-surface-300-600-token mb-4 max-w-md">
               La colección más completa de monoplazas de Fórmula 1. Desde los campeones del mundo hasta las máquinas más icónicas de la parrilla.
             </p>
             <div class="flex space-x-4">
@@ -78,19 +77,19 @@
           <!-- Quick Links -->
           <div>
             <h3 class="font-bold text-lg mb-4">Categorías</h3>
-            <ul class="space-y-2 text-surface-600-300-token">
-              <li><a href="#championship" class="hover:text-primary-500 transition-colors">Campeones</a></li>
-              <li><a href="#ferrari" class="hover:text-secondary-500 transition-colors">Ferrari</a></li>
-              <li><a href="#mercedes" class="hover:text-surface-500 transition-colors">Mercedes</a></li>
-              <li><a href="#mclaren" class="hover:text-tertiary-500 transition-colors">McLaren</a></li>
-              <li><a href="#aston" class="hover:text-success-500 transition-colors">Aston Martin</a></li>
+            <ul class="space-y-2 text-surface-600-300-token dark:text-surface-300-600-token">
+              <li><a href="/categoria/championship" class="hover:text-primary-500 transition-colors">Campeones</a></li>
+              <li><a href="/categoria/ferrari" class="hover:text-secondary-500 transition-colors">Ferrari</a></li>
+              <li><a href="/categoria/mercedes" class="hover:text-surface-500 transition-colors">Mercedes</a></li>
+              <li><a href="/categoria/mclaren" class="hover:text-tertiary-500 transition-colors">McLaren</a></li>
+              <li><a href="/categoria/aston" class="hover:text-success-500 transition-colors">Aston Martin</a></li>
             </ul>
           </div>
 
           <!-- Info -->
           <div>
             <h3 class="font-bold text-lg mb-4">Información</h3>
-            <ul class="space-y-2 text-surface-600-300-token">
+            <ul class="space-y-2 text-surface-600-300-token dark:text-surface-300-600-token">
               <li><a href="#about" class="hover:text-primary-500 transition-colors">Acerca de</a></li>
               <li><a href="#shipping" class="hover:text-primary-500 transition-colors">Envíos</a></li>
               <li><a href="#returns" class="hover:text-primary-500 transition-colors">Devoluciones</a></li>
@@ -101,36 +100,35 @@
         </div>
 
         <!-- Racing Stats -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 py-8 border-t border-surface-300-600-token">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 py-8 border-t border-surface-300-600-token dark:border-surface-600-300-token">
           <div class="text-center">
             <div class="text-3xl font-bold text-primary-500">10+</div>
-            <div class="text-sm text-surface-600-300-token">Escuderías</div>
+            <div class="text-sm text-surface-600-300-token dark:text-surface-300-600-token">Escuderías</div>
           </div>
           <div class="text-center">
             <div class="text-3xl font-bold text-secondary-500">23</div>
-            <div class="text-sm text-surface-600-300-token">Circuitos</div>
+            <div class="text-sm text-surface-600-300-token dark:text-surface-300-600-token">Circuitos</div>
           </div>
           <div class="text-center">
             <div class="text-3xl font-bold text-warning-500">350+</div>
-            <div class="text-sm text-surface-600-300-token">km/h</div>
+            <div class="text-sm text-surface-600-300-token dark:text-surface-300-600-token">km/h</div>
           </div>
           <div class="text-center">
             <div class="text-3xl font-bold text-success-500">100%</div>
-            <div class="text-sm text-surface-600-300-token">Adrenalina</div>
+            <div class="text-sm text-surface-600-300-token dark:text-surface-300-600-token">Adrenalina</div>
           </div>
         </div>
 
         <!-- Bottom -->
-        <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-surface-300-600-token text-sm text-surface-600-300-token">
+        <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-surface-300-600-token dark:border-surface-600-300-token text-sm text-surface-600-300-token dark:text-surface-300-600-token">
           <div class="flex flex-wrap items-center gap-4 mb-4 md:mb-0">
-            <span>🏁 Edición 2023-2024</span>
-            <span>⚡ Entrega Mundial</span>
-            <span>🏆 Calidad Premium</span>
-            <span>🔒 Compra Segura</span>
+            <span>Entrega Mundial</span>
+            <span>Calidad Premium</span>
+            <span>Compra Segura</span>
           </div>
-          <div>
-            © 2024 F1 Racing Catalog. Hecho con ❤️ para los fanáticos de la F1.
-          </div>
+		  <div>
+			© {new Date().getFullYear()} Fast Lane F1 Shop. Hecho con pasión para los fanáticos de la F1.
+		  </div>
         </div>
       </div>
     </footer>

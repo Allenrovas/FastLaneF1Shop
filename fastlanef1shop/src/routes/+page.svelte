@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
 
   // SEO and meta information
-  const pageTitle = "F1 Racing Catalog - Colección Exclusiva de Monoplazas";
+  const pageTitle = "Fast Lane F1 Shop - Colección Exclusiva de Monoplazas";
   const pageDescription = "Descubre la colección más completa de monoplazas de Fórmula 1. Desde Red Bull hasta Ferrari, Mercedes y más. ¡Velocidad suprema al alcance de tus manos!";
 
   onMount(() => {
