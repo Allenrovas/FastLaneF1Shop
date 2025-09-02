@@ -1,109 +1,106 @@
-// You can also use the generator at https://skeleton.dev/docs/generator to create these values for you
 import type { CustomThemeConfig } from '@skeletonlabs/tw-plugin';
+
 export const fastlanef1_theme: CustomThemeConfig = {
 	name: 'fastlanef1_theme',
 	properties: {
-		// =~= Theme Properties =~=
-		"--theme-font-family-base": "system-ui",
-		"--theme-font-family-heading": "'Orbitron', 'Rajdhani', system-ui", // Fuentes más racing/tech
-		"--theme-font-color-base": "0 0 0",
+		"--theme-font-family-base": "Inter, system-ui, sans-serif",
+		"--theme-font-family-heading": "'Poppins', system-ui, sans-serif",
+		"--theme-font-color-base": "33 33 33",   // Gris casi negro
 		"--theme-font-color-dark": "255 255 255",
-		"--theme-rounded-base": "12px", // Más moderno que pill completo
-		"--theme-rounded-container": "16px",
-		"--theme-border-base": "2px", // Bordes más gruesos para impacto visual
-		
-		// =~= Theme On-X Colors =~=
-		"--on-primary": "0 0 0", // Negro sobre verde racing
-		"--on-secondary": "255 255 255", // Blanco sobre azul racing
-		"--on-tertiary": "0 0 0", // Negro sobre naranja F1
-		"--on-success": "0 0 0",
-		"--on-warning": "0 0 0", 
+		"--theme-rounded-base": "8px",
+		"--theme-rounded-container": "12px",
+		"--theme-border-base": "1px",
+
+		"--on-primary": "255 255 255",
+		"--on-secondary": "33 33 33",
+		"--on-tertiary": "255 255 255",
+		"--on-surface": "33 33 33",
+		"--on-success": "255 255 255",
+		"--on-warning": "33 33 33",
 		"--on-error": "255 255 255",
-		"--on-surface": "255 255 255",
-		
-		// =~= Theme Colors =~=
-		// primary | #00D2AA - Verde Racing Mejorado (más vibrante)
-		"--color-primary-50": "204 248 242", // #ccf8f2
-		"--color-primary-100": "179 246 237", // #b3f6ed
-		"--color-primary-200": "153 243 233", // #99f3e9
-		"--color-primary-300": "102 236 219", // #66ecdb
-		"--color-primary-400": "51 222 192", // #33dec0
-		"--color-primary-500": "0 210 170", // #00D2AA
-		"--color-primary-600": "0 189 153", // #00bd99
-		"--color-primary-700": "0 158 128", // #009e80
-		"--color-primary-800": "0 126 102", // #007e66
-		"--color-primary-900": "0 103 83", // #006753
 
-		// secondary | #FF6B35 - Naranja F1 (como McLaren/Red Bull)
-		"--color-secondary-50": "255 233 225", // #ffe9e1
-		"--color-secondary-100": "255 225 214", // #ffe1d6
-		"--color-secondary-200": "255 218 204", // #ffdacc
-		"--color-secondary-300": "255 195 173", // #ffc3ad
-		"--color-secondary-400": "255 150 112", // #ff9670
-		"--color-secondary-500": "255 107 53", // #FF6B35
-		"--color-secondary-600": "230 96 48", // #e66030
-		"--color-secondary-700": "191 80 40", // #bf5028
-		"--color-secondary-800": "153 64 32", // #994020
-		"--color-secondary-900": "125 52 26", // #7d341a
+		// Primary | Azul suave moderno
+		"--color-primary-50": "232 242 250",
+		"--color-primary-100": "207 230 246",
+		"--color-primary-200": "182 217 241",
+		"--color-primary-300": "133 194 233",
+		"--color-primary-400": "84 172 225",
+		"--color-primary-500": "35 150 217",
+		"--color-primary-600": "30 135 195",
+		"--color-primary-700": "25 120 173",
+		"--color-primary-800": "20 105 151",
+		"--color-primary-900": "15 90 129",
 
-		// tertiary | #0066FF - Azul F1 Eléctrico
-		"--color-tertiary-50": "204 229 255", // #cce5ff
-		"--color-tertiary-100": "179 217 255", // #b3d9ff
-		"--color-tertiary-200": "153 204 255", // #99ccff
-		"--color-tertiary-300": "102 178 255", // #66b2ff
-		"--color-tertiary-400": "51 122 255", // #337aff
-		"--color-tertiary-500": "0 102 255", // #0066FF
-		"--color-tertiary-600": "0 92 230", // #005ce6
-		"--color-tertiary-700": "0 77 191", // #004dbf
-		"--color-tertiary-800": "0 61 153", // #003d99
-		"--color-tertiary-900": "0 50 125", // #00327d
+		// Secondary | Arena cálido elegante
+		"--color-secondary-50": "253 250 245",
+		"--color-secondary-100": "250 242 230",
+		"--color-secondary-200": "246 229 204",
+		"--color-secondary-300": "239 209 163",
+		"--color-secondary-400": "229 184 115",
+		"--color-secondary-500": "219 159 66",
+		"--color-secondary-600": "194 141 59",
+		"--color-secondary-700": "168 122 51",
+		"--color-secondary-800": "142 103 44",
+		"--color-secondary-900": "117 85 36",
 
-		// success | #39FF14 - Verde Neón Racing
-		"--color-success-50": "225 255 220", // #e1ffdc
-		"--color-success-100": "214 255 208", // #d6ffd0
-		"--color-success-200": "204 255 197", // #ccffc5
-		"--color-success-300": "174 255 162", // #aeffa2
-		"--color-success-400": "113 255 92", // #71ff5c
-		"--color-success-500": "57 255 20", // #39FF14
-		"--color-success-600": "51 230 18", // #33e612
-		"--color-success-700": "43 191 15", // #2bbf0f
-		"--color-success-800": "34 153 12", // #22990c
-		"--color-success-900": "28 125 10", // #1c7d0a
+		// Tertiary | Coral fresco (acento)
+		"--color-tertiary-50": "255 241 239",
+		"--color-tertiary-100": "255 223 217",
+		"--color-tertiary-200": "255 195 183",
+		"--color-tertiary-300": "255 160 143",
+		"--color-tertiary-400": "255 125 102",
+		"--color-tertiary-500": "240 90 70",
+		"--color-tertiary-600": "215 80 62",
+		"--color-tertiary-700": "190 70 55",
+		"--color-tertiary-800": "165 60 47",
+		"--color-tertiary-900": "140 50 40",
 
-		// warning | #FFD700 - Oro F1 Championship
-		"--color-warning-50": "255 249 204", // #fff9cc
-		"--color-warning-100": "255 247 179", // #fff7b3
-		"--color-warning-200": "255 244 153", // #fff499
-		"--color-warning-300": "255 237 102", // #ffed66
-		"--color-warning-400": "255 223 51", // #ffdf33
-		"--color-warning-500": "255 215 0", // #FFD700
-		"--color-warning-600": "230 194 0", // #e6c200
-		"--color-warning-700": "191 161 0", // #bfa100
-		"--color-warning-800": "153 129 0", // #998100
-		"--color-warning-900": "125 105 0", // #7d6900
+		// Success | Verde menta suave
+		"--color-success-50": "240 253 250",
+		"--color-success-100": "204 251 241",
+		"--color-success-200": "153 246 228",
+		"--color-success-300": "94 234 212",
+		"--color-success-400": "45 212 191",
+		"--color-success-500": "20 184 166",
+		"--color-success-600": "16 160 145",
+		"--color-success-700": "13 133 121",
+		"--color-success-800": "10 107 98",
+		"--color-success-900": "7 82 74",
 
-		// error | #FF0040 - Rojo F1 Ferrari Intenso  
-		"--color-error-50": "255 204 225", // #ffcce1
-		"--color-error-100": "255 179 214", // #ffb3d6
-		"--color-error-200": "255 153 204", // #ff99cc
-		"--color-error-300": "255 102 173", // #ff66ad
-		"--color-error-400": "255 51 112", // #ff3370
-		"--color-error-500": "255 0 64", // #FF0040
-		"--color-error-600": "230 0 58", // #e6003a
-		"--color-error-700": "191 0 48", // #bf0030
-		"--color-error-800": "153 0 38", // #990026
-		"--color-error-900": "125 0 31", // #7d001f
+		// Warning | Amarillo moderno (mostaza suave)
+		"--color-warning-50": "255 251 235",
+		"--color-warning-100": "254 243 199",
+		"--color-warning-200": "253 230 138",
+		"--color-warning-300": "252 211 77",
+		"--color-warning-400": "251 191 36",
+		"--color-warning-500": "245 158 11",
+		"--color-warning-600": "217 119 6",
+		"--color-warning-700": "180 83 9",
+		"--color-warning-800": "146 64 14",
+		"--color-warning-900": "120 53 15",
 
-		// surface | #1A1A2E - Azul Oscuro Racing (fondo premium)
-		"--color-surface-50": "221 221 233", // #dddde9
-		"--color-surface-100": "209 209 226", // #d1d1e2
-		"--color-surface-200": "198 198 218", // #c6c6da
-		"--color-surface-300": "163 163 196", // #a3a3c4
-		"--color-surface-400": "94 94 151", // #5e5e97
-		"--color-surface-500": "26 26 46", // #1A1A2E
-		"--color-surface-600": "23 23 41", // #171729
-		"--color-surface-700": "20 20 35", // #141423
-		"--color-surface-800": "16 16 28", // #10101c
-		"--color-surface-900": "13 13 23", // #0d0d17
+		// Error | Rojo suave elegante
+		"--color-error-50": "254 242 242",
+		"--color-error-100": "254 226 226",
+		"--color-error-200": "254 202 202",
+		"--color-error-300": "252 165 165",
+		"--color-error-400": "248 113 113",
+		"--color-error-500": "239 68 68",
+		"--color-error-600": "220 38 38",
+		"--color-error-700": "185 28 28",
+		"--color-error-800": "153 27 27",
+		"--color-error-900": "127 29 29",
+
+		// Surface | Neutros claros y grises
+		"--color-surface-50": "255 255 255",
+		"--color-surface-100": "250 250 250",
+		"--color-surface-200": "245 245 245",
+		"--color-surface-300": "229 229 229",
+		"--color-surface-400": "212 212 212",
+		"--color-surface-500": "163 163 163",
+		"--color-surface-600": "115 115 115",
+		"--color-surface-700": "82 82 82",
+		"--color-surface-800": "64 64 64",
+		"--color-surface-900": "38 38 38",
 	}
 };
