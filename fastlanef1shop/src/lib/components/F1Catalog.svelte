@@ -14,31 +14,101 @@
     reloadCart,
     type Product 
   } from '../stores/cart';
-  import { categories, loadCategories, type Category } from '../stores/categories';
+  import { 
+    categories, 
+    loadCategories, 
+    getTeamCategories,
+    getManufacturerCategories, 
+    getScaleCategories,
+    getCategoriesByType,
+    type Category 
+  } from '../stores/categories';
+
+  // Importar iconos con unplugin
+  import LucideMagnify from '~icons/lucide/search';
+  import LucideClose from '~icons/lucide/x';
+  import LucideGrid from '~icons/lucide/grid-3x3';
+  import LucideTrophy from '~icons/lucide/trophy';
+  import LucideStar from '~icons/lucide/star';
+  import LucideZap from '~icons/lucide/zap';
+  import LucideHeart from '~icons/lucide/heart';
+  import LucideRocket from '~icons/lucide/rocket';
+  import LucideShield from '~icons/lucide/shield';
+  import LucideMountain from '~icons/lucide/mountain';
+  import LucideFactory from '~icons/lucide/factory';
+  import LucideGem from '~icons/lucide/gem';
+  import LucideSparkles from '~icons/lucide/sparkles';
+  import LucideCrown from '~icons/lucide/crown';
+  import LucideRuler from '~icons/lucide/ruler';
+  import LucideMaximize from '~icons/lucide/maximize';
+  import LucideMinimize from '~icons/lucide/minimize';
+  import LucideMaximize2 from '~icons/lucide/maximize-2';
+  import LucideUser from '~icons/lucide/user';
+  import LucideHelmet from '~icons/lucide-lab/motor-racing-helmet';
+  import LucidePackage from '~icons/lucide/package';
+  import LucideTruck from '~icons/lucide/truck';
+  import LucideEye from '~icons/lucide/eye';
+  import LucideCartPlus from '~icons/lucide/shopping-cart';
+  import LucideCheck from '~icons/lucide/check-circle';
+  import LucideShoppingBag from '~icons/lucide/shopping-bag';
+  import LucideInfo from '~icons/lucide/info';
+  import LucideEmail from '~icons/lucide/mail';
+  import LucideHelp from '~icons/lucide/help-circle';
 
   // Component stores
   const products = writable<Product[]>([]);
-  const selectedCategory = writable<string>('all');
+  const selectedCategories = writable<string[]>(['all']); // Cambiado para soportar múltiples categorías
   const isLoading = writable<boolean>(true);
   const searchQuery = writable<string>('');
+  const activeFilterType = writable<'general' | 'team' | 'manufacturer' | 'scale'>('general');
 
   // GitHub Pages configuration
   const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/tu-usuario/tu-repo/main';
 
+  // Mapeo de iconos
+  const iconMap = {
+    'lucide:grid-3x3': LucideGrid,
+    'lucide:trophy': LucideTrophy,
+    'lucide:star': LucideStar,
+    'lucide:zap': LucideZap,
+    'lucide:heart': LucideHeart,
+    'lucide:rocket': LucideRocket,
+    'lucide:shield': LucideShield,
+    'lucide:mountain': LucideMountain,
+    'lucide:factory': LucideFactory,
+    'lucide:gem': LucideGem,
+    'lucide:sparkles': LucideSparkles,
+    'lucide:crown': LucideCrown,
+    'lucide:ruler': LucideRuler,
+    'lucide:maximize': LucideMaximize,
+    'lucide:minimize': LucideMinimize,
+    'lucide:maximize-2': LucideMaximize2,
+    'lucide:user': LucideUser
+  };
+
   // Derived store for filtered products
   const filteredProducts = derived(
-    [products, selectedCategory, searchQuery], 
-    ([$products, $selectedCategory, $searchQuery]) => {
-      let filtered = $selectedCategory === 'all' 
-        ? $products 
-        : $products.filter(p => p.category === $selectedCategory);
+    [products, selectedCategories, searchQuery], 
+    ([$products, $selectedCategories, $searchQuery]) => {
+      let filtered = $products;
       
+      // Filtrar por categorías (si no es 'all')
+      if (!$selectedCategories.includes('all')) {
+        filtered = $products.filter(p => 
+          p.categories.some(cat => $selectedCategories.includes(cat))
+        );
+      }
+      
+      // Filtrar por búsqueda
       if ($searchQuery.trim()) {
         const query = $searchQuery.toLowerCase();
         filtered = filtered.filter(p => 
           p.name.toLowerCase().includes(query) ||
           p.description.toLowerCase().includes(query) ||
-          p.team.toLowerCase().includes(query)
+          p.team.toLowerCase().includes(query) ||
+          p.manufacturer.toLowerCase().includes(query) ||
+          p.scale.toLowerCase().includes(query) ||
+          (p.driver && p.driver.toLowerCase().includes(query))
         );
       }
       
@@ -63,13 +133,13 @@
     } catch (error) {
       console.error('Error loading products:', error);
       
-      // Fallback mock data para desarrollo
+      // Fallback mock data con nuevas propiedades
       const mockProducts: Product[] = [
         {
           id: 1,
-          name: "Red Bull RB19",
+          name: "Red Bull RB19 Max Verstappen",
           description: "El monoplaza dominador de la temporada 2023, pilotado por Max Verstappen hacia su tercer título mundial consecutivo.",
-          category: "championship",
+          categories: ["championship", "red-bull", "verstappen", "burago", "scale-1-43"],
           price: 89.99,
           originalPrice: 99.99,
           images: ["rb19_1.jpg", "rb19_2.jpg", "rb19_3.jpg"],
@@ -85,39 +155,48 @@
           inStock: true,
           limitedEdition: true,
           year: 2023,
-          team: "Red Bull Racing"
+          team: "Red Bull Racing",
+          manufacturer: "Bburago",
+          scale: "1:43",
+          driver: "Max Verstappen"
         },
         {
           id: 2,
-          name: "Ferrari SF-23",
+          name: "Ferrari SF-23 Charles Leclerc",
           description: "La máquina roja de Maranello con el corazón palpitante de la Scuderia Ferrari.",
-          category: "ferrari",
+          categories: ["ferrari", "leclerc", "minichamps", "scale-1-43"],
           price: 79.99,
           images: ["sf23_1.jpg", "sf23_2.jpg"],
           imageFolder: "images/sf23/",
           inStock: true,
           limitedEdition: false,
           year: 2023,
-          team: "Scuderia Ferrari"
+          team: "Scuderia Ferrari",
+          manufacturer: "Minichamps",
+          scale: "1:43",
+          driver: "Charles Leclerc"
         },
         {
           id: 3,
-          name: "Mercedes W14",
+          name: "Mercedes W14 Lewis Hamilton",
           description: "La flecha plateada de Mercedes-AMG Petronas, buscando recuperar su supremacía.",
-          category: "mercedes",
-          price: 74.99,
+          categories: ["mercedes", "hamilton", "spark", "scale-1-18"],
+          price: 149.99,
           images: ["w14_1.jpg", "w14_2.jpg", "w14_3.jpg"],
           imageFolder: "images/w14/",
           inStock: true,
           limitedEdition: false,
           year: 2023,
-          team: "Mercedes-AMG Petronas"
+          team: "Mercedes-AMG Petronas",
+          manufacturer: "Spark Model",
+          scale: "1:18",
+          driver: "Lewis Hamilton"
         },
         {
           id: 4,
-          name: "McLaren MCL60",
+          name: "McLaren MCL60 Lando Norris",
           description: "El papaya speed de McLaren Racing con tecnología de vanguardia británica.",
-          category: "mclaren",
+          categories: ["mclaren", "burago", "scale-1-43", "limited"],
           price: 69.99,
           originalPrice: 79.99,
           images: ["mcl60_1.jpg"],
@@ -125,33 +204,42 @@
           inStock: true,
           limitedEdition: true,
           year: 2023,
-          team: "McLaren F1 Team"
+          team: "McLaren F1 Team",
+          manufacturer: "Bburago",
+          scale: "1:43",
+          driver: "Lando Norris"
         },
         {
           id: 5,
-          name: "Aston Martin AMR23",
+          name: "Aston Martin AMR23 Fernando Alonso",
           description: "El verde británico de Aston Martin con elegancia y velocidad suprema.",
-          category: "aston",
-          price: 65.99,
+          categories: ["aston-martin", "amalgam", "scale-1-8", "limited"],
+          price: 899.99,
           images: ["amr23_1.jpg", "amr23_2.jpg"],
           imageFolder: "images/amr23/",
           inStock: false,
           limitedEdition: true,
           year: 2023,
-          team: "Aston Martin Aramco"
+          team: "Aston Martin Aramco",
+          manufacturer: "Amalgam Collection",
+          scale: "1:8",
+          driver: "Fernando Alonso"
         },
         {
           id: 6,
-          name: "Alpine A523",
+          name: "Alpine A523 Pierre Gasly",
           description: "El espíritu francés de Alpine con ingeniería de precisión y pasión competitiva.",
-          category: "alpine",
+          categories: ["alpine", "spark", "scale-1-43"],
           price: 62.99,
           images: ["a523_1.jpg"],
           imageFolder: "images/a523/",
           inStock: true,
           limitedEdition: false,
           year: 2023,
-          team: "BWT Alpine F1 Team"
+          team: "BWT Alpine F1 Team",
+          manufacturer: "Spark Model",
+          scale: "1:43",
+          driver: "Pierre Gasly"
         }
       ];
       
@@ -166,12 +254,38 @@
   }
 
   function handleAddToCart(product: Product, event: Event): void {
-    event.stopPropagation(); // Prevent navigation when clicking add to cart
+    event.stopPropagation();
     addToCart(product);
   }
 
   function handleProductClick(productId: number): void {
     goto(`/producto/${productId}`);
+  }
+
+  function toggleCategory(categoryId: string): void {
+    selectedCategories.update(current => {
+      if (categoryId === 'all') {
+        return ['all'];
+      }
+      
+      const filtered = current.filter(id => id !== 'all');
+      
+      if (filtered.includes(categoryId)) {
+        const newSelection = filtered.filter(id => id !== categoryId);
+        return newSelection.length === 0 ? ['all'] : newSelection;
+      } else {
+        return [...filtered, categoryId];
+      }
+    });
+  }
+
+  function getIconComponent(iconName: string) {
+    return iconMap[iconName] || LucideGrid;
+  }
+
+  function getCategoryProductCount(categoryId: string): number {
+    if (categoryId === 'all') return $products.length;
+    return $products.filter(p => p.categories.includes(categoryId)).length;
   }
 
   onMount(() => {
@@ -183,7 +297,6 @@
 
 <!-- Hero Section -->
 <section class="relative overflow-hidden bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-500 dark:from-primary-600 dark:via-primary-700 dark:to-secondary-600">
-  <!-- Dynamic overlay with better contrast -->
   <div class="absolute inset-0 bg-surface-900/40 dark:bg-surface-900/60"></div>
   
   <!-- Animated background elements -->
@@ -244,7 +357,7 @@
           class="btn variant-filled-warning text-surface-900 font-bold px-8 py-4 text-lg hover:scale-105 transition-all duration-300 shadow-2xl"
           on:click={() => document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' })}
         >
-          <iconify-icon icon="mdi:racing-helmet" class="mr-2 text-xl"></iconify-icon>
+          <LucideHelmet class="mr-2 w-5 h-5" />
           Explora la Colección
         </button>
       </div>
@@ -257,7 +370,7 @@
 
 <!-- Search and Filter Section -->
 <section class="container mx-auto px-4 py-12 bg-surface-50 dark:bg-surface-900">
-  <div class="max-w-4xl mx-auto">
+  <div class="max-w-6xl mx-auto">
     <!-- Search Bar -->
     <div class="text-center mb-8">
       <h2 class="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-4">
@@ -266,63 +379,109 @@
       <div class="relative max-w-md mx-auto">
         <input
           type="text"
-          placeholder="Buscar por nombre, equipo o descripción..."
+          placeholder="Buscar por nombre, equipo, marca, escala..."
           class="input w-full pl-12 pr-4 py-3 text-lg rounded-full bg-surface-100 dark:bg-surface-700 border-2 border-surface-200 dark:border-surface-600 focus:border-primary-500 transition-all duration-300"
           bind:value={$searchQuery}
         />
-        <iconify-icon 
-          icon="mdi:magnify" 
-          class="absolute left-4 top-1/2 transform -translate-y-1/2 text-surface-500 dark:text-surface-400 text-xl"
-        ></iconify-icon>
+        <LucideMagnify class="absolute left-4 top-1/2 transform -translate-y-1/2 text-surface-500 dark:text-surface-400 w-5 h-5" />
         {#if $searchQuery}
           <button
             class="absolute right-3 top-1/2 transform -translate-y-1/2 btn btn-sm variant-ghost-surface rounded-full w-8 h-8 !p-0"
             on:click={() => searchQuery.set('')}
           >
-            <iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>
+            <LucideClose class="w-4 h-4" />
           </button>
         {/if}
+      </div>
+    </div>
+    
+    <!-- Filter Type Tabs -->
+    <div class="flex justify-center mb-6">
+      <div class="flex bg-surface-200 dark:bg-surface-700 p-1 rounded-full">
+        <button
+          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'general' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-600 hover:text-surface-900'}"
+          on:click={() => activeFilterType.set('general')}
+        >
+          General
+        </button>
+        <button
+          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'team' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-600 hover:text-surface-900'}"
+          on:click={() => activeFilterType.set('team')}
+        >
+          Equipos
+        </button>
+        <button
+          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'manufacturer' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-600 hover:text-surface-900'}"
+          on:click={() => activeFilterType.set('manufacturer')}
+        >
+          Marcas
+        </button>
+        <button
+          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'scale' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-600 hover:text-surface-900'}"
+          on:click={() => activeFilterType.set('scale')}
+        >
+          Escalas
+        </button>
       </div>
     </div>
     
     <!-- Category Filter Pills -->
     <div class="text-center mb-6">
       <p class="text-surface-600 dark:text-surface-300 mb-6">
-        Explora por escudería y descubre las máquinas que han marcado la historia
+        {$activeFilterType === 'general' && 'Explora por categorías generales'}
+        {$activeFilterType === 'team' && 'Filtra por escudería favorita'}
+        {$activeFilterType === 'manufacturer' && 'Descubre por fabricante'}
+        {$activeFilterType === 'scale' && 'Encuentra tu escala ideal'}
       </p>
       
       <div class="flex flex-wrap gap-3 justify-center">
-        {#each $categories as category, i}
+        {#each getCategoriesByType($activeFilterType) as category, i}
+          {@const IconComponent = getIconComponent(category.icon)}
           <button
-            class="btn {$selectedCategory === category.id 
+            class="btn {$selectedCategories.includes(category.id)
               ? `${category.variant} shadow-lg scale-105` 
               : 'variant-soft-surface hover:variant-filled-surface'} 
             rounded-full transition-all duration-300 font-semibold px-6 py-3
             hover:scale-105 hover:shadow-md"
-            on:click={() => selectedCategory.set(category.id)}
+            on:click={() => toggleCategory(category.id)}
             in:fly={{ x: -50, duration: 500, delay: i * 100 }}
           >
             <span class="flex items-center space-x-2">
-              <iconify-icon 
-                icon={category.id === 'all' ? 'mdi:view-grid' :
-                      category.id === 'championship' ? 'mdi:trophy' :
-                      category.id === 'ferrari' ? 'mdi:horse' :
-                      category.id === 'mercedes' ? 'mdi:star-three-points' :
-                      category.id === 'mclaren' ? 'mdi:speedometer' :
-                      category.id === 'aston' ? 'mdi:shield' :
-                      'mdi:car-sports'} 
-                class="text-sm"
-              ></iconify-icon>
+              <svelte:component this={IconComponent} class="w-4 h-4" />
               <span>{category.name}</span>
               {#if category.id !== 'all'}
                 <span class="badge variant-soft text-xs">
-                  {$products.filter(p => p.category === category.id).length}
+                  {getCategoryProductCount(category.id)}
                 </span>
               {/if}
             </span>
           </button>
         {/each}
       </div>
+      
+      <!-- Selected Categories Display -->
+      {#if !$selectedCategories.includes('all') && $selectedCategories.length > 0}
+        <div class="mt-4 flex flex-wrap gap-2 justify-center">
+          <span class="text-sm text-surface-600 dark:text-surface-300">Filtros activos:</span>
+          {#each $selectedCategories as catId}
+            {@const category = $categories.find(c => c.id === catId)}
+            {#if category}
+              <span class="badge variant-filled-primary text-xs">
+                {category.name}
+                <button class="ml-1 hover:bg-primary-600 rounded-full" on:click={() => toggleCategory(catId)}>
+                  <LucideClose class="w-3 h-3" />
+                </button>
+              </span>
+            {/if}
+          {/each}
+          <button 
+            class="badge variant-ghost-error text-xs hover:variant-filled-error"
+            on:click={() => selectedCategories.set(['all'])}
+          >
+            Limpiar filtros
+          </button>
+        </div>
+      {/if}
     </div>
   </div>
 </section>
@@ -365,15 +524,15 @@
               class="btn variant-filled-primary text-lg px-8 py-4"
               on:click={() => searchQuery.set('')}
             >
-              <iconify-icon icon="mdi:close" class="mr-2"></iconify-icon>
+              <LucideClose class="mr-2 w-5 h-5" />
               Limpiar Búsqueda
             </button>
           {/if}
           <button 
             class="btn variant-soft-surface text-lg px-8 py-4"
-            on:click={() => selectedCategory.set('all')}
+            on:click={() => selectedCategories.set(['all'])}
           >
-            <iconify-icon icon="mdi:view-grid" class="mr-2"></iconify-icon>
+            <LucideGrid class="mr-2 w-5 h-5" />
             Ver Todos los Productos
           </button>
         </div>
@@ -384,19 +543,19 @@
         <h2 class="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-4">
           {$searchQuery 
             ? `Resultados para "${$searchQuery}"` 
-            : $selectedCategory === 'all' 
+            : $selectedCategories.includes('all')
               ? 'Toda la Colección' 
-              : $categories.find(c => c.id === $selectedCategory)?.name
+              : 'Filtros Aplicados'
           }
         </h2>
         <div class="flex items-center justify-center space-x-6 text-surface-600 dark:text-surface-300">
           <div class="flex items-center space-x-2">
-            <iconify-icon icon="mdi:package-variant" class="text-lg text-success-500"></iconify-icon>
+            <LucidePackage class="w-5 h-5 text-success-500" />
             <span class="font-medium">{$filteredProducts.length} modelos disponibles</span>
           </div>
           <div class="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
           <div class="flex items-center space-x-2">
-            <iconify-icon icon="mdi:truck-delivery" class="text-lg text-primary-500"></iconify-icon>
+            <LucideTruck class="w-5 h-5 text-primary-500" />
             <span class="text-sm">Envío gratis mundial</span>
           </div>
         </div>
@@ -433,13 +592,13 @@
                 </span>
                 {#if product.limitedEdition}
                   <span class="badge variant-filled-warning text-xs font-bold shadow-lg animate-pulse block">
-                    <iconify-icon icon="mdi:star" class="mr-1 text-xs"></iconify-icon>
+                    <LucideStar class="mr-1 w-3 h-3" />
                     Limitada
                   </span>
                 {/if}
                 {#if product.originalPrice && product.originalPrice > product.price}
                   <span class="badge variant-filled-error text-xs font-bold shadow-lg block">
-                    <iconify-icon icon="mdi:sale" class="mr-1 text-xs"></iconify-icon>
+                    <LucideInfo class="mr-1 w-3 h-3" />
                     Oferta
                   </span>
                 {/if}
@@ -448,7 +607,7 @@
               <!-- Stock Status -->
               <div class="absolute top-4 left-4">
                 <span class="badge {product.inStock ? 'variant-filled-success' : 'variant-filled-error'} text-xs font-bold shadow-lg">
-                  <iconify-icon icon="{product.inStock ? 'mdi:check-circle' : 'mdi:close-circle'}" class="mr-1 text-xs"></iconify-icon>
+                  <LucideCheck class="mr-1 w-3 h-3" />
                   {product.inStock ? 'Disponible' : 'Agotado'}
                 </span>
               </div>
@@ -469,11 +628,11 @@
                       on:click={(e) => handleAddToCart(product, e)}
                       disabled={!product.inStock}
                     >
-                      <iconify-icon icon="mdi:cart-plus" class="mr-1"></iconify-icon>
+                      <LucideCartPlus class="mr-1 w-4 h-4" />
                       {product.inStock ? 'Añadir' : 'Agotado'}
                     </button>
                     <button class="btn variant-soft-surface w-12 h-12 !p-0">
-                      <iconify-icon icon="mdi:eye" class="text-lg"></iconify-icon>
+                      <LucideEye class="w-5 h-5" />
                     </button>
                   </div>
                 </div>
@@ -482,14 +641,22 @@
 
             <!-- Product Info -->
             <div class="p-6 bg-surface-25 dark:bg-surface-825">
-              <!-- Team and Year -->
-              <div class="flex items-center justify-between mb-3">
+              <!-- Category Tags -->
+              <div class="flex flex-wrap gap-2 mb-3">
                 <span class="badge variant-soft-primary text-xs font-medium">
                   {product.team}
                 </span>
                 <span class="badge variant-soft-secondary text-xs font-medium">
-                  {product.year}
+                  {product.manufacturer}
                 </span>
+                <span class="badge variant-soft-tertiary text-xs font-medium">
+                  {product.scale}
+                </span>
+                {#if product.driver}
+                  <span class="badge variant-soft-warning text-xs font-medium">
+                    {product.driver}
+                  </span>
+                {/if}
               </div>
               
               <h3 class="h4 font-bold mb-3 text-surface-900 dark:text-surface-50 leading-tight line-clamp-2">
@@ -504,7 +671,7 @@
               <div class="flex items-center space-x-2 mb-4">
                 <div class="flex space-x-1">
                   {#each Array(5) as _, starIndex}
-                    <iconify-icon icon="mdi:star" class="text-warning-500 text-sm"></iconify-icon>
+                    <LucideStar class="text-warning-500 w-4 h-4 fill-current" />
                   {/each}
                 </div>
                 <span class="text-xs text-surface-500 dark:text-surface-400">(4.9)</span>
@@ -524,7 +691,7 @@
                     {/if}
                   </div>
                   <div class="flex items-center space-x-2 text-xs text-surface-500 dark:text-surface-400 mt-1">
-                    <iconify-icon icon="mdi:truck-delivery" class="text-xs"></iconify-icon>
+                    <LucideTruck class="w-3 h-3" />
                     <span>Envío gratis</span>
                   </div>
                 </div>
@@ -534,7 +701,7 @@
                   on:click={(e) => handleAddToCart(product, e)}
                   disabled={!product.inStock}
                 >
-                  <iconify-icon icon="mdi:cart-plus" class="mr-2"></iconify-icon>
+                  <LucideCartPlus class="mr-2 w-4 h-4" />
                   {product.inStock ? 'Añadir' : 'Agotado'}
                 </button>
               </div>
@@ -550,7 +717,7 @@
             Has visto {$filteredProducts.length} de nuestros increíbles monoplazas
           </p>
           <button class="btn variant-soft-primary text-lg px-8 py-4">
-            <iconify-icon icon="mdi:reload" class="mr-2"></iconify-icon>
+            <LucidePackage class="mr-2 w-5 h-5" />
             Cargar Más Modelos
           </button>
         </div>
@@ -574,7 +741,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div class="text-center p-6" in:fly={{ y: 30, duration: 600, delay: 200 }}>
         <div class="w-16 h-16 bg-gradient-to-br from-success-500 to-success-600 rounded-full flex items-center justify-center mx-auto mb-4">
-          <iconify-icon icon="mdi:shield-check" class="text-3xl text-white"></iconify-icon>
+          <LucideShield class="w-8 h-8 text-white" />
         </div>
         <h3 class="text-xl font-bold text-surface-900 dark:text-surface-50 mb-3">
           100% Auténticos
@@ -586,7 +753,7 @@
       
       <div class="text-center p-6" in:fly={{ y: 30, duration: 600, delay: 400 }}>
         <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
-          <iconify-icon icon="mdi:truck-delivery" class="text-3xl text-white"></iconify-icon>
+          <LucideTruck class="w-8 h-8 text-white" />
         </div>
         <h3 class="text-xl font-bold text-surface-900 dark:text-surface-50 mb-3">
           Envío a toda la República de Guatemala
@@ -598,7 +765,7 @@
       
       <div class="text-center p-6" in:fly={{ y: 30, duration: 600, delay: 600 }}>
         <div class="w-16 h-16 bg-gradient-to-br from-warning-500 to-warning-600 rounded-full flex items-center justify-center mx-auto mb-4">
-          <iconify-icon icon="mdi:star-circle" class="text-3xl text-white"></iconify-icon>
+          <LucideStar class="w-8 h-8 text-white" />
         </div>
         <h3 class="text-xl font-bold text-surface-900 dark:text-surface-50 mb-3">
           Ediciones Exclusivas

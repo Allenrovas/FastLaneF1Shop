@@ -16,6 +16,27 @@
   } from '$lib/stores/cart';
   import { categories, loadCategories, type Category } from '$lib/stores/categories';
 
+  // Importar iconos con unplugin
+  import LucideHome from '~icons/lucide/home';
+  import LucideChevronRight from '~icons/lucide/chevron-right';
+  import LucideHelmet from '~icons/lucide-lab/motor-racing-helmet';
+  import LucideShoppingCart from '~icons/lucide/shopping-cart';
+  import LucideClose from '~icons/lucide/x';
+  import LucidePlus from '~icons/lucide/plus';
+  import LucideMinus from '~icons/lucide/minus';
+  import LucideTrash from '~icons/lucide/trash-2';
+  import LucideF1 from '~icons/lucide/car-front';
+  import LucideStar from '~icons/lucide/star';
+  import LucideCheck from '~icons/lucide/check-circle';
+  import LucideCartPlus from '~icons/lucide/shopping-cart';
+  import LucideEye from '~icons/lucide/eye';
+  import LucideArrowLeft from '~icons/lucide/arrow-left';
+  import LucideTruck from '~icons/lucide/truck';
+  import LucideShield from '~icons/lucide/shield-check';
+  import LucideCreditCard from '~icons/lucide/credit-card';
+  import LucideShoppingBag from '~icons/lucide/shopping-bag';
+  import LucideCalculator from '~icons/lucide/calculator';
+
   // Stores
   const products = writable<Product[]>([]);
   const isLoading = writable<boolean>(true);
@@ -34,10 +55,11 @@
       $categories.find(cat => cat.id === $page.params.slug) || null
   );
 
+  // Filtrar productos que contengan la categoría en su array de categorías
   const filteredProducts = derived(
     [products, page], 
     ([$products, $page]) => 
-      $products.filter(p => p.category === $page.params.slug)
+      $products.filter(p => p.categories.includes($page.params.slug))
   );
 
   // Load products
@@ -57,34 +79,55 @@
     } catch (error) {
       console.error('Error loading products:', error);
       
-      // Fallback mock data
+      // Fallback mock data con múltiples categorías
       const mockProducts: Product[] = [
         {
           id: 1,
-          name: "Red Bull RB19",
+          name: "Red Bull RB19 Max Verstappen",
           description: "El monoplaza dominador de la temporada, pilotado por Max Verstappen hacia su tercer título mundial consecutivo.",
-          category: "championship",
+          categories: ["championship", "red-bull", "verstappen", "burago", "scale-1-43"],
           price: 89.99,
           images: ["rb19_1.jpg", "rb19_2.jpg", "rb19_3.jpg"],
-          imageFolder: "images/rb19/"
+          imageFolder: "images/rb19/",
+          inStock: true,
+          limitedEdition: true,
+          year: 2023,
+          team: "Red Bull Racing",
+          manufacturer: "Bburago",
+          scale: "1:43",
+          driver: "Max Verstappen"
         },
         {
           id: 2,
-          name: "Ferrari SF-23",
+          name: "Ferrari SF-23 Charles Leclerc",
           description: "La máquina roja de Maranello con el corazón palpitante de la Scuderia Ferrari.",
-          category: "ferrari",
+          categories: ["ferrari", "leclerc", "minichamps", "scale-1-43"],
           price: 79.99,
           images: ["sf23_1.jpg", "sf23_2.jpg"],
-          imageFolder: "images/sf23/"
+          imageFolder: "images/sf23/",
+          inStock: true,
+          limitedEdition: false,
+          year: 2023,
+          team: "Scuderia Ferrari",
+          manufacturer: "Minichamps",
+          scale: "1:43",
+          driver: "Charles Leclerc"
         },
         {
           id: 3,
-          name: "Mercedes W14",
+          name: "Mercedes W14 Lewis Hamilton",
           description: "La flecha plateada de Mercedes-AMG Petronas, buscando recuperar su supremacía.",
-          category: "mercedes",
-          price: 74.99,
+          categories: ["mercedes", "hamilton", "spark", "scale-1-18"],
+          price: 149.99,
           images: ["w14_1.jpg", "w14_2.jpg", "w14_3.jpg"],
-          imageFolder: "images/w14/"
+          imageFolder: "images/w14/",
+          inStock: true,
+          limitedEdition: false,
+          year: 2023,
+          team: "Mercedes-AMG Petronas",
+          manufacturer: "Spark Model",
+          scale: "1:18",
+          driver: "Lewis Hamilton"
         }
       ];
       
@@ -115,19 +158,6 @@
   <meta name="description" content="Descubre los mejores monoplazas de {$currentCategory?.name || 'esta categoría'} en nuestra colección exclusiva." />
 </svelte:head>
 
-<!-- Cart Button (Fixed) -->
-<button
-  class="btn variant-filled-primary fixed top-20 right-4 z-50 rounded-full !p-3 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110"
-  on:click={() => isCartOpen.set(true)}
->
-  <iconify-icon icon="mdi:cart" class="text-xl text-on-primary-token"></iconify-icon>
-  {#if $cartItemCount > 0}
-    <span class="badge variant-filled-warning absolute -top-2 -right-2 text-xs font-bold animate-bounce">
-      {$cartItemCount}
-    </span>
-  {/if}
-</button>
-
 <!-- Breadcrumb -->
 <section class="container mx-auto px-4 py-6 bg-surface-50 dark:bg-surface-900">
   <nav class="breadcrumb">
@@ -137,15 +167,13 @@
           href="/" 
           class="flex items-center space-x-2 text-surface-600-300-token hover:text-primary-500 transition-colors duration-200 font-medium group"
         >
-          <iconify-icon icon="mdi:home" class="text-base"></iconify-icon>
           <span>Inicio</span>
         </a>
       </li>
       <li class="text-surface-400-500-token">
-        <iconify-icon icon="mdi:chevron-right" class="text-sm"></iconify-icon>
+        <LucideChevronRight class="w-4 h-4" />
       </li>
       <li class="flex items-center space-x-2">
-        <iconify-icon icon="mdi:racing-helmet" class="text-sm text-primary-500"></iconify-icon>
         <span class="font-semibold text-surface-900-50-token">
           {$currentCategory?.name || categorySlug}
         </span>
@@ -178,7 +206,10 @@
         <!-- Category badge -->
         <div class="mb-6" in:fly={{ y: 20, duration: 600 }}>
           <span class="inline-block px-4 py-2 bg-surface-50/20 dark:bg-surface-50/30 rounded-full text-sm font-semibold text-on-primary-token border border-surface-50/30 backdrop-blur-sm">
-            Escudería Premium
+            {$currentCategory.type === 'team' ? 'Escudería' :
+             $currentCategory.type === 'manufacturer' ? 'Fabricante' :
+             $currentCategory.type === 'scale' ? 'Escala' :
+             $currentCategory.type === 'driver' ? 'Piloto' : 'Categoría'}
           </span>
         </div>
         
@@ -248,7 +279,7 @@
           class="btn variant-filled-primary text-lg px-8 py-4 hover:scale-105 transition-transform duration-200"
           on:click={() => goto('/')}
         >
-          <iconify-icon icon="mdi:arrow-left" class="mr-2"></iconify-icon>
+          <LucideArrowLeft class="mr-2 w-5 h-5" />
           Ver Todos los Productos
         </button>
       </div>
@@ -265,7 +296,7 @@
           </div>
           <div class="w-px h-4 bg-surface-300-600-token"></div>
           <div class="flex items-center space-x-2">
-            <iconify-icon icon="mdi:shield-check" class="text-sm text-success-500"></iconify-icon>
+            <LucideShield class="w-4 h-4 text-success-500" />
             <span class="text-sm">Garantía premium incluida</span>
           </div>
         </div>
@@ -275,251 +306,121 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {#each $filteredProducts as product, i}
           <div 
-            class="card card-hover overflow-hidden bg-surface-0-token dark:bg-surface-800-token border border-surface-200 dark:border-surface-700 
-            transition-all duration-300 hover:shadow-2xl hover:border-primary-300 dark:hover:border-primary-600 hover:-translate-y-2"
-            in:fly={{ y: 50, duration: 500, delay: i * 100 }}
+        class="card card-hover overflow-hidden bg-surface-0-token dark:bg-surface-800-token border border-surface-200 dark:border-surface-700 
+        transition-all duration-300 hover:shadow-2xl hover:border-primary-300 dark:hover:border-primary-600 hover:-translate-y-2 cursor-pointer"
+        in:fly={{ y: 50, duration: 500, delay: i * 100 }}
+        on:click={() => goto(`/producto/${product.id}`)}
           >
-            <!-- Product Image -->
-            <header class="card-header relative overflow-hidden bg-surface-100 dark:bg-surface-700 h-56 group">
-              <img 
-                src={getProductImageUrl(product, 0)} 
-                alt={product.name}
-                class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
-                on:error={(e) => {
-                  e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0yMCAyMEM4Ljk1NDMgMjAgMCAyOC45NTQzIDAgNDBIMTBDMTAgMzQuNDc3MSAxNC40NzcxIDMwIDE5IDMwSDIxQzI1LjUyMjkgMzAgMzAgMzQuNDc3MSAzMCA0MEg0MEMzMCAyOC45NTQzIDMxLjA0NTcgMjAgMjAgMjBaIiBmaWxsPSIjQzNDM0MzIi8+Cjwvc3ZnPgo=';
-                  e.currentTarget.classList.add('opacity-50');
-                }}
-              />
-              
-              <!-- Product ID Badge -->
-              <div class="absolute top-4 right-4">
-                <span class="badge variant-filled-error text-xs font-bold shadow-lg">
-                  #{product.id.toString().padStart(3, '0')}
-                </span>
-              </div>
-              
-              <!-- Category Badge -->
-              <div class="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span class="badge variant-filled-primary text-xs font-bold shadow-lg">
-                  {$currentCategory.name}
-                </span>
-              </div>
-              
-              <!-- Enhanced Hover Overlay -->
-              <div class="absolute inset-0 bg-gradient-to-t from-surface-900/90 via-surface-900/20 to-transparent 
-              opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-6">
-                <div class="text-surface-50 w-full">
-                  <h3 class="font-bold text-lg drop-shadow-md mb-2">{product.name}</h3>
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-2">
-                      <iconify-icon icon="mdi:eye" class="text-sm"></iconify-icon>
-                      <span class="text-sm opacity-90">Ver detalles</span>
-                    </div>
-                    <div class="flex items-center space-x-1">
-                      <div class="w-1.5 h-1.5 bg-success-400 rounded-full"></div>
-                      <span class="text-xs opacity-80">Disponible</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </header>
-
-            <!-- Product Info -->
-            <div class="p-6 bg-surface-50 dark:bg-surface-800">
-              <h3 class="h4 font-bold mb-3 text-surface-900-50-token leading-tight line-clamp-2">{product.name}</h3>
-              <p class="text-surface-600-300-token text-sm mb-5 line-clamp-3 leading-relaxed">
-                {product.description}
-              </p>
-              
-              <!-- Product Features -->
-              <div class="flex items-center justify-between mb-5">
-                <div class="flex items-center space-x-2">
-                  <div class="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
-                  <span class="text-xs text-surface-600-300-token font-medium">Edición Limitada</span>
-                </div>
-                <div class="flex items-center space-x-1">
-                  <iconify-icon icon="mdi:star" class="text-warning-500 text-sm"></iconify-icon>
-                  <iconify-icon icon="mdi:star" class="text-warning-500 text-sm"></iconify-icon>
-                  <iconify-icon icon="mdi:star" class="text-warning-500 text-sm"></iconify-icon>
-                  <iconify-icon icon="mdi:star" class="text-warning-500 text-sm"></iconify-icon>
-                  <iconify-icon icon="mdi:star" class="text-warning-500 text-sm"></iconify-icon>
-                </div>
-              </div>
-              
-              <!-- Price and Add to Cart -->
-              <div class="flex items-center justify-between pt-4 border-t border-surface-200 dark:border-surface-600">
-                <div class="flex flex-col">
-                  <div class="text-2xl font-bold text-success-600 dark:text-success-400">
-                    ${product.price}
-                  </div>
-                  <div class="text-xs text-surface-500-400-token">Precio final • Envío gratis</div>
-                </div>
-                <button
-                  class="btn variant-filled-primary font-semibold hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg"
-                  on:click={() => handleAddToCart(product)}
-                >
-                  <iconify-icon icon="mdi:cart-plus" class="mr-2"></iconify-icon>
-                  Añadir
-                </button>
-              </div>
+        <!-- Product Image -->
+        <header class="card-header relative overflow-hidden bg-surface-100 dark:bg-surface-700 h-56 group">
+          <img 
+            src={getProductImageUrl(product, 0)} 
+            alt={product.name}
+            class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
+            on:error={(e) => {
+          e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0yMCAyMEM4Ljk1NDMgMjAgMCAyOC45NTQzIDAgNDBIMTBDMTAgMzQuNDc3MSAxNC40NzcxIDMwIDE5IDMwSDIxQzI1LjUyMjkgMzAgMzAgMzQuNDc3MSAzMCA0MEg0MEMzMCAyOC45NTQzIDMxLjA0NTcgMjAgMjAgMjBaIiBmaWxsPSIjQzNDM0MzIi8+Cjwvc3ZnPgo=';
+          e.currentTarget.classList.add('opacity-50');
+            }}
+          />
+          
+          <!-- Product ID Badge -->
+          <div class="absolute top-4 right-4">
+            <span class="badge variant-filled-error text-xs font-bold shadow-lg">
+          #{product.id.toString().padStart(3, '0')}
+            </span>
+          </div>
+          
+          <!-- Limited Edition Badge -->
+          {#if product.limitedEdition}
+            <div class="absolute top-4 left-4">
+          <span class="badge variant-filled-warning text-xs font-bold shadow-lg animate-pulse">
+            <LucideStar class="mr-1 w-3 h-3" />
+            Limitada
+          </span>
             </div>
+          {/if}
+          
+          <!-- Enhanced Hover Overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-surface-900/90 via-surface-900/20 to-transparent 
+          opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-6">
+            <div class="text-surface-50 w-full">
+          <h3 class="font-bold text-lg drop-shadow-md mb-2">{product.name}</h3>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <LucideEye class="w-4 h-4" />
+              <span class="text-sm opacity-90">Ver detalles</span>
+            </div>
+            <div class="flex items-center space-x-1">
+              <div class="w-1.5 h-1.5 bg-success-400 rounded-full"></div>
+              <span class="text-xs opacity-80">Disponible</span>
+            </div>
+          </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Product Info -->
+        <div class="p-6 bg-surface-50 dark:bg-surface-800" on:click|stopPropagation>
+          <!-- Category Tags -->
+          <div class="flex flex-wrap gap-2 mb-3">
+            <span class="badge variant-soft-primary text-xs font-medium">
+          {product.team}
+            </span>
+            <span class="badge variant-soft-secondary text-xs font-medium">
+          {product.manufacturer}
+            </span>
+            <span class="badge variant-soft-tertiary text-xs font-medium">
+          {product.scale}
+            </span>
+            {#if product.driver}
+          <span class="badge variant-soft-warning text-xs font-medium">
+            {product.driver}
+          </span>
+            {/if}
+          </div>
+          
+          <h3 class="h4 font-bold mb-3 text-surface-900-50-token leading-tight line-clamp-2">{product.name}</h3>
+          <p class="text-surface-600-300-token text-sm mb-5 line-clamp-3 leading-relaxed">
+            {product.description}
+          </p>
+          
+          <!-- Product Features -->
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center space-x-2">
+          <div class="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
+          <span class="text-xs text-surface-600-300-token font-medium">
+            {product.limitedEdition ? 'Edición Limitada' : 'Disponible'}
+          </span>
+            </div>
+            <div class="flex items-center space-x-1">
+          {#each Array(5) as _, starIndex}
+            <LucideStar class="text-warning-500 w-4 h-4 fill-current" />
+          {/each}
+            </div>
+          </div>
+          
+          <!-- Price and Add to Cart -->
+          <div class="flex items-center justify-between pt-4 border-t border-surface-200 dark:border-surface-600">
+            <div class="flex flex-col">
+          <div class="text-2xl font-bold text-success-600 dark:text-success-400">
+            ${product.price.toFixed(2)}
+          </div>
+          <div class="text-xs text-surface-500-400-token">Precio final • Envío gratis</div>
+            </div>
+            <button
+          class="btn variant-filled-primary font-semibold hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg"
+          on:click={() => handleAddToCart(product)}
+            >
+          <LucideCartPlus class="mr-2 w-4 h-4" />
+          Añadir
+            </button>
+          </div>
+        </div>
           </div>
         {/each}
       </div>
     {/if}
   </section>
-{/if}
-
-<!-- Cart Drawer -->
-{#if $isCartOpen}
-  <div class="fixed inset-0 z-50 overflow-hidden" transition:fade>
-    <div class="absolute inset-0 bg-surface-900/60 dark:bg-surface-950/70 backdrop-blur-sm" on:click={() => isCartOpen.set(false)}></div>
-    <div 
-      class="absolute right-0 top-0 h-full w-full max-w-md bg-surface-0-token dark:bg-surface-800-token shadow-2xl border-l border-surface-200 dark:border-surface-700"
-      transition:fly={{ x: 300, duration: 300 }}
-    >
-      <div class="flex flex-col h-full">
-        <!-- Cart Header -->
-        <div class="p-6 border-b border-surface-200 dark:border-surface-600 bg-surface-50 dark:bg-surface-750">
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="h3 font-bold text-surface-900-50-token">Carrito de Compras</h3>
-              <p class="text-sm text-surface-600-300-token">
-                {$cartItemCount} {$cartItemCount === 1 ? 'artículo' : 'artículos'} • {$currentCategory?.name || 'Varios'}
-              </p>
-            </div>
-            <button 
-              class="btn btn-sm variant-soft-surface rounded-full hover:variant-filled-surface transition-all duration-200"
-              on:click={() => isCartOpen.set(false)}
-            >
-              <iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>
-            </button>
-          </div>
-        </div>
-
-        <!-- Cart Items -->
-        <div class="flex-1 overflow-y-auto p-6 bg-surface-25 dark:bg-surface-825">
-          {#if $cart.length === 0}
-            <div class="text-center py-20">
-              <div class="text-8xl mb-8 text-surface-300-600-token opacity-30 font-bold">F1</div>
-              <h4 class="text-2xl font-semibold mb-4 text-surface-800-100-token">Tu garaje está vacío</h4>
-              <p class="text-surface-600-300-token mb-8 leading-relaxed">
-                Añade algunos monoplazas de <strong>{$currentCategory?.name || 'esta categoría'}</strong> a tu colección
-              </p>
-              <button 
-                class="btn variant-filled-primary px-8 py-3"
-                on:click={() => isCartOpen.set(false)}
-              >
-                <iconify-icon icon="mdi:racing-helmet" class="mr-2"></iconify-icon>
-                Explorar {$currentCategory?.name || 'Productos'}
-              </button>
-            </div>
-          {:else}
-            <div class="space-y-4">
-              {#each $cart as item}
-                <div class="card variant-soft-surface p-4 border border-surface-200 dark:border-surface-600 hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-200">
-                  <div class="flex items-center space-x-4">
-                    <!-- Product Image -->
-                    <div class="relative overflow-hidden rounded-container-token w-16 h-16 bg-surface-200 dark:bg-surface-600">
-                      <img 
-                        src={getProductImageUrl(item, 0)} 
-                        alt={item.name}
-                        class="w-full h-full object-cover"
-                        on:error={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          e.currentTarget.nextElementSibling.style.display = 'flex';
-                        }}
-                      />
-                      <div class="w-full h-full hidden items-center justify-center text-2xl font-bold text-surface-500-400-token">F1</div>
-                    </div>
-                    
-                    <!-- Product Details -->
-                    <div class="flex-1 min-w-0">
-                      <h4 class="font-semibold text-sm text-surface-900-50-token truncate">{item.name}</h4>
-                      <div class="flex items-center space-x-2 mt-1">
-                        <span class="text-success-600 dark:text-success-400 font-bold text-lg">${item.price}</span>
-                        <span class="text-xs text-surface-500-400-token">c/u</span>
-                      </div>
-                      <p class="text-xs text-surface-500-400-token mt-1">Subtotal: ${(item.price * item.quantity).toFixed(2)}</p>
-                    </div>
-                    
-                    <!-- Quantity Controls -->
-                    <div class="flex items-center space-x-2 bg-surface-100 dark:bg-surface-700 rounded-full p-1">
-                      <button 
-                        class="btn btn-sm variant-soft-surface rounded-full w-8 h-8 !p-0 hover:variant-filled-surface transition-all duration-200"
-                        on:click={() => updateQuantity(item.id, item.quantity - 1)}
-                        disabled={item.quantity <= 1}
-                      >
-                        <iconify-icon icon="mdi:minus" class="text-xs"></iconify-icon>
-                      </button>
-                      <span class="w-8 text-center font-semibold text-surface-900-50-token text-sm">{item.quantity}</span>
-                      <button 
-                        class="btn btn-sm variant-soft-surface rounded-full w-8 h-8 !p-0 hover:variant-filled-surface transition-all duration-200"
-                        on:click={() => updateQuantity(item.id, item.quantity + 1)}
-                      >
-                        <iconify-icon icon="mdi:plus" class="text-xs"></iconify-icon>
-                      </button>
-                    </div>
-                    
-                    <!-- Remove Button -->
-                    <button 
-                      class="btn btn-sm variant-soft-error rounded-full w-8 h-8 !p-0 hover:variant-filled-error transition-all duration-200"
-                      on:click={() => removeFromCart(item.id)}
-                      title="Eliminar del carrito"
-                    >
-                      <iconify-icon icon="mdi:delete" class="text-xs"></iconify-icon>
-                    </button>
-                  </div>
-                </div>
-              {/each}
-            </div>
-          {/if}
-        </div>
-
-        <!-- Cart Footer -->
-        {#if $cart.length > 0}
-          <div class="p-6 border-t border-surface-200 dark:border-surface-600 bg-surface-50 dark:bg-surface-750">
-            <div class="space-y-3 mb-6">
-              <div class="flex justify-between items-center text-sm">
-                <span class="text-surface-600-300-token">Subtotal ({$cartItemCount} {$cartItemCount === 1 ? 'item' : 'items'}):</span>
-                <span class="font-semibold text-surface-900-50-token">${$cartTotal.toFixed(2)}</span>
-              </div>
-              <div class="flex justify-between items-center text-sm">
-                <span class="text-surface-600-300-token">Envío mundial:</span>
-                <span class="font-semibold text-success-600 dark:text-success-400">Gratis</span>
-              </div>
-              <div class="flex justify-between items-center text-sm">
-                <span class="text-surface-600-300-token">Garantía premium:</span>
-                <span class="font-semibold text-success-600 dark:text-success-400">Incluida</span>
-              </div>
-              <div class="border-t border-surface-200 dark:border-surface-600 pt-3">
-                <div class="flex justify-between items-center">
-                  <span class="text-lg font-bold text-surface-900-50-token">Total:</span>
-                  <span class="text-2xl font-bold text-success-600 dark:text-success-400">
-                    ${$cartTotal.toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="space-y-3">
-              <button class="btn variant-filled-success w-full font-semibold hover:scale-105 transition-transform duration-200">
-                <iconify-icon icon="mdi:credit-card" class="mr-2"></iconify-icon>
-                Proceder al Pago
-              </button>
-              <button 
-                class="btn variant-soft-surface w-full text-sm"
-                on:click={() => isCartOpen.set(false)}
-              >
-                <iconify-icon icon="mdi:shopping" class="mr-2"></iconify-icon>
-                Continuar explorando {$currentCategory?.name || 'productos'}
-              </button>
-            </div>
-          </div>
-        {/if}
-      </div>
-    </div>
-  </div>
 {/if}
 
 <style lang="postcss">

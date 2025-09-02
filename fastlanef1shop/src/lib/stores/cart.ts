@@ -6,23 +6,27 @@ export interface Product {
   id: number;
   name: string;
   description: string;
-  category: string;
+  categories: string[]; // Cambiado de 'category' a 'categories' array
   price: number;
   originalPrice?: number;
   images: string[];
   imageFolder: string;
   specifications?: {
-    engine: string;
-    power: string;
-    weight: string;
-    topSpeed: string;
-    acceleration: string;
+    engine?: string;
+    power?: string;
+    weight?: string;
+    topSpeed?: string;
+    acceleration?: string;
   };
   features?: string[];
   inStock: boolean;
-  limitedEdition: boolean;
+  limitedEdition?: boolean;
   year: number;
   team: string;
+  manufacturer: string; // Nuevo campo: Burago, Minichamps, etc.
+  scale: string; // Nuevo campo: 1/43, 1/18, etc.
+  driver?: string; // Nuevo campo opcional para el piloto
+  quantity?: number; // Para el carrito
 }
 
 export interface CartItem extends Product {

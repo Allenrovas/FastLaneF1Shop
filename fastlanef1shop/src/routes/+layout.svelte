@@ -8,7 +8,6 @@
   import { fade, fly } from 'svelte/transition';
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
-  import Formula1Icon from '~icons/arcticons/formula-1';
   import { 
     cart, 
     cartTotal, 
@@ -21,7 +20,35 @@
     type Product 
   } from '$lib/stores/cart';
   import { categories, loadCategories } from '$lib/stores/categories';
-  import MaterialSymbolsShoppingCartRounded from '~icons/material-symbols/shopping-cart-rounded'
+
+  // Importar iconos con unplugin
+  import Formula1Icon from '~icons/arcticons/formula-1';
+  import LucideF1 from '~icons/lucide/car-front';
+  import LucideShoppingCart from '~icons/lucide/shopping-cart';
+  import LucideClose from '~icons/lucide/x';
+  import LucideTrash from '~icons/lucide/trash-2';
+  import LucidePlus from '~icons/lucide/plus';
+  import LucideMinus from '~icons/lucide/minus';
+  import LucideCheck from '~icons/lucide/check-circle';
+  import LucideCreditCard from '~icons/lucide/credit-card';
+  import LucideShoppingBag from '~icons/lucide/shopping-bag';
+  import LucidePackage from '~icons/lucide/package';
+  import LucideTruck from '~icons/lucide/truck';
+  import LucideShield from '~icons/lucide/shield-check';
+  import LucideCalculator from '~icons/lucide/calculator';
+  import LucideHelmet from '~icons/lucide-lab/motor-racing-helmet';
+  import LucideUsers from '~icons/lucide/users';
+  import LucideEmail from '~icons/lucide/mail';
+  import LucideHelp from '~icons/lucide/help-circle';
+  import LucideNewsletter from '~icons/lucide/mail-plus';
+  import LucideSend from '~icons/lucide/send';
+  import LucideFacebook from '~icons/lucide/facebook';
+  import LucideTwitter from '~icons/lucide/twitter';
+  import LucideInstagram from '~icons/lucide/instagram';
+  import LucideYoutube from '~icons/lucide/youtube';
+  import LucideInfo from '~icons/lucide/info';
+  import LucideStar from '~icons/lucide/star';
+  import LucideDelete from '~icons/lucide/trash-2';
 
   // Initialize Skeleton stores
   initializeStores();
@@ -38,7 +65,6 @@
   }
 
   function handleCheckout() {
-    // Aquí puedes implementar la lógica de checkout
     console.log('Proceeding to checkout...');
     isCartOpen.set(false);
   }
@@ -62,7 +88,7 @@
           on:click={() => goto('/')}
         >
           <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow duration-200">
-            <Formula1Icon class="text-white text-xl" />
+            <Formula1Icon class="text-white w-6 h-6" />
           </div>
           <div>
             <h1 class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
@@ -79,7 +105,7 @@
             class="btn variant-soft-primary relative hover:variant-filled-primary transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg"
             on:click={() => isCartOpen.set(true)}
           >
-            <MaterialSymbolsShoppingCartRounded class="text-xl mr-2" />
+            <LucideShoppingCart class="w-5 h-5 mr-2" />
             <span class="hidden sm:inline font-semibold">Carrito</span>
             {#if $cartItemCount > 0}
               <span class="badge variant-filled-error absolute -top-2 -right-2 text-xs font-bold animate-bounce min-w-[1.25rem] h-5">
@@ -110,13 +136,12 @@
           <div class="col-span-1 md:col-span-2">
             <div class="flex items-center space-x-3 mb-6">
               <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Formula1Icon class="text-white text-2xl" />
+                <Formula1Icon class="text-white w-6 h-6" />
               </div>
               <div>
                 <span class="text-2xl font-bold bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
                   Fast Lane F1
                 </span>
-                <p class="text-surface-400 text-sm">Premium Collection</p>
               </div>
             </div>
             <p class="text-surface-300 leading-relaxed mb-6 max-w-md">
@@ -125,17 +150,21 @@
             
             <!-- Social Links -->
             <div class="flex space-x-4">
-              <button class="btn btn-sm variant-soft-primary rounded-full w-10 h-10 !p-0">
-                <iconify-icon icon="mdi:facebook" class="text-lg"></iconify-icon>
+              <button 
+              class="btn btn-sm variant-soft-primary rounded-full w-10 h-10 !p-0"
+                on:click={() => window.open('https://www.facebook.com/share/1GkYFBVWRQ/?mibextid=wwXIfr', '_blank')}
+              >
+                <LucideFacebook class="w-4 h-4" />
               </button>
               <button class="btn btn-sm variant-soft-secondary rounded-full w-10 h-10 !p-0">
-                <iconify-icon icon="mdi:twitter" class="text-lg"></iconify-icon>
+                <LucideTwitter class="w-4 h-4" />
               </button>
-              <button class="btn btn-sm variant-soft-success rounded-full w-10 h-10 !p-0">
-                <iconify-icon icon="mdi:instagram" class="text-lg"></iconify-icon>
-              </button>
-              <button class="btn btn-sm variant-soft-warning rounded-full w-10 h-10 !p-0">
-                <iconify-icon icon="mdi:youtube" class="text-lg"></iconify-icon>
+              <button 
+              class="btn btn-sm variant-soft-success rounded-full w-10 h-10 !p-0"
+              on:click={() => window.open('https://www.instagram.com/fastlanef1shop/', '_blank')}
+              aria-label="Instagram"
+              >
+                <LucideInstagram class="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -143,11 +172,11 @@
           <!-- Dynamic Categories -->
           <div>
             <h3 class="font-bold text-lg mb-6 flex items-center">
-              <iconify-icon icon="mdi:racing-helmet" class="mr-2 text-primary-400"></iconify-icon>
+              <LucideHelmet class="mr-2 w-5 h-5 text-primary-400" />
               Escuderías
             </h3>
             <ul class="space-y-3">
-              {#each $categories.slice(1, 6) as category}
+              {#each $categories.filter(c => c.type === 'team').slice(0, 5) as category}
                 <li>
                   <a 
                     href="/categoria/{category.id}" 
@@ -164,31 +193,31 @@
           <!-- Info Links -->
           <div>
             <h3 class="font-bold text-lg mb-6 flex items-center">
-              <iconify-icon icon="mdi:information" class="mr-2 text-secondary-400"></iconify-icon>
+              <LucideInfo class="mr-2 w-5 h-5 text-secondary-400" />
               Información
             </h3>
             <ul class="space-y-3">
               <li>
                 <a href="#about" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
-                  <iconify-icon icon="mdi:account-group" class="text-sm opacity-50 group-hover:opacity-100"></iconify-icon>
+                  <LucideUsers class="w-4 h-4 opacity-50 group-hover:opacity-100" />
                   <span>Acerca de</span>
                 </a>
               </li>
               <li>
                 <a href="#shipping" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
-                  <iconify-icon icon="mdi:truck-delivery" class="text-sm opacity-50 group-hover:opacity-100"></iconify-icon>
+                  <LucideTruck class="w-4 h-4 opacity-50 group-hover:opacity-100" />
                   <span>Envíos</span>
                 </a>
               </li>
               <li>
                 <a href="#contact" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
-                  <iconify-icon icon="mdi:email" class="text-sm opacity-50 group-hover:opacity-100"></iconify-icon>
+                  <LucideEmail class="w-4 h-4 opacity-50 group-hover:opacity-100" />
                   <span>Contacto</span>
                 </a>
               </li>
               <li>
                 <a href="#support" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
-                  <iconify-icon icon="mdi:help-circle" class="text-sm opacity-50 group-hover:opacity-100"></iconify-icon>
+                  <LucideHelp class="w-4 h-4 opacity-50 group-hover:opacity-100" />
                   <span>Soporte</span>
                 </a>
               </li>
@@ -196,11 +225,11 @@
           </div>
         </div>
 
-        <!-- Newsletter -->
+        <!-- Newsletter 
         <div class="border-t border-surface-700 pt-8 mb-8">
           <div class="max-w-md mx-auto text-center">
             <h4 class="text-lg font-semibold mb-4 flex items-center justify-center">
-              <iconify-icon icon="mdi:email-newsletter" class="mr-2 text-warning-400"></iconify-icon>
+              <LucideNewsletter class="mr-2 w-5 h-5 text-warning-400" />
               Mantente al día
             </h4>
             <p class="text-surface-400 mb-4">Recibe noticias sobre nuevos lanzamientos y ofertas exclusivas</p>
@@ -211,11 +240,12 @@
                 class="input rounded-full flex-1 bg-surface-800 border-surface-600 text-surface-100 placeholder-surface-400"
               />
               <button class="btn variant-filled-primary rounded-full px-6">
-                <iconify-icon icon="mdi:send" class="text-lg"></iconify-icon>
+                <LucideSend class="w-4 h-4" />
               </button>
             </div>
           </div>
         </div>
+        -->
 
         <!-- Copyright -->
         <div class="text-center border-t border-surface-700 pt-8">
@@ -249,11 +279,11 @@
           <div class="flex items-center justify-between">
             <div>
               <h3 class="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center">
-                <iconify-icon icon="mdi:cart" class="mr-2 text-primary-500"></iconify-icon>
+                <LucideShoppingCart class="mr-2 w-6 h-6 text-primary-500" />
                 Mi Carrito
               </h3>
               <p class="text-surface-600 dark:text-surface-300 flex items-center mt-1">
-                <iconify-icon icon="mdi:package-variant" class="mr-1 text-sm"></iconify-icon>
+                <LucidePackage class="mr-1 w-4 h-4" />
                 {$cartItemCount} {$cartItemCount === 1 ? 'artículo' : 'artículos'}
               </p>
             </div>
@@ -264,14 +294,14 @@
                   on:click={clearCart}
                   title="Vaciar carrito"
                 >
-                  <iconify-icon icon="mdi:delete-sweep" class="text-lg"></iconify-icon>
+                  <LucideDelete class="w-4 h-4" />
                 </button>
               {/if}
               <button 
                 class="btn btn-sm variant-ghost-surface"
                 on:click={() => isCartOpen.set(false)}
               >
-                <iconify-icon icon="mdi:close" class="text-xl"></iconify-icon>
+                <LucideClose class="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -282,7 +312,7 @@
           {#if $cart.length === 0}
             <div class="flex flex-col items-center justify-center h-full px-6 text-center">
               <div class="w-32 h-32 bg-surface-200 dark:bg-surface-700 rounded-full flex items-center justify-center mb-6">
-                <iconify-icon icon="mdi:cart-outline" class="text-6xl text-surface-400"></iconify-icon>
+                <LucideShoppingCart class="w-16 h-16 text-surface-400" />
               </div>
               <h4 class="text-xl font-semibold mb-3 text-surface-900 dark:text-surface-50">
                 Tu garaje está vacío
@@ -294,7 +324,7 @@
                 class="btn variant-filled-primary text-lg px-8 py-3"
                 on:click={() => isCartOpen.set(false)}
               >
-                <iconify-icon icon="mdi:racing-helmet" class="mr-2"></iconify-icon>
+                <LucideHelmet class="mr-2 w-5 h-5" />
                 Explorar Colección
               </button>
             </div>
@@ -319,13 +349,13 @@
                           }}
                         />
                         <div class="w-full h-full hidden items-center justify-center">
-                          <iconify-icon icon="mdi:car-sports" class="text-3xl text-surface-500"></iconify-icon>
+                          <LucideF1 class="w-8 h-8 text-surface-500" />
                         </div>
                       </div>
                       {#if item.limitedEdition}
                         <div class="absolute -top-1 -right-1">
                           <span class="badge variant-filled-warning text-xs font-bold">
-                            <iconify-icon icon="mdi:star" class="text-xs mr-1"></iconify-icon>
+                            <LucideStar class="w-3 h-3 mr-1" />
                             Limitada
                           </span>
                         </div>
@@ -337,9 +367,11 @@
                       <h4 class="font-semibold text-surface-900 dark:text-surface-50 mb-1 line-clamp-2">
                         {item.name}
                       </h4>
-                      <p class="text-sm text-surface-600 dark:text-surface-400 mb-2">
-                        {item.team} • {item.year}
-                      </p>
+                      <div class="flex flex-wrap gap-1 mb-2">
+                        <span class="badge variant-soft-primary text-xs">{item.team}</span>
+                        <span class="badge variant-soft-secondary text-xs">{item.manufacturer}</span>
+                        <span class="badge variant-soft-tertiary text-xs">{item.scale}</span>
+                      </div>
                       <div class="flex items-center justify-between">
                         <div class="flex flex-col">
                           <span class="text-lg font-bold text-success-600 dark:text-success-400">
@@ -361,7 +393,7 @@
                           on:click={() => updateQuantity(item.id, item.quantity - 1)}
                           disabled={item.quantity <= 1}
                         >
-                          <iconify-icon icon="mdi:minus" class="text-sm"></iconify-icon>
+                          <LucideMinus class="w-3 h-3" />
                         </button>
                         <span class="w-10 text-center font-semibold text-surface-900 dark:text-surface-50">
                           {item.quantity}
@@ -370,7 +402,7 @@
                           class="btn btn-sm variant-ghost-surface w-8 h-8 !p-0 rounded-full"
                           on:click={() => updateQuantity(item.id, item.quantity + 1)}
                         >
-                          <iconify-icon icon="mdi:plus" class="text-sm"></iconify-icon>
+                          <LucidePlus class="w-3 h-3" />
                         </button>
                       </div>
                       
@@ -380,7 +412,7 @@
                         on:click={() => removeFromCart(item.id)}
                         title="Eliminar del carrito"
                       >
-                        <iconify-icon icon="mdi:delete" class="text-sm"></iconify-icon>
+                        <LucideTrash class="w-3 h-3" />
                       </button>
                     </div>
                   </div>
@@ -397,7 +429,7 @@
             <div class="space-y-3 mb-6">
               <div class="flex justify-between items-center">
                 <span class="flex items-center text-surface-600 dark:text-surface-300">
-                  <iconify-icon icon="mdi:calculator" class="mr-2 text-sm"></iconify-icon>
+                  <LucideCalculator class="mr-2 w-4 h-4" />
                   Subtotal ({$cartItemCount} items):
                 </span>
                 <span class="font-semibold text-surface-900 dark:text-surface-50">
@@ -407,22 +439,22 @@
               
               <div class="flex justify-between items-center">
                 <span class="flex items-center text-surface-600 dark:text-surface-300">
-                  <iconify-icon icon="mdi:truck-delivery" class="mr-2 text-sm"></iconify-icon>
+                  <LucideTruck class="mr-2 w-4 h-4" />
                   Envío mundial:
                 </span>
                 <span class="font-semibold text-success-600 dark:text-success-400">
-                  <iconify-icon icon="mdi:check-circle" class="mr-1 text-sm"></iconify-icon>
+                  <LucideCheck class="mr-1 w-4 h-4" />
                   Gratis
                 </span>
               </div>
               
               <div class="flex justify-between items-center">
                 <span class="flex items-center text-surface-600 dark:text-surface-300">
-                  <iconify-icon icon="mdi:shield-check" class="mr-2 text-sm"></iconify-icon>
+                  <LucideShield class="mr-2 w-4 h-4" />
                   Garantía premium:
                 </span>
                 <span class="font-semibold text-success-600 dark:text-success-400">
-                  <iconify-icon icon="mdi:check-circle" class="mr-1 text-sm"></iconify-icon>
+                  <LucideCheck class="mr-1 w-4 h-4" />
                   Incluida
                 </span>
               </div>
@@ -443,7 +475,7 @@
                 class="btn variant-filled-success w-full font-semibold text-lg py-4 hover:scale-105 transition-transform duration-200"
                 on:click={handleCheckout}
               >
-                <iconify-icon icon="mdi:credit-card" class="mr-2"></iconify-icon>
+                <LucideCreditCard class="mr-2 w-5 h-5" />
                 Proceder al Pago
               </button>
               
@@ -451,7 +483,7 @@
                 class="btn variant-soft-surface w-full"
                 on:click={() => isCartOpen.set(false)}
               >
-                <iconify-icon icon="mdi:shopping" class="mr-2"></iconify-icon>
+                <LucideShoppingBag class="mr-2 w-5 h-5" />
                 Continuar Comprando
               </button>
             </div>
@@ -470,12 +502,15 @@
   >
     <div class="card variant-filled-{$toastNotification.type} p-4 shadow-2xl border-l-4 border-{$toastNotification.type}-400">
       <div class="flex items-center space-x-3">
-        <iconify-icon 
-          icon={$toastNotification.type === 'success' ? 'mdi:check-circle' : 
-                $toastNotification.type === 'warning' ? 'mdi:alert-circle' :
-                $toastNotification.type === 'error' ? 'mdi:close-circle' : 'mdi:information'}
-          class="text-2xl text-on-{$toastNotification.type}-token"
-        ></iconify-icon>
+        {#if $toastNotification.type === 'success'}
+          <LucideCheck class="w-6 h-6 text-on-{$toastNotification.type}-token" />
+        {:else if $toastNotification.type === 'warning'}
+          <LucideInfo class="w-6 h-6 text-on-{$toastNotification.type}-token" />
+        {:else if $toastNotification.type === 'error'}
+          <LucideClose class="w-6 h-6 text-on-{$toastNotification.type}-token" />
+        {:else}
+          <LucideInfo class="w-6 h-6 text-on-{$toastNotification.type}-token" />
+        {/if}
         <span class="font-semibold text-on-{$toastNotification.type}-token">
           {$toastNotification.message}
         </span>
