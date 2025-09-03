@@ -369,7 +369,7 @@
 </section>
 
 <!-- Search and Filter Section -->
-<section class="container mx-auto px-4 py-12 bg-surface-50 dark:bg-surface-900">
+<section class="container mx-auto px-4 py-12">
   <div class="max-w-6xl mx-auto">
     <!-- Search Bar -->
     <div class="text-center mb-8">
@@ -380,7 +380,7 @@
         <input
           type="text"
           placeholder="Buscar por nombre, equipo, marca, escala..."
-          class="input w-full pl-12 pr-4 py-3 text-lg rounded-full bg-surface-100 dark:bg-surface-700 border-2 border-surface-200 dark:border-surface-600 focus:border-primary-500 transition-all duration-300"
+          class="input w-full pl-12 pr-4 py-3 text-lg rounded-full  border-2 border-surface-200 dark:border-surface-600 focus:border-primary-500 transition-all duration-300"
           bind:value={$searchQuery}
         />
         <LucideMagnify class="absolute left-4 top-1/2 transform -translate-y-1/2 text-surface-500 dark:text-surface-400 w-5 h-5" />
@@ -399,25 +399,25 @@
     <div class="flex justify-center mb-6">
       <div class="flex bg-surface-200 dark:bg-surface-700 p-1 rounded-full">
         <button
-          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'general' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-600 hover:text-surface-900'}"
+          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'general' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-200 hover:text-surface-400'}"
           on:click={() => activeFilterType.set('general')}
         >
           General
         </button>
         <button
-          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'team' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-600 hover:text-surface-900'}"
+          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'team' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-200 hover:text-surface-400'}"
           on:click={() => activeFilterType.set('team')}
         >
           Equipos
         </button>
         <button
-          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'manufacturer' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-600 hover:text-surface-900'}"
+          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'manufacturer' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-200 hover:text-surface-400'}"
           on:click={() => activeFilterType.set('manufacturer')}
         >
           Marcas
         </button>
         <button
-          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'scale' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-600 hover:text-surface-900'}"
+          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'scale' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-200 hover:text-surface-400'}"
           on:click={() => activeFilterType.set('scale')}
         >
           Escalas
@@ -505,224 +505,226 @@
 
 <!-- Products Grid -->
 {#if !$isLoading}
-  <section id="products-section" class="container mx-auto px-4 py-12 bg-surface-50 dark:bg-surface-900">
-    {#if $filteredProducts.length === 0}
-      <div class="text-center py-20" in:fade>
-        <div class="text-8xl mb-6 text-surface-300 dark:text-surface-600 opacity-50 font-bold">F1</div>
-        <h3 class="text-3xl font-bold mb-4 text-surface-900 dark:text-surface-50">
-          {$searchQuery ? 'No encontramos resultados' : 'No hay productos disponibles'}
-        </h3>
-        <p class="text-surface-600 dark:text-surface-300 mb-8 max-w-md mx-auto text-lg">
-          {$searchQuery 
-            ? `No encontramos monoplazas que coincidan con "${$searchQuery}". Intenta con otros términos.`
-            : 'Selecciona una categoría diferente para explorar nuestros increíbles monoplazas'
-          }
-        </p>
-        <div class="space-x-4">
-          {#if $searchQuery}
+  <section id="products-section" class=" px-4 py-4 bg-surface-50 dark:bg-surface-900">
+    <div class="container mx-auto">
+      {#if $filteredProducts.length === 0}
+        <div class="text-center py-20 " in:fade>
+          <div class="text-8xl mb-6 text-surface-300 dark:text-surface-600 opacity-50 font-bold">F1</div>
+          <h3 class="text-3xl font-bold mb-4 text-surface-900 dark:text-surface-50">
+            {$searchQuery ? 'No encontramos resultados' : 'No hay productos disponibles'}
+          </h3>
+          <p class="text-surface-600 dark:text-surface-300 mb-8 max-w-md mx-auto text-lg">
+            {$searchQuery 
+              ? `No encontramos monoplazas que coincidan con "${$searchQuery}". Intenta con otros términos.`
+              : 'Selecciona una categoría diferente para explorar nuestros increíbles monoplazas'
+            }
+          </p>
+          <div class="space-x-4">
+            {#if $searchQuery}
+              <button 
+                class="btn variant-filled-primary text-lg px-8 py-4"
+                on:click={() => searchQuery.set('')}
+              >
+                <LucideClose class="mr-2 w-5 h-5" />
+                Limpiar Búsqueda
+              </button>
+            {/if}
             <button 
-              class="btn variant-filled-primary text-lg px-8 py-4"
-              on:click={() => searchQuery.set('')}
+              class="btn variant-soft-surface text-lg px-8 py-4"
+              on:click={() => selectedCategories.set(['all'])}
             >
-              <LucideClose class="mr-2 w-5 h-5" />
-              Limpiar Búsqueda
+              <LucideGrid class="mr-2 w-5 h-5" />
+              Ver Todos los Productos
             </button>
-          {/if}
-          <button 
-            class="btn variant-soft-surface text-lg px-8 py-4"
-            on:click={() => selectedCategories.set(['all'])}
-          >
-            <LucideGrid class="mr-2 w-5 h-5" />
-            Ver Todos los Productos
-          </button>
-        </div>
-      </div>
-    {:else}
-      <!-- Products Header -->
-      <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-4">
-          {$searchQuery 
-            ? `Resultados para "${$searchQuery}"` 
-            : $selectedCategories.includes('all')
-              ? 'Toda la Colección' 
-              : 'Filtros Aplicados'
-          }
-        </h2>
-        <div class="flex items-center justify-center space-x-6 text-surface-600 dark:text-surface-300">
-          <div class="flex items-center space-x-2">
-            <LucidePackage class="w-5 h-5 text-success-500" />
-            <span class="font-medium">{$filteredProducts.length} modelos disponibles</span>
-          </div>
-          <div class="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
-          <div class="flex items-center space-x-2">
-            <LucideTruck class="w-5 h-5 text-primary-500" />
-            <span class="text-sm">Envío gratis mundial</span>
           </div>
         </div>
-      </div>
-
-      <!-- Products Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {#each $filteredProducts as product, i}
-          <div 
-            class="card card-hover overflow-hidden bg-surface-0 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 
-            transition-all duration-300 hover:shadow-2xl hover:border-primary-300 dark:hover:border-primary-600 hover:-translate-y-2 cursor-pointer"
-            in:fly={{ y: 50, duration: 500, delay: i * 100 }}
-            on:click={() => handleProductClick(product.id)}
-            on:keydown={(e) => e.key === 'Enter' && handleProductClick(product.id)}
-            tabindex="0"
-            role="button"
-          >
-            <!-- Product Image -->
-            <header class="card-header relative overflow-hidden bg-surface-100 dark:bg-surface-700 h-56 group">
-              <img 
-                src={getProductImageUrl(product, 0)} 
-                alt={product.name}
-                class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
-                on:error={(e) => {
-                  e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0yMCAyMEM4Ljk1NDMgMjAgMCAyOC45NTQzIDAgNDBIMTBDMTAgMzQuNDc3MSAxNC40NzcxIDMwIDE5IDMwSDIxQzI1LjUyMjkgMzAgMzAgMzQuNDc3MSAzMCA0MEg0MEMzMCAyOC45NTQzIDMxLjA0NTcgMjAgMjAgMjBaIiBmaWxsPSIjQzNDM0MzIi8+Cjwvc3ZnPgo=';
-                  e.currentTarget.classList.add('opacity-50');
-                }}
-              />
-              
-              <!-- Product Badges -->
-              <div class="absolute top-4 right-4 space-y-2">
-                <span class="badge variant-filled-surface text-xs font-bold shadow-lg">
-                  #{product.id.toString().padStart(3, '0')}
-                </span>
-                {#if product.limitedEdition}
-                  <span class="badge variant-filled-warning text-xs font-bold shadow-lg animate-pulse block">
-                    <LucideStar class="mr-1 w-3 h-3" />
-                    Limitada
-                  </span>
-                {/if}
-                {#if product.originalPrice && product.originalPrice > product.price}
-                  <span class="badge variant-filled-error text-xs font-bold shadow-lg block">
-                    <LucideInfo class="mr-1 w-3 h-3" />
-                    Oferta
-                  </span>
-                {/if}
-              </div>
-              
-              <!-- Stock Status -->
-              <div class="absolute top-4 left-4">
-                <span class="badge {product.inStock ? 'variant-filled-success' : 'variant-filled-error'} text-xs font-bold shadow-lg">
-                  <LucideCheck class="mr-1 w-3 h-3" />
-                  {product.inStock ? 'Disponible' : 'Agotado'}
-                </span>
-              </div>
-              
-              <!-- Quick Actions Overlay -->
-              <div class="absolute inset-0 bg-gradient-to-t from-surface-900/90 via-surface-900/20 to-transparent 
-              opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-6">
-                <div class="text-surface-50 w-full">
-                  <div class="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 class="font-bold text-lg drop-shadow-md mb-1">{product.name}</h3>
-                      <p class="text-sm opacity-90">{product.team} • {product.year}</p>
-                    </div>
-                  </div>
-                  <div class="flex space-x-2">
-                    <button 
-                      class="btn variant-filled-primary flex-1 font-semibold"
-                      on:click={(e) => handleAddToCart(product, e)}
-                      disabled={!product.inStock}
-                    >
-                      <LucideCartPlus class="mr-1 w-4 h-4" />
-                      {product.inStock ? 'Añadir' : 'Agotado'}
-                    </button>
-                    <button class="btn variant-soft-surface w-12 h-12 !p-0">
-                      <LucideEye class="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </header>
-
-            <!-- Product Info -->
-            <div class="p-6 bg-surface-25 dark:bg-surface-825">
-              <!-- Category Tags -->
-              <div class="flex flex-wrap gap-2 mb-3">
-                <span class="badge variant-soft-primary text-xs font-medium">
-                  {product.team}
-                </span>
-                <span class="badge variant-soft-secondary text-xs font-medium">
-                  {product.manufacturer}
-                </span>
-                <span class="badge variant-soft-tertiary text-xs font-medium">
-                  {product.scale}
-                </span>
-                {#if product.driver}
-                  <span class="badge variant-soft-warning text-xs font-medium">
-                    {product.driver}
-                  </span>
-                {/if}
-              </div>
-              
-              <h3 class="h4 font-bold mb-3 text-surface-900 dark:text-surface-50 leading-tight line-clamp-2">
-                {product.name}
-              </h3>
-              
-              <p class="text-surface-600 dark:text-surface-300 text-sm mb-4 line-clamp-3 leading-relaxed">
-                {product.description}
-              </p>
-              
-              <!-- Rating -->
-              <div class="flex items-center space-x-2 mb-4">
-                <div class="flex space-x-1">
-                  {#each Array(5) as _, starIndex}
-                    <LucideStar class="text-warning-500 w-4 h-4 fill-current" />
-                  {/each}
-                </div>
-                <span class="text-xs text-surface-500 dark:text-surface-400">(4.9)</span>
-              </div>
-              
-              <!-- Price and Actions -->
-              <div class="flex items-center justify-between pt-4 border-t border-surface-200 dark:border-surface-600">
-                <div class="flex flex-col">
-                  <div class="flex items-center space-x-2">
-                    <span class="text-2xl font-bold text-success-600 dark:text-success-400">
-                      ${product.price.toFixed(2)}
-                    </span>
-                    {#if product.originalPrice && product.originalPrice > product.price}
-                      <span class="text-sm text-surface-500 dark:text-surface-400 line-through">
-                        ${product.originalPrice.toFixed(2)}
-                      </span>
-                    {/if}
-                  </div>
-                  <div class="flex items-center space-x-2 text-xs text-surface-500 dark:text-surface-400 mt-1">
-                    <LucideTruck class="w-3 h-3" />
-                    <span>Envío gratis</span>
-                  </div>
-                </div>
-                
-                <button
-                  class="btn variant-filled-primary font-semibold hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg"
-                  on:click={(e) => handleAddToCart(product, e)}
-                  disabled={!product.inStock}
-                >
-                  <LucideCartPlus class="mr-2 w-4 h-4" />
-                  {product.inStock ? 'Añadir' : 'Agotado'}
-                </button>
-              </div>
+      {:else}
+        <!-- Products Header -->
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-4">
+            {$searchQuery 
+              ? `Resultados para "${$searchQuery}"` 
+              : $selectedCategories.includes('all')
+                ? 'Toda la Colección' 
+                : 'Filtros Aplicados'
+            }
+          </h2>
+          <div class="flex items-center justify-center space-x-6 text-surface-600 dark:text-surface-300">
+            <div class="flex items-center space-x-2">
+              <LucidePackage class="w-5 h-5 text-success-500" />
+              <span class="font-medium">{$filteredProducts.length} modelos disponibles</span>
+            </div>
+            <div class="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
+            <div class="flex items-center space-x-2">
+              <LucideTruck class="w-5 h-5 text-primary-500" />
+              <span class="text-sm">Envío a toda Guatemala</span>
             </div>
           </div>
-        {/each}
-      </div>
-      
-      <!-- Load More Section -->
-      {#if $filteredProducts.length >= 6}
-        <div class="text-center mt-12">
-          <p class="text-surface-600 dark:text-surface-300 mb-6">
-            Has visto {$filteredProducts.length} de nuestros increíbles monoplazas
-          </p>
-          <button class="btn variant-soft-primary text-lg px-8 py-4">
-            <LucidePackage class="mr-2 w-5 h-5" />
-            Cargar Más Modelos
-          </button>
         </div>
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {#each $filteredProducts as product, i}
+            <div 
+              class="card card-hover overflow-hidden bg-surface-0 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 
+              transition-all duration-300 hover:shadow-2xl hover:border-primary-300 dark:hover:border-primary-600 hover:-translate-y-2 cursor-pointer"
+              in:fly={{ y: 50, duration: 500, delay: i * 100 }}
+              on:click={() => handleProductClick(product.id)}
+              on:keydown={(e) => e.key === 'Enter' && handleProductClick(product.id)}
+              tabindex="0"
+              role="button"
+            >
+              <!-- Product Image -->
+              <header class="card-header relative overflow-hidden bg-surface-100 dark:bg-surface-700 h-56 group">
+                <img 
+                  src={getProductImageUrl(product, 0)} 
+                  alt={product.name}
+                  class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
+                  on:error={(e) => {
+                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0yMCAyMEM4Ljk1NDMgMjAgMCAyOC45NTQzIDAgNDBIMTBDMTAgMzQuNDc3MSAxNC40NzcxIDMwIDE5IDMwSDIxQzI1LjUyMjkgMzAgMzAgMzQuNDc3MSAzMCA0MEg0MEMzMCAyOC45NTQzIDMxLjA0NTcgMjAgMjAgMjBaIiBmaWxsPSIjQzNDM0MzIi8+Cjwvc3ZnPgo=';
+                    e.currentTarget.classList.add('opacity-50');
+                  }}
+                />
+                
+                <!-- Product Badges -->
+                <div class="absolute top-4 right-4 space-y-2">
+                  <span class="badge variant-filled-surface text-xs font-bold shadow-lg">
+                    #{product.id.toString().padStart(3, '0')}
+                  </span>
+                  {#if product.limitedEdition}
+                    <span class="badge variant-filled-warning text-xs font-bold shadow-lg animate-pulse block">
+                      <LucideStar class="mr-1 w-3 h-3" />
+                      Limitada
+                    </span>
+                  {/if}
+                  {#if product.originalPrice && product.originalPrice > product.price}
+                    <span class="badge variant-filled-error text-xs font-bold shadow-lg block">
+                      <LucideInfo class="mr-1 w-3 h-3" />
+                      Oferta
+                    </span>
+                  {/if}
+                </div>
+                
+                <!-- Stock Status -->
+                <div class="absolute top-4 left-4">
+                  <span class="badge {product.inStock ? 'variant-filled-success' : 'variant-filled-error'} text-xs font-bold shadow-lg">
+                    <LucideCheck class="mr-1 w-3 h-3" />
+                    {product.inStock ? 'Disponible' : 'Agotado'}
+                  </span>
+                </div>
+                
+                <!-- Quick Actions Overlay -->
+                <div class="absolute inset-0 bg-gradient-to-t from-surface-900/90 via-surface-900/20 to-transparent 
+                opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-6">
+                  <div class="text-surface-50 w-full">
+                    <div class="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 class="font-bold text-lg drop-shadow-md mb-1">{product.name}</h3>
+                        <p class="text-sm opacity-90">{product.team} • {product.year}</p>
+                      </div>
+                    </div>
+                    <div class="flex space-x-2">
+                      <button 
+                        class="btn variant-filled-primary flex-1 font-semibold"
+                        on:click={(e) => handleAddToCart(product, e)}
+                        disabled={!product.inStock}
+                      >
+                        <LucideCartPlus class="mr-1 w-4 h-4" />
+                        {product.inStock ? 'Añadir' : 'Agotado'}
+                      </button>
+                      <button class="btn variant-soft-surface w-12 h-12 !p-0">
+                        <LucideEye class="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </header>
+
+              <!-- Product Info -->
+              <div class="p-6 bg-surface-25 dark:bg-surface-800">
+                <!-- Category Tags -->
+                <div class="flex flex-wrap gap-2 mb-3">
+                  <span class="badge variant-soft-primary text-xs font-medium">
+                    {product.team}
+                  </span>
+                  <span class="badge variant-soft-secondary text-xs font-medium">
+                    {product.manufacturer}
+                  </span>
+                  <span class="badge variant-soft-tertiary text-xs font-medium">
+                    {product.scale}
+                  </span>
+                  {#if product.driver}
+                    <span class="badge variant-soft-warning text-xs font-medium">
+                      {product.driver}
+                    </span>
+                  {/if}
+                </div>
+                
+                <h3 class="h4 font-bold mb-3 text-surface-900 dark:text-surface-50 leading-tight line-clamp-2">
+                  {product.name}
+                </h3>
+                
+                <p class="text-surface-600 dark:text-surface-300 text-sm mb-4 line-clamp-3 leading-relaxed">
+                  {product.description}
+                </p>
+                
+                <!-- Rating -->
+                <!-- <div class="flex items-center space-x-2 mb-4">
+                  <div class="flex space-x-1">
+                    {#each Array(5) as _, starIndex}
+                      <LucideStar class="text-warning-500 w-4 h-4 fill-current" />
+                    {/each}
+                  </div>
+                  <span class="text-xs text-surface-500 dark:text-surface-400">(4.9)</span>
+                </div> -->
+                
+                <!-- Price and Actions -->
+                <div class="flex items-center justify-between pt-4 border-t border-surface-200 dark:border-surface-600">
+                  <div class="flex flex-col">
+                    <div class="flex items-center space-x-2">
+                      <span class="text-2xl font-bold text-success-600 dark:text-success-400">
+                        Q. {product.price.toFixed(2)}
+                      </span>
+                      {#if product.originalPrice && product.originalPrice > product.price}
+                        <span class="text-sm text-surface-500 dark:text-surface-400 line-through">
+                          ${product.originalPrice.toFixed(2)}
+                        </span>
+                      {/if}
+                    </div>
+                    <div class="flex items-center space-x-2 text-xs text-surface-500 dark:text-surface-400 mt-1">
+                      <LucideTruck class="w-3 h-3" />
+                      <span>Envío a toda Guatemala</span>
+                    </div>
+                  </div>
+                  
+                  <button
+                    class="btn variant-filled-primary font-semibold hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg"
+                    on:click={(e) => handleAddToCart(product, e)}
+                    disabled={!product.inStock}
+                  >
+                    <LucideCartPlus class="mr-2 w-4 h-4" />
+                    {product.inStock ? 'Añadir' : 'Agotado'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          {/each}
+        </div>
+        
+        <!-- Load More Section -->
+        {#if $filteredProducts.length >= 6}
+          <div class="text-center mt-12">
+            <p class="text-surface-600 dark:text-surface-300 mb-6">
+              Has visto {$filteredProducts.length} de nuestros increíbles monoplazas
+            </p>
+            <button class="btn variant-soft-primary text-lg px-8 py-4">
+              <LucidePackage class="mr-2 w-5 h-5" />
+              Cargar Más Modelos
+            </button>
+          </div>
+        {/if}
       {/if}
-    {/if}
+    </div>
   </section>
 {/if}
 

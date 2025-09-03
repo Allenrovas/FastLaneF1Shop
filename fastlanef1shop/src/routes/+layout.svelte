@@ -45,10 +45,11 @@
   import LucideFacebook from '~icons/lucide/facebook';
   import LucideTwitter from '~icons/lucide/twitter';
   import LucideInstagram from '~icons/lucide/instagram';
-  import LucideYoutube from '~icons/lucide/youtube';
+  import IcTwotoneTiktok from '~icons/ic/twotone-tiktok'
   import LucideInfo from '~icons/lucide/info';
   import LucideStar from '~icons/lucide/star';
   import LucideDelete from '~icons/lucide/trash-2';
+  import TablerBrandWhatsapp from '~icons/tabler/brand-whatsapp'
 
   // Initialize Skeleton stores
   initializeStores();
@@ -91,7 +92,7 @@
             <Formula1Icon class="text-white w-6 h-6" />
           </div>
           <div>
-            <h1 class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-secondary-600 to-tertiary-600 bg-clip-text text-transparent">
               Fast Lane F1 Shop
             </h1>
           </div>
@@ -139,7 +140,7 @@
                 <Formula1Icon class="text-white w-6 h-6" />
               </div>
               <div>
-                <span class="text-2xl font-bold bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent">
+                <span class="text-2xl font-bold bg-gradient-to-r from-secondary-600 to-tertiary-600 bg-clip-text text-transparent">
                   Fast Lane F1
                 </span>
               </div>
@@ -156,8 +157,10 @@
               >
                 <LucideFacebook class="w-4 h-4" />
               </button>
-              <button class="btn btn-sm variant-soft-secondary rounded-full w-10 h-10 !p-0">
-                <LucideTwitter class="w-4 h-4" />
+              <button class="btn btn-sm variant-soft-secondary rounded-full w-10 h-10 !p-0"
+              on:click={() => window.open('https://www.tiktok.com/@fastlanef1.shop', '_blank')}
+              >
+                <IcTwotoneTiktok class="w-4 h-4" />
               </button>
               <button 
               class="btn btn-sm variant-soft-success rounded-full w-10 h-10 !p-0"
@@ -165,6 +168,12 @@
               aria-label="Instagram"
               >
                 <LucideInstagram class="w-4 h-4" />
+              </button>
+              <button class="btn btn-sm variant-soft-error rounded-full w-10 h-10 !p-0"
+              on:click={() => window.open('https://wa.me/+50249395444', '_blank')}
+              aria-label="WhatsApp"
+              >
+                <TablerBrandWhatsapp class="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -197,12 +206,12 @@
               Información
             </h3>
             <ul class="space-y-3">
-              <li>
+              <!-- <li>
                 <a href="#about" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
                   <LucideUsers class="w-4 h-4 opacity-50 group-hover:opacity-100" />
                   <span>Acerca de</span>
                 </a>
-              </li>
+              </li> -->
               <li>
                 <a href="#shipping" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
                   <LucideTruck class="w-4 h-4 opacity-50 group-hover:opacity-100" />
@@ -215,12 +224,12 @@
                   <span>Contacto</span>
                 </a>
               </li>
-              <li>
+              <!-- <li>
                 <a href="#support" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
                   <LucideHelp class="w-4 h-4 opacity-50 group-hover:opacity-100" />
                   <span>Soporte</span>
                 </a>
-              </li>
+              </li> -->
             </ul>
           </div>
         </div>
@@ -254,9 +263,9 @@
               © {new Date().getFullYear()} Fast Lane F1 Shop. Todos los derechos reservados.
             </p>
             <div class="flex items-center space-x-6 text-sm text-surface-400">
-              <a href="#privacy" class="hover:text-surface-200 transition-colors">Privacidad</a>
+              <!-- <a href="#privacy" class="hover:text-surface-200 transition-colors">Privacidad</a>
               <a href="#terms" class="hover:text-surface-200 transition-colors">Términos</a>
-              <a href="#cookies" class="hover:text-surface-200 transition-colors">Cookies</a>
+              <a href="#cookies" class="hover:text-surface-200 transition-colors">Cookies</a> -->
             </div>
           </div>
         </div>
@@ -424,7 +433,7 @@
 
         <!-- Cart Footer -->
         {#if $cart.length > 0}
-          <div class="border-t border-surface-200 dark:border-surface-600 bg-surface-50 dark:bg-surface-750 p-6">
+          <div class="border-t border-surface-200 dark:border-surface-600 bg-surface-900 dark:bg-surface-750 p-6">
             <!-- Cart Summary -->
             <div class="space-y-3 mb-6">
               <div class="flex justify-between items-center">
@@ -434,28 +443,6 @@
                 </span>
                 <span class="font-semibold text-surface-900 dark:text-surface-50">
                   ${$cartTotal.toFixed(2)}
-                </span>
-              </div>
-              
-              <div class="flex justify-between items-center">
-                <span class="flex items-center text-surface-600 dark:text-surface-300">
-                  <LucideTruck class="mr-2 w-4 h-4" />
-                  Envío mundial:
-                </span>
-                <span class="font-semibold text-success-600 dark:text-success-400">
-                  <LucideCheck class="mr-1 w-4 h-4" />
-                  Gratis
-                </span>
-              </div>
-              
-              <div class="flex justify-between items-center">
-                <span class="flex items-center text-surface-600 dark:text-surface-300">
-                  <LucideShield class="mr-2 w-4 h-4" />
-                  Garantía premium:
-                </span>
-                <span class="font-semibold text-success-600 dark:text-success-400">
-                  <LucideCheck class="mr-1 w-4 h-4" />
-                  Incluida
                 </span>
               </div>
               

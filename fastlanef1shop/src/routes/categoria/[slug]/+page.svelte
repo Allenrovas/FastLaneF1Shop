@@ -254,7 +254,7 @@
 
 <!-- Loading State -->
 {#if $isLoading}
-  <div class="container mx-auto px-4 py-20 text-center bg-surface-50 dark:bg-surface-900" in:fade>
+  <div class=" px-4 py-20 text-center bg-surface-50 dark:bg-surface-900" in:fade>
     <div class="flex justify-center items-center space-x-4 mb-8">
       <div class="placeholder animate-pulse w-12 h-12 rounded-full bg-primary-300 dark:bg-primary-600"></div>
       <div class="placeholder animate-pulse w-10 h-10 rounded-full bg-secondary-300 dark:bg-secondary-600 delay-200"></div>
@@ -267,7 +267,8 @@
 
 <!-- Products Section -->
 {#if !$isLoading}
-  <section class="container mx-auto px-4 py-16 bg-surface-50 dark:bg-surface-900">
+  <section class="px-4 py-16 bg-surface-50 dark:bg-surface-900">
+    <div class="container mx-auto">
     {#if $filteredProducts.length === 0}
       <div class="text-center py-24" in:fade>
         <div class="text-8xl mb-8 text-surface-300-600-token opacity-30 font-bold">F1</div>
@@ -420,6 +421,7 @@
         {/each}
       </div>
     {/if}
+    </div>
   </section>
 {/if}
 

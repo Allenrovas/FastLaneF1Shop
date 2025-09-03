@@ -14,10 +14,12 @@
   },
   "devDependencies": {
     "@iconify-json/arcticons": "^1.2.34",
+    "@iconify-json/ic": "^1.2.4",
     "@iconify-json/lucide": "^1.2.66",
     "@iconify-json/lucide-lab": "^1.2.3",
     "@iconify-json/material-symbols": "^1.2.33",
     "@iconify-json/mdi": "^1.2.3",
+    "@iconify-json/tabler": "^1.2.22",
     "@playwright/test": "^1.28.1",
     "@skeletonlabs/skeleton": "^2.11.0",
     "@skeletonlabs/tw-plugin": "^0.4.1",

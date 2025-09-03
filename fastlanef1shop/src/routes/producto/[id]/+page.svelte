@@ -222,7 +222,7 @@
   </section>
 
   <!-- Product Detail Section -->
-  <section class="container mx-auto px-4 py-12 bg-surface-50 dark:bg-surface-900">
+  <section class="container mx-auto px-4 py-12">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12" in:fade={{ duration: 600 }}>
       <!-- Product Images -->
       <div class="space-y-4">
@@ -455,9 +455,9 @@
 
   <!-- Technical Specifications -->
   {#if $product.specifications}
-    <section class="container mx-auto px-4 py-12 bg-surface-100 dark:bg-surface-800"
+    <section class=" px-4 py-12 bg-surface-100 dark:bg-surface-800"
              in:fly={{ y: 50, duration: 600, delay: 800 }}>
-      <div class="max-w-4xl mx-auto">
+      <div class="max-w-4xl container mx-auto">
         <h2 class="text-3xl font-bold text-center text-surface-900 dark:text-surface-50 mb-12 flex items-center justify-center">
           <LucideCog class="mr-3 w-7 h-7 text-primary-500" />
           Especificaciones Técnicas
@@ -495,9 +495,10 @@
 
   <!-- Related Products -->
   {#if $relatedProducts.length > 0}
-    <section class="container mx-auto px-4 py-12 bg-surface-50 dark:bg-surface-900"
+    <section class="px-4 py-12 bg-surface-50 dark:bg-surface-900"
              in:fly={{ y: 50, duration: 600, delay: 1000 }}>
-      <div class="text-center mb-12">
+      <div class="container mx-auto">
+      <div class="text-center mx-auto mb-12">
         <h2 class="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-4">
           Productos Relacionados
         </h2>
@@ -508,8 +509,14 @@
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {#each $relatedProducts as relatedProduct, i}
-          <div class="card card-hover overflow-hidden bg-surface-0 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:shadow-2xl transition-all duration-300"
-               in:fly={{ y: 50, duration: 500, delay: 1100 + (i * 100) }}>
+          <div 
+            class="card card-hover overflow-hidden bg-surface-0 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:shadow-2xl transition-all duration-300 cursor-pointer"
+            in:fly={{ y: 50, duration: 500, delay: 1100 + (i * 100) }}
+            on:click={() => goto(`/producto/${relatedProduct.id}`)}
+            tabindex="0"
+            role="link"
+            aria-label={`Ver detalles de ${relatedProduct.name}`}
+          >
             <header class="card-header relative overflow-hidden h-48 group">
               <img 
                 src={getProductImageUrl(relatedProduct, 0)} 
@@ -521,7 +528,7 @@
               <div class="absolute inset-0 bg-gradient-to-t from-surface-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                 <button 
                   class="btn variant-filled-primary w-full"
-                  on:click={() => goto(`/producto/${relatedProduct.id}`)}
+                  on:click|stopPropagation={() => goto(`/producto/${relatedProduct.id}`)}
                 >
                   <LucideEye class="mr-2 w-4 h-4" />
                   Ver Detalles
@@ -549,7 +556,7 @@
                 </span>
                 <button 
                   class="btn variant-soft-primary btn-sm"
-                  on:click={() => goto(`/producto/${relatedProduct.id}`)}
+                  on:click|stopPropagation={() => goto(`/producto/${relatedProduct.id}`)}
                 >
                   Ver más
                 </button>
@@ -557,6 +564,7 @@
             </div>
           </div>
         {/each}
+      </div>
       </div>
     </section>
   {/if}
