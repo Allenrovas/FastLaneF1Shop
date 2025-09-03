@@ -66,8 +66,8 @@
   }
 
   function handleCheckout() {
-    console.log('Proceeding to checkout...');
     isCartOpen.set(false);
+    goto('/checkout');
   }
 
   onMount(() => {
@@ -213,13 +213,13 @@
                 </a>
               </li> -->
               <li>
-                <a href="#shipping" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
+                <a href="/shipping" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
                   <LucideTruck class="w-4 h-4 opacity-50 group-hover:opacity-100" />
                   <span>Envíos</span>
                 </a>
               </li>
               <li>
-                <a href="#contact" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
+                <a href="/contact" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
                   <LucideEmail class="w-4 h-4 opacity-50 group-hover:opacity-100" />
                   <span>Contacto</span>
                 </a>
@@ -384,10 +384,10 @@
                       <div class="flex items-center justify-between">
                         <div class="flex flex-col">
                           <span class="text-lg font-bold text-success-600 dark:text-success-400">
-                            ${item.price.toFixed(2)}
+                            Q. {item.price.toFixed(2)}
                           </span>
                           <span class="text-xs text-surface-500 dark:text-surface-400">
-                            Subtotal: ${(item.price * item.quantity).toFixed(2)}
+                            Subtotal: Q. {(item.price * item.quantity).toFixed(2)}
                           </span>
                         </div>
                       </div>
@@ -442,7 +442,7 @@
                   Subtotal ({$cartItemCount} items):
                 </span>
                 <span class="font-semibold text-surface-900 dark:text-surface-50">
-                  ${$cartTotal.toFixed(2)}
+                  Q. {$cartTotal.toFixed(2)}
                 </span>
               </div>
               
@@ -450,7 +450,7 @@
                 <div class="flex justify-between items-center">
                   <span class="text-xl font-bold text-surface-900 dark:text-surface-50">Total:</span>
                   <span class="text-3xl font-bold text-success-600 dark:text-success-400">
-                    ${$cartTotal.toFixed(2)}
+                    Q. {$cartTotal.toFixed(2)}
                   </span>
                 </div>
               </div>

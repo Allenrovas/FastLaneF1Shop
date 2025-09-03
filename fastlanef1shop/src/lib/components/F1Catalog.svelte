@@ -24,6 +24,9 @@
     type Category 
   } from '../stores/categories';
 
+  // Importar el nuevo componente de ProductCard
+  import ProductCard from './ProductCard.svelte';
+
   // Importar iconos con unplugin
   import LucideMagnify from '~icons/lucide/search';
   import LucideClose from '~icons/lucide/x';
@@ -47,17 +50,12 @@
   import LucideHelmet from '~icons/lucide-lab/motor-racing-helmet';
   import LucidePackage from '~icons/lucide/package';
   import LucideTruck from '~icons/lucide/truck';
-  import LucideEye from '~icons/lucide/eye';
-  import LucideCartPlus from '~icons/lucide/shopping-cart';
-  import LucideCheck from '~icons/lucide/check-circle';
-  import LucideShoppingBag from '~icons/lucide/shopping-bag';
-  import LucideInfo from '~icons/lucide/info';
   import LucideEmail from '~icons/lucide/mail';
   import LucideHelp from '~icons/lucide/help-circle';
 
   // Component stores
   const products = writable<Product[]>([]);
-  const selectedCategories = writable<string[]>(['all']); // Cambiado para soportar múltiples categorías
+  const selectedCategories = writable<string[]>(['all']);
   const isLoading = writable<boolean>(true);
   const searchQuery = writable<string>('');
   const activeFilterType = writable<'general' | 'team' | 'manufacturer' | 'scale'>('general');
@@ -249,17 +247,18 @@
     }
   }
 
-  function getProductImageUrl(product: Product, imageIndex: number = 0): string {
-    return `${GITHUB_REPO_URL}/${product.imageFolder}${product.images[imageIndex]}`;
+  function handleProductClick(productId: number): void {
+    goto(`/producto/${productId}`);
   }
 
-  function handleAddToCart(product: Product, event: Event): void {
-    event.stopPropagation();
+  function handleAddToCart(event: CustomEvent): void {
+    const { product } = event.detail;
     addToCart(product);
   }
 
-  function handleProductClick(productId: number): void {
-    goto(`/producto/${productId}`);
+  function handleViewDetails(event: CustomEvent): void {
+    const { product } = event.detail;
+    goto(`/producto/${product.id}`);
   }
 
   function toggleCategory(categoryId: string): void {
@@ -295,7 +294,7 @@
   });
 </script>
 
-<!-- Hero Section -->
+<!-- Hero Section (mantener igual) -->
 <section class="relative overflow-hidden bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-500 dark:from-primary-600 dark:via-primary-700 dark:to-secondary-600">
   <div class="absolute inset-0 bg-surface-900/40 dark:bg-surface-900/60"></div>
   
@@ -368,7 +367,7 @@
   <div class="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-error-500 via-warning-400 to-error-500 animate-pulse"></div>
 </section>
 
-<!-- Search and Filter Section -->
+<!-- Search and Filter Section (mantener igual) -->
 <section class="container mx-auto px-4 py-12">
   <div class="max-w-6xl mx-auto">
     <!-- Search Bar -->
@@ -562,152 +561,17 @@
           </div>
         </div>
 
-        <!-- Products Grid -->
+        <!-- Products Grid con ProductCard -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {#each $filteredProducts as product, i}
-            <div 
-              class="card card-hover overflow-hidden bg-surface-0 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 
-              transition-all duration-300 hover:shadow-2xl hover:border-primary-300 dark:hover:border-primary-600 hover:-translate-y-2 cursor-pointer"
-              in:fly={{ y: 50, duration: 500, delay: i * 100 }}
-              on:click={() => handleProductClick(product.id)}
-              on:keydown={(e) => e.key === 'Enter' && handleProductClick(product.id)}
-              tabindex="0"
-              role="button"
-            >
-              <!-- Product Image -->
-              <header class="card-header relative overflow-hidden bg-surface-100 dark:bg-surface-700 h-56 group">
-                <img 
-                  src={getProductImageUrl(product, 0)} 
-                  alt={product.name}
-                  class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
-                  on:error={(e) => {
-                    e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0yMCAyMEM4Ljk1NDMgMjAgMCAyOC45NTQzIDAgNDBIMTBDMTAgMzQuNDc3MSAxNC40NzcxIDMwIDE5IDMwSDIxQzI1LjUyMjkgMzAgMzAgMzQuNDc3MSAzMCA0MEg0MEMzMCAyOC45NTQzIDMxLjA0NTcgMjAgMjAgMjBaIiBmaWxsPSIjQzNDM0MzIi8+Cjwvc3ZnPgo=';
-                    e.currentTarget.classList.add('opacity-50');
-                  }}
-                />
-                
-                <!-- Product Badges -->
-                <div class="absolute top-4 right-4 space-y-2">
-                  <span class="badge variant-filled-surface text-xs font-bold shadow-lg">
-                    #{product.id.toString().padStart(3, '0')}
-                  </span>
-                  {#if product.limitedEdition}
-                    <span class="badge variant-filled-warning text-xs font-bold shadow-lg animate-pulse block">
-                      <LucideStar class="mr-1 w-3 h-3" />
-                      Limitada
-                    </span>
-                  {/if}
-                  {#if product.originalPrice && product.originalPrice > product.price}
-                    <span class="badge variant-filled-error text-xs font-bold shadow-lg block">
-                      <LucideInfo class="mr-1 w-3 h-3" />
-                      Oferta
-                    </span>
-                  {/if}
-                </div>
-                
-                <!-- Stock Status -->
-                <div class="absolute top-4 left-4">
-                  <span class="badge {product.inStock ? 'variant-filled-success' : 'variant-filled-error'} text-xs font-bold shadow-lg">
-                    <LucideCheck class="mr-1 w-3 h-3" />
-                    {product.inStock ? 'Disponible' : 'Agotado'}
-                  </span>
-                </div>
-                
-                <!-- Quick Actions Overlay -->
-                <div class="absolute inset-0 bg-gradient-to-t from-surface-900/90 via-surface-900/20 to-transparent 
-                opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-6">
-                  <div class="text-surface-50 w-full">
-                    <div class="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 class="font-bold text-lg drop-shadow-md mb-1">{product.name}</h3>
-                        <p class="text-sm opacity-90">{product.team} • {product.year}</p>
-                      </div>
-                    </div>
-                    <div class="flex space-x-2">
-                      <button 
-                        class="btn variant-filled-primary flex-1 font-semibold"
-                        on:click={(e) => handleAddToCart(product, e)}
-                        disabled={!product.inStock}
-                      >
-                        <LucideCartPlus class="mr-1 w-4 h-4" />
-                        {product.inStock ? 'Añadir' : 'Agotado'}
-                      </button>
-                      <button class="btn variant-soft-surface w-12 h-12 !p-0">
-                        <LucideEye class="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </header>
-
-              <!-- Product Info -->
-              <div class="p-6 bg-surface-25 dark:bg-surface-800">
-                <!-- Category Tags -->
-                <div class="flex flex-wrap gap-2 mb-3">
-                  <span class="badge variant-soft-primary text-xs font-medium">
-                    {product.team}
-                  </span>
-                  <span class="badge variant-soft-secondary text-xs font-medium">
-                    {product.manufacturer}
-                  </span>
-                  <span class="badge variant-soft-tertiary text-xs font-medium">
-                    {product.scale}
-                  </span>
-                  {#if product.driver}
-                    <span class="badge variant-soft-warning text-xs font-medium">
-                      {product.driver}
-                    </span>
-                  {/if}
-                </div>
-                
-                <h3 class="h4 font-bold mb-3 text-surface-900 dark:text-surface-50 leading-tight line-clamp-2">
-                  {product.name}
-                </h3>
-                
-                <p class="text-surface-600 dark:text-surface-300 text-sm mb-4 line-clamp-3 leading-relaxed">
-                  {product.description}
-                </p>
-                
-                <!-- Rating -->
-                <!-- <div class="flex items-center space-x-2 mb-4">
-                  <div class="flex space-x-1">
-                    {#each Array(5) as _, starIndex}
-                      <LucideStar class="text-warning-500 w-4 h-4 fill-current" />
-                    {/each}
-                  </div>
-                  <span class="text-xs text-surface-500 dark:text-surface-400">(4.9)</span>
-                </div> -->
-                
-                <!-- Price and Actions -->
-                <div class="flex items-center justify-between pt-4 border-t border-surface-200 dark:border-surface-600">
-                  <div class="flex flex-col">
-                    <div class="flex items-center space-x-2">
-                      <span class="text-2xl font-bold text-success-600 dark:text-success-400">
-                        Q. {product.price.toFixed(2)}
-                      </span>
-                      {#if product.originalPrice && product.originalPrice > product.price}
-                        <span class="text-sm text-surface-500 dark:text-surface-400 line-through">
-                          ${product.originalPrice.toFixed(2)}
-                        </span>
-                      {/if}
-                    </div>
-                    <div class="flex items-center space-x-2 text-xs text-surface-500 dark:text-surface-400 mt-1">
-                      <LucideTruck class="w-3 h-3" />
-                      <span>Envío a toda Guatemala</span>
-                    </div>
-                  </div>
-                  
-                  <button
-                    class="btn variant-filled-primary font-semibold hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg"
-                    on:click={(e) => handleAddToCart(product, e)}
-                    disabled={!product.inStock}
-                  >
-                    <LucideCartPlus class="mr-2 w-4 h-4" />
-                    {product.inStock ? 'Añadir' : 'Agotado'}
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ProductCard
+              {product}
+              index={i}
+              animationDelay={100}
+              onCardClick={handleProductClick}
+              on:addToCart={handleAddToCart}
+              on:viewDetails={handleViewDetails}
+            />
           {/each}
         </div>
         
@@ -728,7 +592,7 @@
   </section>
 {/if}
 
-<!-- Featured Benefits Section -->
+<!-- Featured Benefits Section (mantener igual) -->
 <section class="bg-gradient-to-r from-surface-100 to-surface-200 dark:from-surface-800 dark:to-surface-700 py-16">
   <div class="container mx-auto px-4">
     <div class="text-center mb-12">
@@ -781,50 +645,6 @@
 </section>
 
 <style lang="postcss">
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  /* Enhanced shadow effects */
-  .shadow-3xl {
-    box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
-  }
-  
-  /* Racing-themed animations */
-  @keyframes racing-line {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100vw); }
-  }
-  
-  .animate-racing {
-    animation: racing-line 3s ease-in-out infinite;
-  }
-  
-  /* Card hover effects */
-  .card-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .card-hover:hover {
-    transform: translateY(-8px);
-  }
-  
-  /* Focus styles for accessibility */
-  .card-hover:focus {
-    outline: 2px solid rgb(var(--color-primary-500));
-    outline-offset: 2px;
-  }
-  
   /* Search input focus enhancement */
   .input:focus {
     box-shadow: 0 0 0 3px rgba(var(--color-primary-500), 0.1);

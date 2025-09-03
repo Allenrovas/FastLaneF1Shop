@@ -14,6 +14,9 @@
   } from '$lib/stores/cart';
   import { categories, loadCategories, type Category } from '$lib/stores/categories';
 
+  // Importar el componente ProductCard
+  import ProductCard from '$lib/components/ProductCard.svelte';
+
   // Importar iconos con unplugin
   import LucideHome from '~icons/lucide/home';
   import LucideChevronRight from '~icons/lucide/chevron-right';
@@ -137,7 +140,7 @@
         {
           id: 2,
           name: "Red Bull RB19 Sergio Pérez",
-          description: "El compañero de equipo de Verstappen en Red Bull Racing.",
+          description: "El compañero de equipo de Verstappen en Red Bull Racing con la misma tecnología revolucionaria.",
           categories: ["red-bull", "burago", "scale-1-43"],
           price: 89.99,
           images: ["rb19_perez.jpg"],
@@ -149,6 +152,39 @@
           manufacturer: "Bburago",
           scale: "1:43",
           driver: "Sergio Pérez"
+        },
+        {
+          id: 3,
+          name: "Red Bull RB20 Max Verstappen 2024",
+          description: "La evolución del dominante RB19, llevando la supremacía de Red Bull a nuevas alturas.",
+          categories: ["championship", "red-bull", "verstappen", "burago", "scale-1-43"],
+          price: 94.99,
+          images: ["rb20_1.jpg"],
+          imageFolder: "images/rb20/",
+          inStock: true,
+          limitedEdition: true,
+          year: 2024,
+          team: "Red Bull Racing",
+          manufacturer: "Bburago",
+          scale: "1:43",
+          driver: "Max Verstappen"
+        },
+        {
+          id: 4,
+          name: "Red Bull RB18 Max Verstappen - Campeón 2022",
+          description: "El monoplaza que conquistó el campeonato 2022 y comenzó la era de dominio de Verstappen.",
+          categories: ["championship", "red-bull", "verstappen", "burago", "scale-1-43"],
+          price: 84.99,
+          originalPrice: 94.99,
+          images: ["rb18_1.jpg"],
+          imageFolder: "images/rb18/",
+          inStock: true,
+          limitedEdition: true,
+          year: 2022,
+          team: "Red Bull Racing",
+          manufacturer: "Bburago",
+          scale: "1:43",
+          driver: "Max Verstappen"
         }
       ];
       relatedProducts.set(mockRelated);
@@ -169,6 +205,21 @@
     const img = e.currentTarget as HTMLImageElement;
     img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0yMCAyMEM4Ljk1NDMgMjAgMCAyOC45NTQzIDAgNDBIMTBDMTAgMzQuNDc3MSAxNC40NzcxIDMwIDE5IDMwSDIxQzI1LjUyMjkgMzAgMzAgMzQuNDc3MSAzMCA0MEg0MEMzMCAyOC45NTQzIDMxLjA0NTcgMjAgMjAgMjBaIiBmaWxsPSIjQzNDM0MzIi8+Cjwvc3ZnPgo=';
     img.classList.add('opacity-50');
+  }
+
+  // Event handlers para ProductCard en productos relacionados
+  function handleRelatedProductClick(productId: number): void {
+    goto(`/producto/${productId}`);
+  }
+
+  function handleRelatedAddToCart(event: CustomEvent): void {
+    const { product } = event.detail;
+    addToCart(product);
+  }
+
+  function handleRelatedViewDetails(event: CustomEvent): void {
+    const { product } = event.detail;
+    goto(`/producto/${product.id}`);
   }
 
   onMount(() => {
@@ -344,11 +395,11 @@
           <!-- Price -->
           <div class="flex items-center space-x-4 mb-6">
             <span class="text-4xl font-bold text-success-600 dark:text-success-400">
-              ${$product.price.toFixed(2)}
+              Q. {$product.price.toFixed(2)}
             </span>
             {#if $product.originalPrice && $product.originalPrice > $product.price}
               <span class="text-2xl text-surface-500 dark:text-surface-400 line-through">
-                ${$product.originalPrice.toFixed(2)}
+                Q. {$product.originalPrice.toFixed(2)}
               </span>
               <span class="badge variant-filled-error text-sm font-bold">
                 ¡Oferta!
@@ -394,7 +445,7 @@
               <div class="flex items-center space-x-4 text-sm text-surface-600 dark:text-surface-300">
                 <span class="flex items-center">
                   <LucideTruck class="mr-1 w-4 h-4" />
-                  Envío gratis mundial
+                  Envío a toda Guatemala
                 </span>
                 <span class="flex items-center">
                   <LucideShield class="mr-1 w-4 h-4" />
@@ -411,7 +462,7 @@
           >
             {#if $product.inStock}
               <LucideCartPlus class="mr-2 w-5 h-5" />
-              Añadir al Carrito - ${$product.price.toFixed(2)}
+              Añadir al Carrito - Q. {$product.price.toFixed(2)}
             {:else}
               <LucideClock class="mr-2 w-5 h-5" />
               Notificarme cuando esté disponible
@@ -493,78 +544,54 @@
     </section>
   {/if}
 
-  <!-- Related Products -->
+  <!-- Related Products con ProductCard -->
   {#if $relatedProducts.length > 0}
     <section class="px-4 py-12 bg-surface-50 dark:bg-surface-900"
              in:fly={{ y: 50, duration: 600, delay: 1000 }}>
       <div class="container mx-auto">
-      <div class="text-center mx-auto mb-12">
-        <h2 class="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-4">
-          Productos Relacionados
-        </h2>
-        <p class="text-surface-600 dark:text-surface-300 max-w-2xl mx-auto">
-          Descubre otros monoplazas que comparten categorías con este modelo
-        </p>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {#each $relatedProducts as relatedProduct, i}
-          <div 
-            class="card card-hover overflow-hidden bg-surface-0 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:shadow-2xl transition-all duration-300 cursor-pointer"
-            in:fly={{ y: 50, duration: 500, delay: 1100 + (i * 100) }}
-            on:click={() => goto(`/producto/${relatedProduct.id}`)}
-            tabindex="0"
-            role="link"
-            aria-label={`Ver detalles de ${relatedProduct.name}`}
-          >
-            <header class="card-header relative overflow-hidden h-48 group">
-              <img 
-                src={getProductImageUrl(relatedProduct, 0)} 
-                alt={relatedProduct.name}
-                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                on:error={handleImageError}
-              />
-              
-              <div class="absolute inset-0 bg-gradient-to-t from-surface-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <button 
-                  class="btn variant-filled-primary w-full"
-                  on:click|stopPropagation={() => goto(`/producto/${relatedProduct.id}`)}
-                >
-                  <LucideEye class="mr-2 w-4 h-4" />
-                  Ver Detalles
-                </button>
-              </div>
-            </header>
-            
-            <div class="p-6">
-              <!-- Categories for related product -->
-              <div class="flex flex-wrap gap-1 mb-3">
-                <span class="badge variant-soft-primary text-xs">{relatedProduct.team}</span>
-                <span class="badge variant-soft-secondary text-xs">{relatedProduct.manufacturer}</span>
-                <span class="badge variant-soft-tertiary text-xs">{relatedProduct.scale}</span>
-              </div>
-              
-              <h3 class="font-bold text-surface-900 dark:text-surface-50 mb-2 line-clamp-2">
-                {relatedProduct.name}
-              </h3>
-              <p class="text-surface-600 dark:text-surface-300 text-sm mb-4 line-clamp-3">
-                {relatedProduct.description}
-              </p>
-              <div class="flex items-center justify-between">
-                <span class="text-xl font-bold text-success-600 dark:text-success-400">
-                  ${relatedProduct.price.toFixed(2)}
-                </span>
-                <button 
-                  class="btn variant-soft-primary btn-sm"
-                  on:click|stopPropagation={() => goto(`/producto/${relatedProduct.id}`)}
-                >
-                  Ver más
-                </button>
-              </div>
-            </div>
+        <div class="text-center mx-auto mb-12">
+          <h2 class="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-4">
+            Productos Relacionados
+          </h2>
+          <p class="text-surface-600 dark:text-surface-300 max-w-2xl mx-auto">
+            Descubre otros monoplazas que comparten categorías con este modelo
+          </p>
+        </div>
+        
+        <!-- Grid con ProductCard -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {#each $relatedProducts as relatedProduct, i}
+            <ProductCard
+              product={relatedProduct}
+              index={i}
+              animationDelay={100}
+              onCardClick={handleRelatedProductClick}
+              variant="default"
+              showFullDescription={false}
+              on:addToCart={handleRelatedAddToCart}
+              on:viewDetails={handleRelatedViewDetails}
+            />
+          {/each}
+        </div>
+        
+        <!-- Call to Action -->
+        <div class="text-center mt-12">
+          <div class="bg-gradient-to-r from-surface-100 to-surface-200 dark:from-surface-800 dark:to-surface-700 rounded-2xl p-8 max-w-2xl mx-auto">
+            <h3 class="text-xl font-bold text-surface-900 dark:text-surface-50 mb-4">
+              ¿Buscas más modelos similares?
+            </h3>
+            <p class="text-surface-600 dark:text-surface-300 mb-6">
+              Explora nuestra colección completa y descubre más monoplazas increíbles
+            </p>
+            <button 
+              class="btn variant-filled-primary text-lg px-8 py-3 hover:scale-105 transition-transform duration-200"
+              on:click={() => goto('/')}
+            >
+              <LucideEye class="mr-2 w-5 h-5" />
+              Ver Toda la Colección
+            </button>
           </div>
-        {/each}
-      </div>
+        </div>
       </div>
     </section>
   {/if}

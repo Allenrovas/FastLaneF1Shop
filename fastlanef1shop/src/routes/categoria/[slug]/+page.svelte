@@ -16,31 +16,20 @@
   } from '$lib/stores/cart';
   import { categories, loadCategories, type Category } from '$lib/stores/categories';
 
+  // Importar el componente ProductCard
+  import ProductCard from '$lib/components/ProductCard.svelte';
+
   // Importar iconos con unplugin
   import LucideHome from '~icons/lucide/home';
   import LucideChevronRight from '~icons/lucide/chevron-right';
-  import LucideHelmet from '~icons/lucide-lab/motor-racing-helmet';
-  import LucideShoppingCart from '~icons/lucide/shopping-cart';
-  import LucideClose from '~icons/lucide/x';
-  import LucidePlus from '~icons/lucide/plus';
-  import LucideMinus from '~icons/lucide/minus';
-  import LucideTrash from '~icons/lucide/trash-2';
-  import LucideF1 from '~icons/lucide/car-front';
-  import LucideStar from '~icons/lucide/star';
-  import LucideCheck from '~icons/lucide/check-circle';
-  import LucideCartPlus from '~icons/lucide/shopping-cart';
-  import LucideEye from '~icons/lucide/eye';
   import LucideArrowLeft from '~icons/lucide/arrow-left';
-  import LucideTruck from '~icons/lucide/truck';
   import LucideShield from '~icons/lucide/shield-check';
-  import LucideCreditCard from '~icons/lucide/credit-card';
-  import LucideShoppingBag from '~icons/lucide/shopping-bag';
-  import LucideCalculator from '~icons/lucide/calculator';
+  import LucidePackage from '~icons/lucide/package';
+  import LucideGrid from '~icons/lucide/grid-3x3';
 
   // Stores
   const products = writable<Product[]>([]);
   const isLoading = writable<boolean>(true);
-  const isCartOpen = writable<boolean>(false);
 
   // GitHub configuration
   const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/tu-usuario/tu-repo/main';
@@ -137,13 +126,19 @@
     }
   }
 
-  function getProductImageUrl(product: Product, imageIndex: number = 0): string {
-    return `${GITHUB_REPO_URL}/${product.imageFolder}${product.images[imageIndex]}`;
+  // Event handlers para ProductCard
+  function handleProductClick(productId: number): void {
+    goto(`/producto/${productId}`);
   }
 
-  function handleAddToCart(product: Product): void {
+  function handleAddToCart(event: CustomEvent): void {
+    const { product } = event.detail;
     addToCart(product);
-    console.log(`Added ${product.name} to cart`);
+  }
+
+  function handleViewDetails(event: CustomEvent): void {
+    const { product } = event.detail;
+    goto(`/producto/${product.id}`);
   }
 
   onMount(() => {
@@ -303,124 +298,87 @@
         </div>
       </div>
 
-      <!-- Products Grid -->
+      <!-- Products Grid con ProductCard -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {#each $filteredProducts as product, i}
-          <div 
-        class="card card-hover overflow-hidden bg-surface-0-token dark:bg-surface-800-token border border-surface-200 dark:border-surface-700 
-        transition-all duration-300 hover:shadow-2xl hover:border-primary-300 dark:hover:border-primary-600 hover:-translate-y-2 cursor-pointer"
-        in:fly={{ y: 50, duration: 500, delay: i * 100 }}
-        on:click={() => goto(`/producto/${product.id}`)}
-          >
-        <!-- Product Image -->
-        <header class="card-header relative overflow-hidden bg-surface-100 dark:bg-surface-700 h-56 group">
-          <img 
-            src={getProductImageUrl(product, 0)} 
-            alt={product.name}
-            class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
-            on:error={(e) => {
-          e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0yMCAyMEM4Ljk1NDMgMjAgMCAyOC45NTQzIDAgNDBIMTBDMTAgMzQuNDc3MSAxNC40NzcxIDMwIDE5IDMwSDIxQzI1LjUyMjkgMzAgMzAgMzQuNDc3MSAzMCA0MEg0MEMzMCAyOC45NTQzIDMxLjA0NTcgMjAgMjAgMjBaIiBmaWxsPSIjQzNDM0MzIi8+Cjwvc3ZnPgo=';
-          e.currentTarget.classList.add('opacity-50');
-            }}
+          <ProductCard
+            {product}
+            index={i}
+            animationDelay={100}
+            onCardClick={handleProductClick}
+            on:addToCart={handleAddToCart}
+            on:viewDetails={handleViewDetails}
           />
-          
-          <!-- Product ID Badge -->
-          <div class="absolute top-4 right-4">
-            <span class="badge variant-filled-error text-xs font-bold shadow-lg">
-          #{product.id.toString().padStart(3, '0')}
-            </span>
-          </div>
-          
-          <!-- Limited Edition Badge -->
-          {#if product.limitedEdition}
-            <div class="absolute top-4 left-4">
-          <span class="badge variant-filled-warning text-xs font-bold shadow-lg animate-pulse">
-            <LucideStar class="mr-1 w-3 h-3" />
-            Limitada
-          </span>
-            </div>
-          {/if}
-          
-          <!-- Enhanced Hover Overlay -->
-          <div class="absolute inset-0 bg-gradient-to-t from-surface-900/90 via-surface-900/20 to-transparent 
-          opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-6">
-            <div class="text-surface-50 w-full">
-          <h3 class="font-bold text-lg drop-shadow-md mb-2">{product.name}</h3>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-              <LucideEye class="w-4 h-4" />
-              <span class="text-sm opacity-90">Ver detalles</span>
-            </div>
-            <div class="flex items-center space-x-1">
-              <div class="w-1.5 h-1.5 bg-success-400 rounded-full"></div>
-              <span class="text-xs opacity-80">Disponible</span>
-            </div>
-          </div>
-            </div>
-          </div>
-        </header>
-
-        <!-- Product Info -->
-        <div class="p-6 bg-surface-50 dark:bg-surface-800" on:click|stopPropagation>
-          <!-- Category Tags -->
-          <div class="flex flex-wrap gap-2 mb-3">
-            <span class="badge variant-soft-primary text-xs font-medium">
-          {product.team}
-            </span>
-            <span class="badge variant-soft-secondary text-xs font-medium">
-          {product.manufacturer}
-            </span>
-            <span class="badge variant-soft-tertiary text-xs font-medium">
-          {product.scale}
-            </span>
-            {#if product.driver}
-          <span class="badge variant-soft-warning text-xs font-medium">
-            {product.driver}
-          </span>
-            {/if}
-          </div>
-          
-          <h3 class="h4 font-bold mb-3 text-surface-900-50-token leading-tight line-clamp-2">{product.name}</h3>
-          <p class="text-surface-600-300-token text-sm mb-5 line-clamp-3 leading-relaxed">
-            {product.description}
-          </p>
-          
-          <!-- Product Features -->
-          <div class="flex items-center justify-between mb-5">
-            <div class="flex items-center space-x-2">
-          <div class="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
-          <span class="text-xs text-surface-600-300-token font-medium">
-            {product.limitedEdition ? 'Edición Limitada' : 'Disponible'}
-          </span>
-            </div>
-            <div class="flex items-center space-x-1">
-          {#each Array(5) as _, starIndex}
-            <LucideStar class="text-warning-500 w-4 h-4 fill-current" />
-          {/each}
-            </div>
-          </div>
-          
-          <!-- Price and Add to Cart -->
-          <div class="flex items-center justify-between pt-4 border-t border-surface-200 dark:border-surface-600">
-            <div class="flex flex-col">
-          <div class="text-2xl font-bold text-success-600 dark:text-success-400">
-            ${product.price.toFixed(2)}
-          </div>
-          <div class="text-xs text-surface-500-400-token">Precio final • Envío gratis</div>
-            </div>
-            <button
-          class="btn variant-filled-primary font-semibold hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg"
-          on:click={() => handleAddToCart(product)}
-            >
-          <LucideCartPlus class="mr-2 w-4 h-4" />
-          Añadir
-            </button>
-          </div>
-        </div>
-          </div>
         {/each}
       </div>
+      
+      <!-- Load More / Pagination -->
+      {#if $filteredProducts.length >= 6}
+        <div class="text-center mt-16">
+          <div class="bg-gradient-to-r from-surface-100 to-surface-200 dark:from-surface-800 dark:to-surface-700 rounded-2xl p-8">
+            <h3 class="text-xl font-bold text-surface-900 dark:text-surface-50 mb-4">
+              ¡Increíble colección!
+            </h3>
+            <p class="text-surface-600 dark:text-surface-300 mb-6">
+              Has explorado {$filteredProducts.length} modelos espectaculares de {$currentCategory.name}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <button class="btn variant-soft-primary text-lg px-8 py-3">
+                <LucidePackage class="mr-2 w-5 h-5" />
+                Cargar Más Modelos
+              </button>
+              <button 
+                class="btn variant-ghost-surface text-lg px-8 py-3"
+                on:click={() => goto('/')}
+              >
+                <LucideGrid class="mr-2 w-5 h-5" />
+                Explorar Todas las Categorías
+              </button>
+            </div>
+          </div>
+        </div>
+      {/if}
     {/if}
+    </div>
+  </section>
+{/if}
+
+<!-- Related Categories Section -->
+{#if $currentCategory && $filteredProducts.length > 0}
+  <section class="bg-gradient-to-r from-surface-100 to-surface-200 dark:from-surface-800 dark:to-surface-700 py-16">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-4">
+          Categorías Relacionadas
+        </h2>
+        <p class="text-surface-600 dark:text-surface-300 max-w-2xl mx-auto">
+          Descubre más colecciones que podrían interesarte
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {#each $categories.filter(c => c.type === $currentCategory.type && c.id !== $currentCategory.id).slice(0, 3) as relatedCategory}
+          <a 
+            href="/categoria/{relatedCategory.id}"
+            class="card card-hover bg-surface-0 dark:bg-surface-800 p-6 text-center border border-surface-200 dark:border-surface-700 
+            hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+          >
+            <div class="w-16 h-16 {relatedCategory.variant} rounded-full flex items-center justify-center mx-auto mb-4">
+              <LucideGrid class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="font-bold text-lg text-surface-900 dark:text-surface-50 mb-2">
+              {relatedCategory.name}
+            </h3>
+            <p class="text-surface-600 dark:text-surface-300 text-sm mb-4 line-clamp-2">
+              {relatedCategory.description || ''}
+            </p>
+            <div class="flex items-center justify-center space-x-2 text-xs text-surface-500 dark:text-surface-400">
+              <LucidePackage class="w-3 h-3" />
+              <span>Ver colección</span>
+            </div>
+          </a>
+        {/each}
+      </div>
     </div>
   </section>
 {/if}
@@ -429,13 +387,6 @@
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -451,7 +402,7 @@
   }
   
   .card-hover:hover {
-    transform: translateY(-8px);
+    transform: translateY(-4px);
   }
   
   /* Racing animations */
