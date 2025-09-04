@@ -49,7 +49,10 @@
   import LucideInfo from '~icons/lucide/info';
   import LucideStar from '~icons/lucide/star';
   import LucideDelete from '~icons/lucide/trash-2';
-  import TablerBrandWhatsapp from '~icons/tabler/brand-whatsapp'
+  import TablerBrandWhatsapp from '~icons/tabler/brand-whatsapp';
+
+  export const prerender = true;
+  export const ssr = false;
 
   // Initialize Skeleton stores
   initializeStores();
