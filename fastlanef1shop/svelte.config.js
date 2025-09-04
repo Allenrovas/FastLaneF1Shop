@@ -5,21 +5,23 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 const config = {
 	extensions: ['.svelte'],
 	preprocess: [vitePreprocess()],
-	
+
 	vitePlugin: {
 		inspector: true,
 	},
+
 	kit: {
 		adapter: adapter({
 			pages: 'build',
 			assets: 'build',
-			fallback: undefined,
+			fallback: 'index.html', 
 			precompress: false,
-			strict: true
+			strict: false         
 		}),
 		paths: {
 			base: process.env.NODE_ENV === 'production' ? '/FastLaneF1Shop' : '',
 		}
 	}
 };
+
 export default config;
