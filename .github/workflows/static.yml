@@ -54,8 +54,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload built dist folder instead of entire repository
-          path: './fastlanef1shop/dist'
+          # Try build folder if dist doesn't exist
+          path: './fastlanef1shop/build'
           
       - name: Deploy to GitHub Pages
         id: deployment
