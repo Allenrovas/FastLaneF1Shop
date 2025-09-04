@@ -30,10 +30,10 @@ jobs:
           BASE_PATH: '/FastLaneF1Shop'  # Cambia por tu nombre de repo
         run: npm run build
 
-      - name: Upload Artifacts
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: fastlanef1shop/build/
+          path: fastlanef1shop/build/         
 
   deploy:
     needs: build_site
