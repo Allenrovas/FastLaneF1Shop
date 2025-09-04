@@ -9,6 +9,7 @@
     cartTotal, 
     cartItemCount, 
     addToCart,
+    toastNotification,
     reloadCart,
     type Product 
   } from '$lib/stores/cart';
@@ -50,10 +51,12 @@
   const product = writable<Product | null>(null);
   const isLoading = writable<boolean>(true);
   const selectedImageIndex = writable<number>(0);
-  const isZoomed = writable<boolean>(false);
+  const zoomLevel = writable<number>(1);
+  const imagePosition = writable<{ x: number; y: number }>({ x: 0, y: 0 });
+
 
   // GitHub configuration
-  const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/tu-usuario/tu-repo/main';
+  const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/Allenrovas/Datos_Catalogo/main';
 
   // Get product ID from URL
   $: productId = parseInt($page.params.id ?? '0');
@@ -89,12 +92,13 @@
       
       // Set related products (same categories, excluding current)
       const related = data
-        .filter(p => 
-          p.id !== foundProduct.id && 
-          p.categories.some(cat => foundProduct.categories.includes(cat))
-        )
-        .slice(0, 3);
-      relatedProducts.set(related);
+      .filter(p => 
+        p.id !== foundProduct.id && 
+        p.categories.some(cat => foundProduct.categories.includes(cat)) &&
+        p.inStock // ✅ Solo productos en stock
+      )
+      .slice(0, 3);
+    relatedProducts.set(related);
       
     } catch (error) {
       console.error('Error loading product:', error);
@@ -207,9 +211,24 @@
     img.classList.add('opacity-50');
   }
 
+  function handleImageZoom(event: MouseEvent): void {
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    
+    imagePosition.set({ x, y });
+    
+    if ($zoomLevel === 1) {
+      zoomLevel.set(2);
+    } else {
+      zoomLevel.set(1);
+      imagePosition.set({ x: 50, y: 50 });
+    }
+  }
+
   // Event handlers para ProductCard en productos relacionados
   function handleRelatedProductClick(productId: number): void {
-    goto(`/producto/${productId}`);
+    window.location.href = `/producto/${productId}`;
   }
 
   function handleRelatedAddToCart(event: CustomEvent): void {
@@ -219,13 +238,72 @@
 
   function handleRelatedViewDetails(event: CustomEvent): void {
     const { product } = event.detail;
-    goto(`/producto/${product.id}`);
+    window.location.href = `/producto/${product.id}`;
+  }
+
+  async function handleCopyLink(): Promise<void> {
+    try {
+      const currentUrl = window.location.href;
+      await navigator.clipboard.writeText(currentUrl);
+      
+      // Mostrar toast de éxito
+      toastNotification.set({
+        message: 'Enlace copiado al portapapeles',
+        type: 'success',
+        visible: true
+      });
+      
+      // Ocultar toast después de 3 segundos
+      setTimeout(() => {
+        toastNotification.update(toast => ({ ...toast, visible: false }));
+      }, 3000);
+      
+    } catch (err) {
+      console.error('Error al copiar el link:', err);
+      
+      // Fallback para navegadores más antiguos
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = window.location.href;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        // Toast de éxito para fallback
+        toastNotification.set({
+          message: 'Enlace copiado al portapapeles',
+          type: 'success',
+          visible: true
+        });
+        
+        setTimeout(() => {
+          toastNotification.update(toast => ({ ...toast, visible: false }));
+        }, 3000);
+        
+      } catch (fallbackErr) {
+        // Toast de error si falla completamente
+        toastNotification.set({
+          message: 'No se pudo copiar el enlace',
+          type: 'error',
+          visible: true
+        });
+        
+        setTimeout(() => {
+          toastNotification.update(toast => ({ ...toast, visible: false }));
+        }, 3000);
+      }
+    }
   }
 
   onMount(() => {
     reloadCart();
     loadCategories();
     loadProduct();
+    
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
   });
 </script>
 
@@ -279,24 +357,34 @@
       <div class="space-y-4">
         <!-- Main Image -->
         <div class="relative bg-surface-100 dark:bg-surface-700 rounded-2xl overflow-hidden aspect-square group">
-          <img 
-            src={getProductImageUrl($product, $selectedImageIndex)} 
-            alt={$product.name}
-            class="w-full h-full object-cover transition-all duration-500 cursor-zoom-in {$isZoomed ? 'scale-150' : 'scale-100'}"
-            on:click={() => isZoomed.update(z => !z)}
-            on:error={handleImageError}
-            in:scale={{ duration: 400 }}
-          />
-          
-          <!-- Image Controls -->
-          <div class="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button class="btn btn-sm variant-filled-surface rounded-full shadow-lg">
-              <LucideZoomIn class="w-4 h-4" />
-            </button>
-            <button class="btn btn-sm variant-filled-surface rounded-full shadow-lg">
-              <LucideMaximize class="w-4 h-4" />
-            </button>
-          </div>
+        <img 
+          src={getProductImageUrl($product, $selectedImageIndex)} 
+          alt={$product.name}
+          class="w-full h-full object-cover transition-all duration-300 cursor-zoom-in select-none"
+          style="transform: scale({$zoomLevel}); transform-origin: {$imagePosition.x}% {$imagePosition.y}%;"
+          on:click={handleImageZoom}
+          on:error={handleImageError}
+          in:scale={{ duration: 400 }}
+          draggable="false"
+        />
+        
+        <!-- Image Controls -->
+        <div class="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button 
+            class="btn btn-sm variant-filled-surface rounded-full shadow-lg hover:scale-110 transition-transform"
+            on:click|stopPropagation={() => {
+              if ($zoomLevel === 1) {
+                zoomLevel.set(2);
+              } else {
+                zoomLevel.set(1);
+                imagePosition.set({ x: 50, y: 50 });
+              }
+            }}
+            title="Zoom"
+          >
+            <LucideZoomIn class="w-4 h-4" />
+          </button>
+        </div>
           
           <!-- Limited Edition Badge -->
           {#if $product.limitedEdition}
@@ -381,7 +469,7 @@
           </h1>
           
           <!-- Rating -->
-          <div class="flex items-center space-x-3 mb-4">
+          <!-- <div class="flex items-center space-x-3 mb-4">
             <div class="flex space-x-1">
               {#each Array(5) as _, i}
                 <LucideStar class="text-warning-500 w-5 h-5 fill-current" />
@@ -390,7 +478,7 @@
             <span class="text-surface-600 dark:text-surface-300 text-sm">
               (4.9/5.0 • 127 reseñas)
             </span>
-          </div>
+          </div> -->
           
           <!-- Price -->
           <div class="flex items-center space-x-4 mb-6">
@@ -486,16 +574,42 @@
         <div class="flex items-center justify-between pt-6 border-t border-surface-200 dark:border-surface-600">
           <span class="text-surface-600 dark:text-surface-300 font-medium">Compartir:</span>
           <div class="flex space-x-3">
-            <button class="btn btn-sm variant-soft-primary rounded-full w-10 h-10 !p-0">
+            <!-- <button 
+              class="btn btn-sm variant-soft-primary rounded-full w-10 h-10 !p-0"
+              on:click={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank')}
+              title="Compartir en Facebook"
+            >
               <LucideFacebook class="w-4 h-4" />
             </button>
-            <button class="btn btn-sm variant-soft-secondary rounded-full w-10 h-10 !p-0">
+            <button 
+              class="btn btn-sm variant-soft-secondary rounded-full w-10 h-10 !p-0"
+              on:click={() => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent($product.name)}`, '_blank')}
+              title="Compartir en Twitter"
+            > 
               <LucideTwitter class="w-4 h-4" />
-            </button>
-            <button class="btn btn-sm variant-soft-success rounded-full w-10 h-10 !p-0">
+            </button>-->
+            <button 
+              class="btn btn-sm variant-soft-success rounded-full w-10 h-10 !p-0"
+              on:click={() => {
+                if (navigator.share) {
+                  navigator.share({
+                    title: $product.name,
+                    text: $product.description,
+                    url: window.location.href
+                  });
+                } else {
+                  handleCopyLink();
+                }
+              }}
+              title="Compartir"
+            >
               <LucideShare class="w-4 h-4" />
             </button>
-            <button class="btn btn-sm variant-soft-warning rounded-full w-10 h-10 !p-0">
+            <button 
+              class="btn btn-sm variant-soft-warning rounded-full w-10 h-10 !p-0"
+              on:click={handleCopyLink}
+              title="Copiar enlace"
+            >
               <LucideLink class="w-4 h-4" />
             </button>
           </div>
@@ -666,4 +780,40 @@
     background: rgb(var(--color-primary-500));
     border-radius: 3px;
   }
+
+  .cursor-zoom-in {
+    cursor: zoom-in;
+  }
+  
+  .cursor-zoom-out {
+    cursor: zoom-out;
+  }
+  
+  .cursor-move {
+    cursor: move;
+  }
+  
+  .select-none {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+  
+  /* Prevenir scroll del body cuando el modal está abierto */
+  :global(body.modal-open) {
+    overflow: hidden !important;
+  }
+  
+  /* Animación suave para el zoom */
+  .zoom-transition {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Mejora para los controles flotantes */
+  .floating-controls {
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
 </style>

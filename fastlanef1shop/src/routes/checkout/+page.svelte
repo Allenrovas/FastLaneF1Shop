@@ -41,7 +41,7 @@
     'Petén', 'Izabal', 'Zacapa', 'Chiquimula', 'Jalapa', 'Jutiapa', 'El Progreso'
   ];
 
-  const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/tu-usuario/tu-repo/main';
+  const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/Allenrovas/Datos_Catalogo/main';
   const WHATSAPP_PHONE = '+50249395444';
 
   function getProductImageUrl(product: CartItem, imageIndex: number = 0): string {

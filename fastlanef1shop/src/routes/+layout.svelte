@@ -59,7 +59,7 @@
 
   // Cart drawer state
   const isCartOpen = writable<boolean>(false);
-  const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/tu-usuario/tu-repo/main';
+  const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/Allenrovas/Datos_Catalogo/main';
 
   function getProductImageUrl(product: Product, imageIndex: number = 0): string {
     return `${GITHUB_REPO_URL}/${product.imageFolder}${product.images[imageIndex]}`;

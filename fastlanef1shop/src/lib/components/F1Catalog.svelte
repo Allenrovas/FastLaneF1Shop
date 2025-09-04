@@ -61,7 +61,7 @@
   const activeFilterType = writable<'general' | 'team' | 'manufacturer' | 'scale'>('general');
 
   // GitHub Pages configuration
-  const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/tu-usuario/tu-repo/main';
+  const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/Allenrovas/Datos_Catalogo/main';
 
   // Mapeo de iconos
   const iconMap = {
@@ -110,7 +110,11 @@
         );
       }
       
-      return filtered;
+      // Ordenar: productos en stock primero, luego los que no están en stock
+      return filtered.sort((a, b) => {
+        if (a.inStock === b.inStock) return 0;
+        return a.inStock ? -1 : 1;
+      });
     }
   );
 
@@ -504,8 +508,8 @@
 
 <!-- Products Grid -->
 {#if !$isLoading}
-  <section id="products-section" class=" px-4 py-4 bg-surface-50 dark:bg-surface-900">
-    <div class="container mx-auto">
+  <section id="products-section" class="px-4 py-4 bg-surface-50 dark:bg-surface-900">
+    <div class="container mx-auto max-w-screen-2xl">
       {#if $filteredProducts.length === 0}
         <div class="text-center py-20 " in:fade>
           <div class="text-8xl mb-6 text-surface-300 dark:text-surface-600 opacity-50 font-bold">F1</div>
@@ -562,7 +566,7 @@
         </div>
 
         <!-- Products Grid con ProductCard -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 lg:gap-8">
           {#each $filteredProducts as product, i}
             <ProductCard
               {product}

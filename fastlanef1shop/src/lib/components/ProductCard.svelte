@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { fly } from 'svelte/transition';
-  import type { Product } from '../stores/cart';
+  import type { Product  } from '../stores/cart';
 
   // Importar iconos
   import LucideCartPlus from '~icons/lucide/shopping-cart';
@@ -20,7 +20,7 @@
   export let variant: 'default' | 'compact' = 'default';
 
   // GitHub Pages configuration
-  const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/tu-usuario/tu-repo/main';
+  const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/Allenrovas/Datos_Catalogo/main';
 
   // Event dispatcher
   const dispatch = createEventDispatcher();
@@ -115,24 +115,24 @@
             <p class="text-sm opacity-90">{product.team} • {product.year}</p>
           </div>
         </div>
-        <div class="flex space-x-2">
-          <button 
-            class="btn variant-filled-primary flex-1 font-semibold"
-            on:click={handleAddToCart}
-            disabled={!product.inStock}
-            aria-label="Añadir {product.name} al carrito"
-          >
-            <LucideCartPlus class="mr-1 w-4 h-4" />
-            {product.inStock ? 'Añadir' : 'Agotado'}
-          </button>
-          <button 
-            class="btn variant-soft-surface w-12 h-12 !p-0"
-            on:click={handleViewDetails}
-            aria-label="Ver detalles de {product.name}"
-          >
-            <LucideEye class="w-5 h-5" />
-          </button>
-        </div>
+        <div class="flex space-x-2 items-stretch">
+  <button 
+    class="btn variant-filled-primary flex-1 font-semibold min-h-[44px]"
+    on:click={handleAddToCart}
+    disabled={!product.inStock}
+    aria-label="Añadir {product.name} al carrito"
+  >
+    <LucideCartPlus class="mr-1 w-4 h-4" />
+    {product.inStock ? 'Añadir' : 'Agotado'}
+  </button>
+  <button 
+    class="btn variant-soft-surface w-12 h-12 !p-0 flex-shrink-0"
+    on:click={handleViewDetails}
+    aria-label="Ver detalles de {product.name}"
+  >
+    <LucideEye class="w-5 h-5" />
+  </button>
+</div>
       </div>
     </div>
   </header>
@@ -157,35 +157,38 @@
       {/if}
     </div>
     
-    <h3 class="h4 font-bold mb-3 text-surface-900 dark:text-surface-50 leading-tight {showFullDescription ? '' : 'line-clamp-2'}">
-      {product.name}
-    </h3>
+    <div class="mb-3 min-h-[56px] flex items-start">
+      <h3 class="h4 font-bold text-surface-900 dark:text-surface-50 leading-tight line-clamp-3">
+        {product.name}
+      </h3>
+    </div>
     
     <p class="text-surface-600 dark:text-surface-300 text-sm mb-4 leading-relaxed {showFullDescription ? '' : 'line-clamp-3'}">
       {product.description}
     </p>
     
     <!-- Price and Actions -->
-    <div class="flex items-center justify-between pt-4 border-t border-surface-200 dark:border-surface-600">
-      <div class="flex flex-col">
-        <div class="flex items-center space-x-2">
-          <span class="text-2xl font-bold text-success-600 dark:text-success-400">
+    <div class="flex items-end justify-between pt-4 border-t border-surface-200 dark:border-surface-600 min-h-[80px]">
+      <div class="flex flex-col justify-end flex-1 pr-4">
+        <div class="flex items-baseline space-x-2 mb-2">
+          <span class="text-2xl font-bold text-success-600 dark:text-success-400 whitespace-nowrap">
             Q. {product.price.toFixed(2)}
           </span>
           {#if product.originalPrice && product.originalPrice > product.price}
-            <span class="text-sm text-surface-500 dark:text-surface-400 line-through">
+            <span class="text-sm text-surface-500 dark:text-surface-400 line-through whitespace-nowrap">
               Q. {product.originalPrice.toFixed(2)}
             </span>
           {/if}
         </div>
-        <div class="flex items-center space-x-2 text-xs text-surface-500 dark:text-surface-400 mt-1">
-          <LucideTruck class="w-3 h-3" />
+        <div class="flex items-center space-x-2 text-xs text-surface-500 dark:text-surface-400">
+          <LucideTruck class="w-3 h-3 flex-shrink-0" />
           <span>Envío a toda Guatemala</span>
         </div>
       </div>
-      
+    
+    <div class="flex-shrink-0">
       <button
-        class="btn variant-filled-primary font-semibold hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg"
+        class="btn variant-filled-primary font-semibold hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg min-w-[120px] h-[48px]"
         on:click={handleAddToCart}
         disabled={!product.inStock}
         aria-label="Añadir {product.name} al carrito"
@@ -194,6 +197,7 @@
         {product.inStock ? 'Añadir' : 'Agotado'}
       </button>
     </div>
+  </div>
   </div>
 </div>
 
