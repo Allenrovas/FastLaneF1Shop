@@ -4,7 +4,6 @@
   import { writable, derived } from 'svelte/store';
   import { fade, fly, scale } from 'svelte/transition';
   import { goto } from '$app/navigation';
-  import { invalidateAll } from '$app/navigation'; 
   import { base } from '$app/paths';
   import { 
     cart, 
@@ -78,6 +77,7 @@
   // Load single product
   async function loadProduct(): Promise<void> {
     try {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       isLoading.set(true);
       
       const response = await fetch(`${GITHUB_REPO_URL}/data/products.json`);
@@ -233,6 +233,7 @@
 
   // Event handlers para ProductCard en productos relacionados
   function handleRelatedProductClick(productId: number): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     goto(`${base}/producto/${productId}`);
   }
 
