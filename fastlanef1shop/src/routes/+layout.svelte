@@ -8,6 +8,7 @@
   import { fade, fly } from 'svelte/transition';
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
+  import { base } from '$app/paths';
   import { 
     cart, 
     cartTotal, 
@@ -70,7 +71,7 @@
 
   function handleCheckout() {
     isCartOpen.set(false);
-    goto('/checkout');
+    goto(`${base}/checkout`);
   }
 
   onMount(() => {

@@ -1,5 +1,5 @@
 // src/lib/stores/categories.ts
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
 export interface Category {
   id: string;
@@ -189,9 +189,8 @@ export function loadCategories(): void {
 
 // Helper functions para filtrar categorías por tipo
 export function getCategoriesByType(type: Category['type']): Category[] {
-  let categoryList: Category[] = [];
-  categories.subscribe(cats => categoryList = cats)();
-  return categoryList.filter(cat => cat.type === type);
+  const cats = get(categories); 
+  return cats.filter(cat => cat.type === type);
 }
 
 export function getTeamCategories(): Category[] {

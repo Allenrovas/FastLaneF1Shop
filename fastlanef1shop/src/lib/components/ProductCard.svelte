@@ -182,7 +182,7 @@
         </div>
         <div class="flex items-center space-x-2 text-xs text-surface-500 dark:text-surface-400">
           <LucideTruck class="w-3 h-3 flex-shrink-0" />
-          <span>Envío a toda Guatemala</span>
+          <span>Envíos a toda Guatemala</span>
         </div>
       </div>
     

@@ -4,6 +4,7 @@
   import { fade, fly, scale } from 'svelte/transition';
   import { elasticOut } from 'svelte/easing';
   import { goto } from '$app/navigation';
+  import { base } from '$app/paths';
   import { 
     cart, 
     cartTotal, 
@@ -59,6 +60,9 @@
   const isLoading = writable<boolean>(true);
   const searchQuery = writable<string>('');
   const activeFilterType = writable<'general' | 'team' | 'manufacturer' | 'scale'>('general');
+  
+  // AGREGADO: Store para controlar la inicialización de las categorías
+  const categoriesLoaded = writable<boolean>(false);
 
   // GitHub Pages configuration
   const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/Allenrovas/Datos_Catalogo/main';
@@ -83,6 +87,17 @@
     'lucide:maximize-2': LucideMaximize2,
     'lucide:user': LucideUser
   };
+
+  // MEJORADO: Derived store para las categorías por tipo con verificación de inicialización
+  const currentCategories = derived(
+    [categories, activeFilterType, categoriesLoaded],
+    ([$categories, $activeFilterType, $categoriesLoaded]) => {
+      if (!$categoriesLoaded || !$categories.length) {
+        return [];
+      }
+      return getCategoriesByType($activeFilterType);
+    }
+  );
 
   // Derived store for filtered products
   const filteredProducts = derived(
@@ -252,7 +267,7 @@
   }
 
   function handleProductClick(productId: number): void {
-    goto(`/producto/${productId}`);
+    goto(`${base}/producto/${productId}`);
   }
 
   function handleAddToCart(event: CustomEvent): void {
@@ -262,7 +277,7 @@
 
   function handleViewDetails(event: CustomEvent): void {
     const { product } = event.detail;
-    goto(`/producto/${product.id}`);
+    goto(`${base}/producto/${product.id}`);
   }
 
   function toggleCategory(categoryId: string): void {
@@ -286,19 +301,41 @@
     return iconMap[iconName] || LucideGrid;
   }
 
-  function getCategoryProductCount(categoryId: string): number {
-    if (categoryId === 'all') return $products.length;
-    return $products.filter(p => p.categories.includes(categoryId)).length;
+  // Crear un derived store para los contadores
+  const categoryProductCounts = derived(
+    products,
+    ($products) => {
+      return (categoryId: string): number => {
+        if (categoryId === 'all') return $products.length;
+        return $products.filter(p => p.categories.includes(categoryId)).length;
+      };
+    }
+  );
+
+  // MEJORADO: Función de inicialización async para asegurar el orden correcto
+  async function initializeApp() {
+    try {
+      reloadCart();
+      
+      // Cargar categorías y esperar a que se completen
+      await loadCategories();
+      categoriesLoaded.set(true);
+      
+      // Cargar productos
+      await loadProducts();
+    } catch (error) {
+      console.error('Error initializing app:', error);
+      // Incluso si hay error, marcamos las categorías como "cargadas" para mostrar algo
+      categoriesLoaded.set(true);
+    }
   }
 
   onMount(() => {
-    reloadCart();
-    loadCategories();
-    loadProducts();
+    initializeApp();
   });
 </script>
 
-<!-- Hero Section (mantener igual) -->
+<!-- Hero Section -->
 <section class="relative overflow-hidden bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-500 dark:from-primary-600 dark:via-primary-700 dark:to-secondary-600">
   <div class="absolute inset-0 bg-surface-900/40 dark:bg-surface-900/60"></div>
   
@@ -371,7 +408,7 @@
   <div class="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-error-500 via-warning-400 to-error-500 animate-pulse"></div>
 </section>
 
-<!-- Search and Filter Section (mantener igual) -->
+<!-- Search and Filter Section -->
 <section class="container mx-auto px-4 py-12">
   <div class="max-w-6xl mx-auto">
     <!-- Search Bar -->
@@ -402,25 +439,25 @@
     <div class="flex justify-center mb-6">
       <div class="flex bg-surface-200 dark:bg-surface-700 p-1 rounded-full">
         <button
-          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'general' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-200 hover:text-surface-400'}"
+          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'general' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-600 dark:text-surface-400 hover:text-surface-400'}"
           on:click={() => activeFilterType.set('general')}
         >
           General
         </button>
         <button
-          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'team' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-200 hover:text-surface-400'}"
+          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'team' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-600 dark:text-surface-400 hover:text-surface-400'}"
           on:click={() => activeFilterType.set('team')}
         >
           Equipos
         </button>
         <button
-          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'manufacturer' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-200 hover:text-surface-400'}"
+          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'manufacturer' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-600 dark:text-surface-400 hover:text-surface-400'}"
           on:click={() => activeFilterType.set('manufacturer')}
         >
           Marcas
         </button>
         <button
-          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'scale' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-200 hover:text-surface-400'}"
+          class="px-4 py-2 rounded-full transition-all duration-300 {$activeFilterType === 'scale' ? 'bg-primary-500 text-white shadow-md' : 'text-surface-600 dark:text-surface-400 hover:text-surface-400'}"
           on:click={() => activeFilterType.set('scale')}
         >
           Escalas
@@ -428,64 +465,83 @@
       </div>
     </div>
     
-    <!-- Category Filter Pills -->
-    <div class="text-center mb-6">
-      <p class="text-surface-600 dark:text-surface-300 mb-6">
-        {$activeFilterType === 'general' && 'Explora por categorías generales'}
-        {$activeFilterType === 'team' && 'Filtra por escudería favorita'}
-        {$activeFilterType === 'manufacturer' && 'Descubre por fabricante'}
-        {$activeFilterType === 'scale' && 'Encuentra tu escala ideal'}
-      </p>
-      
-      <div class="flex flex-wrap gap-3 justify-center">
-        {#each getCategoriesByType($activeFilterType) as category, i}
-          {@const IconComponent = getIconComponent(category.icon)}
-          <button
-            class="btn {$selectedCategories.includes(category.id)
-              ? `${category.variant} shadow-lg scale-105` 
-              : 'variant-soft-surface hover:variant-filled-surface'} 
-            rounded-full transition-all duration-300 font-semibold px-6 py-3
-            hover:scale-105 hover:shadow-md"
-            on:click={() => toggleCategory(category.id)}
-            in:fly={{ x: -50, duration: 500, delay: i * 100 }}
-          >
-            <span class="flex items-center space-x-2">
-              <svelte:component this={IconComponent} class="w-4 h-4" />
-              <span>{category.name}</span>
-              {#if category.id !== 'all'}
-                <span class="badge variant-soft text-xs">
-                  {getCategoryProductCount(category.id)}
+    <!-- MEJORADO: Category Filter Pills con verificación de carga -->
+    {#if $categoriesLoaded && $currentCategories.length > 0}
+      <div class="text-center mb-6">
+        <p class="text-surface-600 dark:text-surface-300 mb-6">
+          {#if $activeFilterType === 'general'}
+            Explora por categorías generales
+          {:else if $activeFilterType === 'team'}
+            Filtra por escudería favorita
+          {:else if $activeFilterType === 'manufacturer'}
+            Descubre por fabricante
+          {:else if $activeFilterType === 'scale'}
+            Encuentra tu escala ideal
+          {/if}
+        </p>
+        
+        <div class="flex flex-wrap gap-3 justify-center">
+          {#each $currentCategories as category, i}
+            {@const IconComponent = getIconComponent(category.icon)}
+            <button
+              class="btn {$selectedCategories.includes(category.id)
+                ? `${category.variant || 'variant-filled-primary'} shadow-lg scale-105` 
+                : 'variant-soft-surface hover:variant-filled-surface'} 
+              rounded-full transition-all duration-300 font-semibold px-6 py-3
+              hover:scale-105 hover:shadow-md"
+              on:click={() => toggleCategory(category.id)}
+              in:fly={{ x: -50, duration: 500, delay: i * 100 }}
+            >
+              <span class="flex items-center space-x-2">
+                <svelte:component this={IconComponent} class="w-4 h-4" />
+                <span>{category.name}</span>
+                {#if category.id !== 'all'}
+                  <span class="badge variant-soft text-xs">
+                    {$categoryProductCounts(category.id)}
+                  </span>
+                {/if}
+              </span>
+            </button>
+          {/each}
+        </div>
+        
+        <!-- Selected Categories Display -->
+        {#if !$selectedCategories.includes('all') && $selectedCategories.length > 0}
+          <div class="mt-4 flex flex-wrap gap-2 justify-center">
+            <span class="text-sm text-surface-600 dark:text-surface-300">Filtros activos:</span>
+            {#each $selectedCategories as catId}
+              {@const category = $categories.find(c => c.id === catId)}
+              {#if category}
+                <span class="badge variant-filled-primary text-xs">
+                  {category.name}
+                  <button class="ml-1 hover:bg-primary-600 rounded-full" on:click={() => toggleCategory(catId)}>
+                    <LucideClose class="w-3 h-3" />
+                  </button>
                 </span>
               {/if}
-            </span>
-          </button>
-        {/each}
+            {/each}
+            <button 
+              class="badge variant-ghost-error text-xs hover:variant-filled-error"
+              on:click={() => selectedCategories.set(['all'])}
+            >
+              Limpiar filtros
+            </button>
+          </div>
+        {/if}
       </div>
-      
-      <!-- Selected Categories Display -->
-      {#if !$selectedCategories.includes('all') && $selectedCategories.length > 0}
-        <div class="mt-4 flex flex-wrap gap-2 justify-center">
-          <span class="text-sm text-surface-600 dark:text-surface-300">Filtros activos:</span>
-          {#each $selectedCategories as catId}
-            {@const category = $categories.find(c => c.id === catId)}
-            {#if category}
-              <span class="badge variant-filled-primary text-xs">
-                {category.name}
-                <button class="ml-1 hover:bg-primary-600 rounded-full" on:click={() => toggleCategory(catId)}>
-                  <LucideClose class="w-3 h-3" />
-                </button>
-              </span>
-            {/if}
+    {:else if !$categoriesLoaded}
+      <!-- Loading state para las categorías -->
+      <div class="text-center mb-6">
+        <p class="text-surface-600 dark:text-surface-300 mb-6">Cargando categorías...</p>
+        <div class="flex flex-wrap gap-3 justify-center">
+          {#each Array(6) as _, i}
+            <div class="animate-pulse">
+              <div class="h-10 bg-surface-200 dark:bg-surface-700 rounded-full w-24"></div>
+            </div>
           {/each}
-          <button 
-            class="badge variant-ghost-error text-xs hover:variant-filled-error"
-            on:click={() => selectedCategories.set(['all'])}
-          >
-            Limpiar filtros
-          </button>
         </div>
-      {/if}
-    </div>
+      </div>
+    {/if}
   </div>
 </section>
 
@@ -511,7 +567,7 @@
   <section id="products-section" class="px-4 py-4 bg-surface-50 dark:bg-surface-900">
     <div class="container mx-auto max-w-screen-2xl">
       {#if $filteredProducts.length === 0}
-        <div class="text-center py-20 " in:fade>
+        <div class="text-center py-20" in:fade>
           <div class="text-8xl mb-6 text-surface-300 dark:text-surface-600 opacity-50 font-bold">F1</div>
           <h3 class="text-3xl font-bold mb-4 text-surface-900 dark:text-surface-50">
             {$searchQuery ? 'No encontramos resultados' : 'No hay productos disponibles'}
@@ -560,7 +616,7 @@
             <div class="w-2 h-2 bg-success-500 rounded-full animate-pulse"></div>
             <div class="flex items-center space-x-2">
               <LucideTruck class="w-5 h-5 text-primary-500" />
-              <span class="text-sm">Envío a toda Guatemala</span>
+              <span class="text-sm">Envíos a toda Guatemala</span>
             </div>
           </div>
         </div>
@@ -596,7 +652,7 @@
   </section>
 {/if}
 
-<!-- Featured Benefits Section (mantener igual) -->
+<!-- Featured Benefits Section -->
 <section class="bg-gradient-to-r from-surface-100 to-surface-200 dark:from-surface-800 dark:to-surface-700 py-16">
   <div class="container mx-auto px-4">
     <div class="text-center mb-12">
@@ -626,7 +682,7 @@
           <LucideTruck class="w-8 h-8 text-white" />
         </div>
         <h3 class="text-xl font-bold text-surface-900 dark:text-surface-50 mb-3">
-          Envío a toda la República de Guatemala
+          Envíos a toda la República de Guatemala
         </h3>
         <p class="text-surface-600 dark:text-surface-300 leading-relaxed">
           Entrega segura a cualquier parte de Guatemala en 1-3 días hábiles.

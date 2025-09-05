@@ -4,6 +4,7 @@
   import { writable, derived } from 'svelte/store';
   import { fade, fly, scale } from 'svelte/transition';
   import { goto } from '$app/navigation';
+  import { base } from '$app/paths';
   import { 
     cart, 
     cartTotal, 
@@ -228,7 +229,7 @@
 
   // Event handlers para ProductCard en productos relacionados
   function handleRelatedProductClick(productId: number): void {
-    window.location.href = `/producto/${productId}`;
+    goto(`${base}/producto/${productId}`);
   }
 
   function handleRelatedAddToCart(event: CustomEvent): void {
@@ -238,13 +239,13 @@
 
   function handleRelatedViewDetails(event: CustomEvent): void {
     const { product } = event.detail;
-    window.location.href = `/producto/${product.id}`;
+    goto(`${base}/producto/${product.id}`);
   }
 
   async function handleCopyLink(): Promise<void> {
-    try {
-      const currentUrl = window.location.href;
-      await navigator.clipboard.writeText(currentUrl);
+  try {
+    const currentUrl = `${window.location.origin}${base}${$page.url.pathname}`;
+    await navigator.clipboard.writeText(currentUrl);
       
       // Mostrar toast de éxito
       toastNotification.set({
@@ -533,7 +534,7 @@
               <div class="flex items-center space-x-4 text-sm text-surface-600 dark:text-surface-300">
                 <span class="flex items-center">
                   <LucideTruck class="mr-1 w-4 h-4" />
-                  Envío a toda Guatemala
+                  Envíos a toda Guatemala
                 </span>
                 <span class="flex items-center">
                   <LucideShield class="mr-1 w-4 h-4" />

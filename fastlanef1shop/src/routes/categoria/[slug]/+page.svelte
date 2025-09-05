@@ -4,6 +4,7 @@
   import { writable, derived } from 'svelte/store';
   import { fade, fly } from 'svelte/transition';
   import { goto } from '$app/navigation';
+  import { base } from '$app/paths';
   import { 
     cart, 
     cartTotal, 
@@ -128,7 +129,7 @@
 
   // Event handlers para ProductCard
   function handleProductClick(productId: number): void {
-    goto(`/producto/${productId}`);
+    goto(`${base}/producto/${productId}`);
   }
 
   function handleAddToCart(event: CustomEvent): void {
@@ -138,7 +139,7 @@
 
   function handleViewDetails(event: CustomEvent): void {
     const { product } = event.detail;
-    goto(`/producto/${product.id}`);
+    goto(`${base}/producto/${product.id}`);
   }
 
   onMount(() => {
