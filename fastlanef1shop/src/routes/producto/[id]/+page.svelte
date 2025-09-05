@@ -4,6 +4,7 @@
   import { writable, derived } from 'svelte/store';
   import { fade, fly, scale } from 'svelte/transition';
   import { goto } from '$app/navigation';
+  import { invalidateAll } from '$app/navigation'; 
   import { base } from '$app/paths';
   import { 
     cart, 
@@ -61,6 +62,9 @@
 
   // Get product ID from URL
   $: productId = parseInt($page.params.id ?? '0');
+  $: if ($page.params.id) {
+    loadProduct();
+  }
 
   // Derived stores
   const currentCategories = derived(
