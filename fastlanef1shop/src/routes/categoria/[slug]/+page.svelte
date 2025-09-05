@@ -160,7 +160,7 @@
     <ol class="flex items-center space-x-3 text-sm">
       <li>
         <a 
-          href="/" 
+          href="{base || '/'}"
           class="flex items-center space-x-2 text-surface-600-300-token hover:text-primary-500 transition-colors duration-200 font-medium group"
         >
           <span>Inicio</span>
@@ -360,7 +360,7 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         {#each $categories.filter(c => c.type === $currentCategory.type && c.id !== $currentCategory.id).slice(0, 3) as relatedCategory}
           <a 
-            href="/categoria/{relatedCategory.id}"
+            href="{base}/categoria/{relatedCategory.id}"
             class="card card-hover bg-surface-0 dark:bg-surface-800 p-6 text-center border border-surface-200 dark:border-surface-700 
             hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
           >

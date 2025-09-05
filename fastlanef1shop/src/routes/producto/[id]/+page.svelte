@@ -338,7 +338,7 @@
       <ol class="flex items-center space-x-3 text-sm">
         <li>
           <a 
-            href="/" 
+            href="{base || '/'}"
             class="flex items-center space-x-2 text-surface-600 dark:text-surface-300 hover:text-primary-500 transition-colors duration-200 font-medium"
           >
             <span>Inicio</span>
