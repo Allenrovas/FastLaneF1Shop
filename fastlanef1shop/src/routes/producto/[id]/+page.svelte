@@ -243,10 +243,10 @@
   }
 
   async function handleCopyLink(): Promise<void> {
-  try {
-    const currentUrl = `${window.location.origin}${base}${$page.url.pathname}`;
-    await navigator.clipboard.writeText(currentUrl);
-      
+    try {
+      const currentUrl = `${window.location.origin}${$page.url.pathname}`;
+      await navigator.clipboard.writeText(currentUrl);
+        
       // Mostrar toast de éxito
       toastNotification.set({
         message: 'Enlace copiado al portapapeles',
@@ -700,7 +700,7 @@
             </p>
             <button 
               class="btn variant-filled-primary text-lg px-8 py-3 hover:scale-105 transition-transform duration-200"
-              on:click={() => goto('/')}
+              on:click={() => goto(base || '/')}
             >
               <LucideEye class="mr-2 w-5 h-5" />
               Ver Toda la Colección
@@ -724,7 +724,7 @@
       <div class="space-y-3">
         <button 
           class="btn variant-filled-primary px-8 py-3"
-          on:click={() => goto('/')}
+          on:click={() => goto(base || '/')}
         >
           <LucideHome class="mr-2 w-4 h-4" />
           Volver al Inicio

@@ -90,7 +90,7 @@
       <svelte:fragment slot="lead">
         <button 
           class="flex items-center space-x-3 hover:scale-105 transition-transform duration-200"
-          on:click={() => goto('/')}
+          on:click={() => goto(base || '/')}
         >
           <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow duration-200">
             <Formula1Icon class="text-white w-6 h-6" />
@@ -192,7 +192,7 @@
               {#each $categories.filter(c => c.type === 'team').slice(0, 5) as category}
                 <li>
                   <a 
-                    href="/categoria/{category.id}" 
+                    href={`${base}/categoria/${category.id}`} 
                     class="flex items-center space-x-2 text-surface-300 hover:text-primary-400 transition-colors duration-200 group"
                   >
                     <div class="w-2 h-2 bg-current rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-200"></div>
@@ -217,13 +217,13 @@
                 </a>
               </li> -->
               <li>
-                <a href="/shipping" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
+                <a href={`${base}/shipping`} class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
                   <LucideTruck class="w-4 h-4 opacity-50 group-hover:opacity-100" />
                   <span>Envíos</span>
                 </a>
               </li>
               <li>
-                <a href="/contact" class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
+                <a href={`${base}/contact`} class="flex items-center space-x-2 text-surface-300 hover:text-secondary-400 transition-colors duration-200 group">
                   <LucideEmail class="w-4 h-4 opacity-50 group-hover:opacity-100" />
                   <span>Contacto</span>
                 </a>

@@ -138,7 +138,7 @@ ${orderSummary}
       // Limpiar carrito después de enviar
       setTimeout(() => {
         clearCart();
-        goto('/');
+        goto(base || '/');
       }, 2000);
 
     } catch (error) {
@@ -151,7 +151,7 @@ ${orderSummary}
   // Verificar si hay productos en el carrito al cargar
   onMount(() => {
     if ($cart.length === 0) {
-      goto('/');
+      goto(base || '/');
     }
   });
 

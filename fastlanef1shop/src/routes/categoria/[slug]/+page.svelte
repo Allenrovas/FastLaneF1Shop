@@ -274,7 +274,7 @@
         </p>
         <button 
           class="btn variant-filled-primary text-lg px-8 py-4 hover:scale-105 transition-transform duration-200"
-          on:click={() => goto('/')}
+          on:click={() => goto(base || '/')}
         >
           <LucideArrowLeft class="mr-2 w-5 h-5" />
           Ver Todos los Productos
@@ -330,7 +330,7 @@
               </button>
               <button 
                 class="btn variant-ghost-surface text-lg px-8 py-3"
-                on:click={() => goto('/')}
+                on:click={() => goto(base || '/')}
               >
                 <LucideGrid class="mr-2 w-5 h-5" />
                 Explorar Todas las Categorías
