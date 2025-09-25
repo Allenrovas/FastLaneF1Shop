@@ -49,7 +49,9 @@
   const filteredProducts = derived(
     [products, page], 
     ([$products, $page]) => 
-      $products.filter(p => p.categories.includes($page.params.slug))
+      $products
+        .filter(p => p.categories.includes($page.params.slug))
+        .sort((a, b) => Number(b.inStock) - Number(a.inStock))
   );
 
   // Load products
