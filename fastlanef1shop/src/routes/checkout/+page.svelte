@@ -1,15 +1,14 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
+  import { goto, afterNavigate } from '$app/navigation';
   import { cart, cartTotal, cartItemCount, clearCart, type CartItem } from '$lib/stores/cart';
   import { fade, fly } from 'svelte/transition';
-  
+  import { base } from '$app/paths';
   // Iconos
   import LucideUser from '~icons/lucide/user';
   import LucidePhone from '~icons/lucide/phone';
   import LucideMapPin from '~icons/lucide/map-pin';
   import LucideShoppingCart from '~icons/lucide/shopping-cart';
-  import LucideCreditCard from '~icons/lucide/credit-card';
   import LucidePackage from '~icons/lucide/package';
   import LucideCalculator from '~icons/lucide/calculator';
   import TablerBrandWhatsapp from '~icons/tabler/brand-whatsapp';
@@ -152,7 +151,21 @@ ${orderSummary}
   onMount(() => {
     if ($cart.length === 0) {
       goto(base || '/');
+      return;
     }
+    window.scrollTo(0, 0);
+  });
+
+  // Para navegaciones subsecuentes
+  afterNavigate(() => {
+    if ($cart.length === 0) {
+      goto(base || '/');
+      return;
+    }
+    // Forzar scroll en el siguiente frame
+    setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }, 0);
   });
 
   function goBack() {

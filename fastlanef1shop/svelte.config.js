@@ -11,6 +11,8 @@ const config = {
 	},
 
 	kit: {
+		inlineStyleThreshold: 1024,
+		scrollReset: true,
 		adapter: adapter({
 			pages: 'build',
 			assets: 'build',

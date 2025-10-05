@@ -61,62 +61,14 @@
   // Configure floating UI
   storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
     
-    let previousUrl = '';
-
-  // Función de scroll más agresiva
-  function nuclearScrollReset() {
-    try {
-      // Método 1: Window scroll
-      window.scroll(0, 0);
-      window.scrollTo(0, 0);
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-      
-      // Método 2: Document elements
-      document.documentElement.scrollTop = 0;
-      document.documentElement.scrollLeft = 0;
-      document.body.scrollTop = 0;
-      document.body.scrollLeft = 0;
-      
-      // Método 3: Forzar reflow
-      document.body.style.overflow = 'hidden';
-      setTimeout(() => {
-        document.body.style.overflow = '';
-      }, 10);
-      
-      // Método 4: Resetear todos los elementos scrollables
-      const allElements = document.querySelectorAll('*');
-      allElements.forEach(element => {
-        if (element.scrollTop > 0 || element.scrollLeft > 0) {
-          element.scrollTop = 0;
-          element.scrollLeft = 0;
-        }
-      });
-      
-    } catch (error) {
-      console.warn('Error resetting scroll:', error);
-    }
-  }
-
-  // Reactive statement que se ejecuta cuando cambia la URL
-  $: if (typeof window !== 'undefined' && $page.url?.pathname && $page.url.pathname !== previousUrl) {
-    if (previousUrl !== '') {  // No ejecutar en la primera carga
-      // Ejecutar múltiples veces con diferentes delays
-      nuclearScrollReset();
-      setTimeout(nuclearScrollReset, 0);
-      setTimeout(nuclearScrollReset, 10);
-      setTimeout(nuclearScrollReset, 50);
-      setTimeout(nuclearScrollReset, 100);
-      setTimeout(nuclearScrollReset, 200);
-      setTimeout(nuclearScrollReset, 300);
-    }
-    previousUrl = $page.url.pathname;
-  }
-
-  // También en afterUpdate para capturar cambios del DOM
-  afterUpdate(() => {
-    if (typeof window !== 'undefined') {
-      setTimeout(nuclearScrollReset, 0);
-    }
+  afterNavigate(() => {
+    const allElements = document.querySelectorAll('*');
+    allElements.forEach(element => {
+      if (element.scrollTop > 0 || element.scrollLeft > 0) {
+        element.scrollTop = 0;
+        element.scrollLeft = 0;
+      }
+    });
   });
 
   // Cart drawer state
