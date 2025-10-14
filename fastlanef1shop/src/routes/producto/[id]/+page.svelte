@@ -348,6 +348,17 @@
           <LucideChevronRight class="w-4 h-4" />
         </li>
         <li class="flex items-center space-x-2">
+          <a 
+            href={`${base}/categoria/${$product.team.toLowerCase().replace(/\s+/g, '-')}`}
+            class="flex items-center space-x-2 text-surface-600 dark:text-surface-300 hover:text-primary-500 transition-colors duration-200 font-medium"
+          >
+            <span>{$product.team}</span>
+          </a>
+        </li>
+        <li class="text-surface-400 dark:text-surface-500">
+          <LucideChevronRight class="w-4 h-4" />
+        </li>
+        <li class="flex items-center space-x-2">
           <span class="font-semibold text-surface-900 dark:text-surface-50">
             {$product.name}
           </span>
