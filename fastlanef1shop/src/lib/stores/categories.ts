@@ -11,204 +11,198 @@ export interface Category {
 }
 
 export const categories = writable<Category[]>([]);
+export const categoriesLoading = writable<boolean>(false);
+export const categoriesError = writable<string | null>(null);
 
-export function loadCategories(): void {
-  const categoryList: Category[] = [
-    // Categorías generales
-    { 
-      id: 'all', 
-      name: 'Todos los Productos', 
-      variant: 'variant-filled-primary', 
-      icon: 'lucide:grid-3x3',
-      type: 'general'
-    },
-    { 
-      id: 'championship', 
-      name: 'Campeones del Mundo', 
-      description: 'Los monoplazas que conquistaron el título mundial',
-      variant: 'variant-filled-warning', 
-      icon: 'lucide:trophy',
-      type: 'general'
-    },
-    { 
-      id: 'limited', 
-      name: 'Ediciones Limitadas', 
-      description: 'Modelos exclusivos de colección',
-      variant: 'variant-filled-error', 
-      icon: 'lucide:star',
-      type: 'general'
-    },
+// GitHub configuration
+const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/Allenrovas/Datos_Catalogo/main';
 
-    // Equipos/Escuderías
-    { 
-      id: 'red-bull', 
-      name: 'Red Bull Racing', 
-      description: 'Los toros voladores de Milton Keynes',
-      variant: 'variant-filled-primary', 
-      icon: 'lucide:zap',
-      type: 'team'
-    },
-    { 
-      id: 'ferrari', 
-      name: 'Scuderia Ferrari', 
-      description: 'El cavallino rampante de Maranello',
-      variant: 'variant-filled-error', 
-      icon: 'lucide:heart',
-      type: 'team'
-    },
-    { 
-      id: 'mercedes', 
-      name: 'Mercedes-AMG Petronas', 
-      description: 'Las flechas plateadas de Brackley',
-      variant: 'variant-filled-surface', 
-      icon: 'lucide:star',
-      type: 'team'
-    },
-    { 
-      id: 'mclaren', 
-      name: 'McLaren F1 Team', 
-      description: 'El naranja papaya de Woking',
-      variant: 'variant-filled-warning', 
-      icon: 'lucide:rocket',
-      type: 'team'
-    },
-    { 
-      id: 'aston-martin', 
-      name: 'Aston Martin Aramco', 
-      description: 'El verde británico de Silverstone',
-      variant: 'variant-filled-success', 
-      icon: 'lucide:shield',
-      type: 'team'
-    },
-    { 
-      id: 'alpine', 
-      name: 'BWT Alpine F1 Team', 
-      description: 'El azul francés de Enstone',
-      variant: 'variant-filled-secondary', 
-      icon: 'lucide:mountain',
-      type: 'team'
-    },
-
-    // Marcas/Fabricantes
-    { 
-      id: 'burago', 
-      name: 'Bburago', 
-      description: 'Modelos de calidad italiana desde 1974',
-      variant: 'variant-filled-tertiary', 
-      icon: 'lucide:factory',
-      type: 'manufacturer'
-    },
-    { 
-      id: 'minichamps', 
-      name: 'Minichamps', 
-      description: 'Precisión alemana en cada detalle',
-      variant: 'variant-filled-secondary', 
-      icon: 'lucide:gem',
-      type: 'manufacturer'
-    },
-    { 
-      id: 'spark', 
-      name: 'Spark Model', 
-      description: 'Excelencia francesa en modelismo',
-      variant: 'variant-filled-primary', 
-      icon: 'lucide:sparkles',
-      type: 'manufacturer'
-    },
-    { 
-      id: 'amalgam', 
-      name: 'Amalgam Collection', 
-      description: 'Artesanía británica de lujo',
-      variant: 'variant-filled-warning', 
-      icon: 'lucide:crown',
-      type: 'manufacturer'
-    },
-
-    // Escalas
-    { 
-      id: 'scale-1-43', 
-      name: '1:43', 
-      description: 'Escala clásica de colección',
-      variant: 'variant-soft-primary', 
-      icon: 'lucide:ruler',
-      type: 'scale'
-    },
-    { 
-      id: 'scale-1-18', 
-      name: '1:18', 
-      description: 'Escala premium con detalles excepcionales',
-      variant: 'variant-soft-success', 
-      icon: 'lucide:maximize',
-      type: 'scale'
-    },
-    { 
-      id: 'scale-1-64', 
-      name: '1:64', 
-      description: 'Escala compacta perfecta para displays',
-      variant: 'variant-soft-secondary', 
-      icon: 'lucide:minimize',
-      type: 'scale'
-    },
-    { 
-      id: 'scale-1-8', 
-      name: '1:8', 
-      description: 'Escala exclusiva de alta gama',
-      variant: 'variant-soft-warning', 
-      icon: 'lucide:maximize-2',
-      type: 'scale'
-    },
-
-    // Pilotos destacados
-    { 
-      id: 'verstappen', 
-      name: 'Max Verstappen', 
-      description: 'El campeón dominante de Red Bull',
-      variant: 'variant-soft-primary', 
-      icon: 'lucide:user',
-      type: 'driver'
-    },
-    { 
-      id: 'leclerc', 
-      name: 'Charles Leclerc', 
-      description: 'El predestinado de Ferrari',
-      variant: 'variant-soft-error', 
-      icon: 'lucide:user',
-      type: 'driver'
-    },
-    { 
-      id: 'hamilton', 
-      name: 'Lewis Hamilton', 
-      description: 'La leyenda de Mercedes',
-      variant: 'variant-soft-surface', 
-      icon: 'lucide:user',
-      type: 'driver'
+/**
+ * Carga las categorías desde GitHub
+ * Si falla, usa un fallback con categorías por defecto
+ */
+export async function loadCategories(): Promise<void> {
+  try {
+    categoriesLoading.set(true);
+    categoriesError.set(null);
+    
+    const response = await fetch(`${GITHUB_REPO_URL}/data/categories.json`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  ];
-
-  categories.set(categoryList);
+    
+    const data: Category[] = await response.json();
+    categories.set(data);
+    
+    console.log(`✓ ${data.length} categorías cargadas desde GitHub`);
+    
+  } catch (error) {
+    console.error('Error loading categories:', error);
+    categoriesError.set('Error al cargar categorías, usando fallback');
+    
+    // Fallback a categorías por defecto mínimas
+    const fallbackCategories: Category[] = [
+      // Categorías generales
+      { 
+        id: 'all', 
+        name: 'Todos los Productos', 
+        variant: 'variant-filled-primary', 
+        icon: 'lucide:grid-3x3',
+        type: 'general'
+      },
+      { 
+        id: 'championship', 
+        name: 'Campeones del Mundo', 
+        description: 'Los monoplazas que conquistaron el título mundial',
+        variant: 'variant-filled-warning', 
+        icon: 'lucide:trophy',
+        type: 'general'
+      },
+      { 
+        id: 'limited', 
+        name: 'Ediciones Limitadas', 
+        description: 'Modelos exclusivos de colección',
+        variant: 'variant-filled-error', 
+        icon: 'lucide:star',
+        type: 'general'
+      },
+      
+      // Equipos principales
+      { 
+        id: 'red-bull', 
+        name: 'Red Bull Racing', 
+        description: 'Los toros voladores de Milton Keynes',
+        variant: 'variant-filled-primary', 
+        icon: 'lucide:zap',
+        type: 'team'
+      },
+      { 
+        id: 'ferrari', 
+        name: 'Scuderia Ferrari', 
+        description: 'El cavallino rampante de Maranello',
+        variant: 'variant-filled-error', 
+        icon: 'lucide:heart',
+        type: 'team'
+      },
+      { 
+        id: 'mercedes', 
+        name: 'Mercedes-AMG Petronas', 
+        description: 'Las flechas plateadas de Brackley',
+        variant: 'variant-filled-surface', 
+        icon: 'lucide:star',
+        type: 'team'
+      },
+      { 
+        id: 'mclaren', 
+        name: 'McLaren F1 Team', 
+        description: 'El naranja papaya de Woking',
+        variant: 'variant-filled-warning', 
+        icon: 'lucide:rocket',
+        type: 'team'
+      },
+      
+      // Escalas
+      { 
+        id: 'scale-1-43', 
+        name: '1:43', 
+        description: 'Escala clásica de colección',
+        variant: 'variant-soft-primary', 
+        icon: 'lucide:ruler',
+        type: 'scale'
+      },
+      { 
+        id: 'scale-1-18', 
+        name: '1:18', 
+        description: 'Escala premium con detalles excepcionales',
+        variant: 'variant-soft-success', 
+        icon: 'lucide:maximize',
+        type: 'scale'
+      }
+    ];
+    
+    categories.set(fallbackCategories);
+    console.warn('⚠ Usando categorías fallback');
+    
+  } finally {
+    categoriesLoading.set(false);
+  }
 }
 
-// Helper functions para filtrar categorías por tipo
+/**
+ * Obtiene una categoría específica por su ID
+ */
+export function getCategoryById(id: string): Category | undefined {
+  const cats = get(categories);
+  return cats.find(cat => cat.id === id);
+}
+
+/**
+ * Filtra categorías por tipo
+ */
 export function getCategoriesByType(type: Category['type']): Category[] {
   const cats = get(categories); 
   return cats.filter(cat => cat.type === type);
 }
 
+/**
+ * Obtiene todas las categorías de equipos
+ */
 export function getTeamCategories(): Category[] {
   return getCategoriesByType('team');
 }
 
+/**
+ * Obtiene todas las categorías de fabricantes
+ */
 export function getManufacturerCategories(): Category[] {
   return getCategoriesByType('manufacturer');
 }
 
+/**
+ * Obtiene todas las categorías de escalas
+ */
 export function getScaleCategories(): Category[] {
   return getCategoriesByType('scale');
 }
 
+/**
+ * Obtiene todas las categorías de pilotos
+ */
 export function getDriverCategories(): Category[] {
   return getCategoriesByType('driver');
 }
 
+/**
+ * Obtiene todas las categorías generales
+ */
 export function getGeneralCategories(): Category[] {
   return getCategoriesByType('general');
+}
+
+/**
+ * Verifica si una categoría existe
+ */
+export function categoryExists(id: string): boolean {
+  return getCategoryById(id) !== undefined;
+}
+
+/**
+ * Obtiene el conteo de categorías por tipo
+ */
+export function getCategoriesCountByType(): Record<Category['type'], number> {
+  const cats = get(categories);
+  const counts: Record<Category['type'], number> = {
+    general: 0,
+    team: 0,
+    manufacturer: 0,
+    scale: 0,
+    driver: 0
+  };
+  
+  cats.forEach(cat => {
+    counts[cat.type]++;
+  });
+  
+  return counts;
 }
