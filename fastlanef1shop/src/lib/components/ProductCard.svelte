@@ -10,6 +10,7 @@
   import LucideCheck from '~icons/lucide/check-circle';
   import LucideInfo from '~icons/lucide/info';
   import LucideTruck from '~icons/lucide/truck';
+  import LucideClose from '~icons/lucide/x-circle';
 
   // Props
   export let product: Product;
@@ -97,9 +98,14 @@
     
     <!-- Stock Status -->
     <div class="absolute top-4 left-4">
-      <span class="badge {product.inStock ? 'variant-filled-success' : 'variant-filled-error'} text-xs font-bold shadow-lg">
-        <LucideCheck class="mr-1 w-3 h-3" />
-        {product.inStock ? 'Disponible' : 'Agotado'}
+      <span class="badge {product.inStock ? 'variant-filled-success' : 'variant-filled-error'} text-xs font-bold shadow-lg flex items-center">
+        {#if product.inStock}
+          <LucideCheck class="mr-1 w-3 h-3" />
+          Disponible
+        {:else}
+          <LucideClose class="mr-1 w-3 h-3" />
+          Agotado
+        {/if}
       </span>
     </div>
     
