@@ -59,6 +59,9 @@
   // GitHub configuration
   const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/Allenrovas/Datos_Catalogo/main';
 
+  // Configuración de WhatsApp
+  const WHATSAPP_PHONE = '+50249395444';
+
   // Get product ID from URL
   $: productId = parseInt($page.params.id ?? '0');
   $: if ($page.params.id) {
@@ -208,6 +211,18 @@
 
   function handleAddToCart(product: Product): void {
     addToCart(product);
+  }
+
+  function handleNotifyAvailability(): void {
+    if (!$product) return;
+    
+    const whatsappMessage = encodeURIComponent(
+      `Hola! Me gustaría que me notifiquen cuando el producto "${$product.name}" esté disponible nuevamente.\n\n` +
+      `Link del producto: ${window.location.href}`
+    );
+    
+    const whatsappURL = `https://wa.me/${WHATSAPP_PHONE}?text=${whatsappMessage}`;
+    window.open(whatsappURL, '_blank');
   }
 
   function handleImageError(e: Event) {
@@ -562,8 +577,8 @@
           
           <button
             class="btn variant-filled-primary w-full text-lg font-semibold py-4 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-            on:click={() => handleAddToCart($product)}
-            disabled={!$product.inStock}
+            on:click={() => $product.inStock ? handleAddToCart($product) : handleNotifyAvailability()}
+            disabled={false}
           >
             {#if $product.inStock}
               <LucideCartPlus class="mr-2 w-5 h-5" />
