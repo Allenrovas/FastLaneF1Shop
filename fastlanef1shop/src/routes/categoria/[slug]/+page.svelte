@@ -203,11 +203,33 @@
     <!-- Racing stripe with animation -->
     <div class="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-error-500 via-warning-400 to-error-500 animate-pulse"></div>
   </section>
+{:else if $categoriesLoading}
+  <!-- Loading category info -->
+  <div class="container mx-auto px-4 py-12 text-center bg-surface-50 dark:bg-surface-900" in:fade>
+    <div class="flex justify-center items-center space-x-4 mb-4">
+      <div class="placeholder animate-pulse w-12 h-12 rounded-full bg-primary-300 dark:bg-primary-600"></div>
+    </div>
+    <p class="text-surface-600-300-token">Cargando información de categoría...</p>
+  </div>
+{:else}
+  <!-- Category not found -->
+  <div class="container mx-auto px-4 py-12 text-center bg-surface-50 dark:bg-surface-900" in:fade>
+    <div class="text-6xl mb-4 opacity-30">❌</div>
+    <h2 class="text-2xl font-bold mb-4 text-surface-900-50-token">Categoría no encontrada</h2>
+    <p class="text-surface-600-300-token mb-6">La categoría "{categorySlug}" no existe o no está configurada.</p>
+    <button 
+      class="btn variant-filled-primary"
+      on:click={() => goto(base || '/')}
+    >
+      <LucideArrowLeft class="mr-2 w-5 h-5" />
+      Volver al inicio
+    </button>
+  </div>
 {/if}
 
 <!-- Loading State -->
 {#if $isLoading}
-  <div class=" px-4 py-20 text-center bg-surface-50 dark:bg-surface-900" in:fade>
+  <div class="container mx-auto px-4 py-20 text-center bg-surface-50 dark:bg-surface-900" in:fade>
     <div class="flex justify-center items-center space-x-4 mb-8">
       <div class="placeholder animate-pulse w-12 h-12 rounded-full bg-primary-300 dark:bg-primary-600"></div>
       <div class="placeholder animate-pulse w-10 h-10 rounded-full bg-secondary-300 dark:bg-secondary-600 delay-200"></div>
@@ -241,7 +263,7 @@
       <!-- Section Header -->
       <div class="text-center mb-12">
         <h2 class="text-3xl font-bold text-surface-900-50-token mb-4">
-          Colección {$currentCategory.name}
+          Colección {$currentCategory?.name || categorySlug}
         </h2>
         <div class="flex items-center justify-center space-x-4 text-surface-600-300-token">
           <div class="flex items-center space-x-2">
@@ -278,13 +300,9 @@
               ¡Increíble colección!
             </h3>
             <p class="text-surface-600 dark:text-surface-300 mb-6">
-              Has explorado {$filteredProducts.length} modelos espectaculares de {$currentCategory.name}
+              Has explorado {$filteredProducts.length} modelos espectaculares de {$currentCategory?.name || categorySlug}
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button class="btn variant-soft-primary text-lg px-8 py-3">
-                <LucidePackage class="mr-2 w-5 h-5" />
-                Cargar Más Modelos
-              </button>
               <button 
                 class="btn variant-ghost-surface text-lg px-8 py-3"
                 on:click={() => goto(base || '/')}
@@ -315,7 +333,7 @@
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {#each $categories.filter(c => c.type === $currentCategory.type && c.id !== $currentCategory.id).slice(0, 3) as relatedCategory}
+        {#each $categories.filter(c => c.type === $currentCategory?.type && c.id !== $currentCategory?.id).slice(0, 3) as relatedCategory}
           <a 
             href="{base}/categoria/{relatedCategory.id}"
             class="card card-hover bg-surface-0 dark:bg-surface-800 p-6 text-center border border-surface-200 dark:border-surface-700 
