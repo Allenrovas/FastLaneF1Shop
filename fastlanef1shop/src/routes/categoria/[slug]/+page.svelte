@@ -15,7 +15,13 @@
     reloadCart,
     type Product 
   } from '$lib/stores/cart';
-  import { categories, loadCategories, type Category } from '$lib/stores/categories';
+  import { 
+    categories, 
+    categoriesLoading,
+    loadCategories, 
+    getCategoryById,
+    type Category 
+  } from '$lib/stores/categories';
 
   // Importar el componente ProductCard
   import ProductCard from '$lib/components/ProductCard.svelte';
@@ -31,6 +37,7 @@
   // Stores
   const products = writable<Product[]>([]);
   const isLoading = writable<boolean>(true);
+  const currentCategory = writable<Category | null>(null);
 
   // GitHub configuration
   const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/Allenrovas/Datos_Catalogo/main';
@@ -38,12 +45,11 @@
   // Get category from URL
   $: categorySlug = $page.params.slug;
   
-  // Derived stores
-  const currentCategory = derived(
-    [categories, page],
-    ([$categories, $page]) => 
-      $categories.find(cat => cat.id === $page.params.slug) || null
-  );
+  // Update current category when categories load or slug changes
+  $: if ($categories.length > 0 && categorySlug) {
+    const cat = getCategoryById(categorySlug);
+    currentCategory.set(cat || null);
+  }
 
   // Filtrar productos que contengan la categoría en su array de categorías
   const filteredProducts = derived(
@@ -68,62 +74,11 @@
       const data: Product[] = await response.json();
       products.set(data);
       
+      console.log(`✓ ${data.length} productos cargados`);
+      
     } catch (error) {
       console.error('Error loading products:', error);
-      
-      // Fallback mock data con múltiples categorías
-      const mockProducts: Product[] = [
-        {
-          id: 1,
-          name: "Red Bull RB19 Max Verstappen",
-          description: "El monoplaza dominador de la temporada, pilotado por Max Verstappen hacia su tercer título mundial consecutivo.",
-          categories: ["championship", "red-bull", "verstappen", "burago", "scale-1-43"],
-          price: 89.99,
-          images: ["rb19_1.jpg", "rb19_2.jpg", "rb19_3.jpg"],
-          imageFolder: "images/rb19/",
-          inStock: true,
-          limitedEdition: true,
-          year: 2023,
-          team: "Red Bull Racing",
-          manufacturer: "Bburago",
-          scale: "1:43",
-          driver: "Max Verstappen"
-        },
-        {
-          id: 2,
-          name: "Ferrari SF-23 Charles Leclerc",
-          description: "La máquina roja de Maranello con el corazón palpitante de la Scuderia Ferrari.",
-          categories: ["ferrari", "leclerc", "minichamps", "scale-1-43"],
-          price: 79.99,
-          images: ["sf23_1.jpg", "sf23_2.jpg"],
-          imageFolder: "images/sf23/",
-          inStock: true,
-          limitedEdition: false,
-          year: 2023,
-          team: "Scuderia Ferrari",
-          manufacturer: "Minichamps",
-          scale: "1:43",
-          driver: "Charles Leclerc"
-        },
-        {
-          id: 3,
-          name: "Mercedes W14 Lewis Hamilton",
-          description: "La flecha plateada de Mercedes-AMG Petronas, buscando recuperar su supremacía.",
-          categories: ["mercedes", "hamilton", "spark", "scale-1-18"],
-          price: 149.99,
-          images: ["w14_1.jpg", "w14_2.jpg", "w14_3.jpg"],
-          imageFolder: "images/w14/",
-          inStock: true,
-          limitedEdition: false,
-          year: 2023,
-          team: "Mercedes-AMG Petronas",
-          manufacturer: "Spark Model",
-          scale: "1:18",
-          driver: "Lewis Hamilton"
-        }
-      ];
-      
-      products.set(mockProducts);
+      products.set([]);
     } finally {
       isLoading.set(false);
     }
@@ -144,10 +99,10 @@
     goto(`${base}/producto/${product.id}`);
   }
 
-  onMount(() => {
+  onMount(async () => {
     reloadCart();
-    loadCategories();
-    loadProducts();
+    await loadCategories();
+    await loadProducts();
   });
 </script>
 
