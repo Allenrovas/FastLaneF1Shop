@@ -24,7 +24,7 @@
   // Importar imágenes
   import logoImageSrc from '$lib/assets/Logo.png';
   import instagramLogoSrc from '$lib/assets/Instagram.png';
-  import tiktokLogoSrc from '$lib/assets/TikTok.png';
+  import tiktokLogoSrc from '$lib/assets/Tiktok.png';
   import footerImageSrc from '$lib/assets/Footer.png';
 
   // Tipos (igual que tu estructura)
