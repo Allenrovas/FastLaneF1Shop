@@ -18,13 +18,11 @@
   import LucideShoppingCart from '~icons/lucide/shopping-cart';
   import LucideX from '~icons/lucide/x';
   import LucidePackage from '~icons/lucide/package';
-  import LucideSearch from '~icons/lucide/search';
-  import LucidePlus from '~icons/lucide/plus';
 
   // Importar imágenes
   import logoImageSrc from '$lib/assets/Logo.png';
   import instagramLogoSrc from '$lib/assets/Instagram.png';
-  import tiktokLogoSrc from '$lib/assets/TikTok.png';
+  import tiktokLogoSrc from '$lib/assets/Tiktok.png';
   import footerImageSrc from '$lib/assets/Footer.png';
 
   // Tipos (igual que tu estructura)
