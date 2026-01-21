@@ -24,7 +24,7 @@
   // Importar imágenes
   import logoImageSrc from '$lib/assets/Logo.png';
   import instagramLogoSrc from '$lib/assets/Instagram.png';
-  import tiktokLogoSrc from '$lib/assets/Tiktok.png';
+  import tiktokLogoSrc from '$lib/assets/TikTok.png';
   import footerImageSrc from '$lib/assets/Footer.png';
 
   // Tipos (igual que tu estructura)
@@ -418,96 +418,209 @@
     }
 
     // PRODUCTOS section
-    if (selectedProducts.length > 0) {
+    let productsStartY = currentY;
+    const hasProducts = selectedProducts.length > 0;
+    
+    if (hasProducts) {
       ctx.fillStyle = '#ff3333';
       ctx.font = 'bold 32px "Bebas Neue", "Arial Black", sans-serif';
       ctx.fillText('PRODUCTOS:', 40, currentY);
       currentY += 35;
 
-      for (let i = 0; i < selectedProducts.length; i++) {
-        const sp = selectedProducts[i];
+      // Calcular si necesitamos dos columnas
+      const spaceAvailable = 750 - currentY; // Espacio hasta donde empieza footer/social
+      const estimatedHeightPerProduct = 75; // ~60px imagen + 15px margen
+      const totalProductsHeight = selectedProducts.length * estimatedHeightPerProduct;
+      const needsTwoColumns = totalProductsHeight > spaceAvailable && selectedProducts.length >= 3;
+
+      if (needsTwoColumns) {
+        // LAYOUT DE DOS COLUMNAS
+        const columnWidth = 360;
+        const columnGap = 40;
+        const leftColumnX = 40;
+        const rightColumnX = leftColumnX + columnWidth + columnGap;
+        const productsPerColumn = Math.ceil(selectedProducts.length / 2);
         
-        // Intentar obtener la imagen del producto del caché
-        const productImg = productImagesCache.get(sp.product.id);
+        let leftColumnY = currentY;
+        let rightColumnY = currentY;
+
+        for (let i = 0; i < selectedProducts.length; i++) {
+          const sp = selectedProducts[i];
+          const isLeftColumn = i < productsPerColumn;
+          const columnX = isLeftColumn ? leftColumnX : rightColumnX;
+          let columnY = isLeftColumn ? leftColumnY : rightColumnY;
+          
+          const productImg = productImagesCache.get(sp.product.id);
+          
+          if (productImg && productImg.complete) {
+            const imgSize = 50; // Más pequeño para dos columnas
+            const imgX = columnX;
+            const imgY = columnY - 5;
+            
+            ctx.fillStyle = '#f5f5f5';
+            ctx.fillRect(imgX, imgY, imgSize, imgSize);
+            ctx.drawImage(productImg, imgX, imgY, imgSize, imgSize);
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(imgX, imgY, imgSize, imgSize);
+            
+            const textX = imgX + imgSize + 10;
+            const maxTextWidth = columnWidth - imgSize - 10;
+            
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 18px "Bebas Neue", sans-serif';
+            const productText = `${i + 1}. ${sp.product.name}`;
+            
+            // Truncar nombre si es muy largo
+            let displayName = productText;
+            if (ctx.measureText(displayName).width > maxTextWidth) {
+              while (ctx.measureText(displayName + '...').width > maxTextWidth && displayName.length > 10) {
+                displayName = displayName.slice(0, -1);
+              }
+              displayName += '...';
+            }
+            ctx.fillText(displayName, textX, columnY + 12);
+            
+            ctx.font = '14px "Bebas Neue", sans-serif';
+            const detailsText = `${sp.product.scale} • Q${sp.product.price.toFixed(2)} x${sp.quantity}`;
+            ctx.fillText(detailsText, textX, columnY + 30);
+            
+            if (isLeftColumn) {
+              leftColumnY += imgSize + 12;
+            } else {
+              rightColumnY += imgSize + 12;
+            }
+          } else {
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 18px "Bebas Neue", sans-serif';
+            
+            const productText = `${i + 1}. ${sp.product.name}`;
+            let displayName = productText;
+            const maxTextWidth = columnWidth;
+            
+            if (ctx.measureText(displayName).width > maxTextWidth) {
+              while (ctx.measureText(displayName + '...').width > maxTextWidth && displayName.length > 10) {
+                displayName = displayName.slice(0, -1);
+              }
+              displayName += '...';
+            }
+            ctx.fillText(displayName, columnX, columnY);
+            columnY += 20;
+            
+            ctx.font = '14px "Bebas Neue", sans-serif';
+            const detailsText = `${sp.product.scale} • Q${sp.product.price.toFixed(2)} x${sp.quantity}`;
+            ctx.fillText(detailsText, columnX, columnY);
+            
+            if (isLeftColumn) {
+              leftColumnY += 35;
+            } else {
+              rightColumnY += 35;
+            }
+          }
+        }
         
-        if (productImg && productImg.complete) {
-          // Dibujar imagen del producto (60x60)
-          const imgSize = 60;
-          const imgX = 40;
-          const imgY = currentY - 5;
+        currentY = Math.max(leftColumnY, rightColumnY) + 15;
+      } else {
+        // LAYOUT DE UNA COLUMNA (original)
+        for (let i = 0; i < selectedProducts.length; i++) {
+          const sp = selectedProducts[i];
+          const productImg = productImagesCache.get(sp.product.id);
           
-          // Fondo blanco para la imagen
-          ctx.fillStyle = '#f5f5f5';
-          ctx.fillRect(imgX, imgY, imgSize, imgSize);
-          
-          // Dibujar imagen
-          ctx.drawImage(productImg, imgX, imgY, imgSize, imgSize);
-          
-          // Borde alrededor de la imagen
-          ctx.strokeStyle = '#e0e0e0';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(imgX, imgY, imgSize, imgSize);
-          
-          // Texto del producto (desplazado por la imagen)
-          const textX = imgX + imgSize + 15;
-          
-          ctx.fillStyle = '#000000';
-          ctx.font = 'bold 22px "Bebas Neue", sans-serif';
-          const productText = `${i + 1}. ${sp.product.name}`;
-          ctx.fillText(productText, textX, currentY + 15);
-          
-          // Details
-          ctx.font = '18px "Bebas Neue", sans-serif';
-          const detailsText = `${sp.product.team} • ${sp.product.scale} • CANT: ${sp.quantity} • Q${sp.product.price.toFixed(2)}`;
-          ctx.fillText(detailsText, textX, currentY + 38);
-          
-          currentY += imgSize + 15;
-        } else {
-          // Si no hay imagen, usar el diseño anterior (sin imagen)
-          ctx.fillStyle = '#000000';
-          ctx.font = 'bold 24px "Bebas Neue", sans-serif';
-          
-          const productText = `${i + 1}. ${sp.product.name}`;
-          ctx.fillText(productText, 40, currentY);
-          currentY += 25;
-          
-          ctx.font = '20px "Bebas Neue", sans-serif';
-          const detailsText = `   ${sp.product.team} • ${sp.product.scale} • CANT: ${sp.quantity} • Q${sp.product.price.toFixed(2)}`;
-          ctx.fillText(detailsText, 40, currentY);
-          currentY += 30;
+          if (productImg && productImg.complete) {
+            const imgSize = 60;
+            const imgX = 40;
+            const imgY = currentY - 5;
+            
+            ctx.fillStyle = '#f5f5f5';
+            ctx.fillRect(imgX, imgY, imgSize, imgSize);
+            ctx.drawImage(productImg, imgX, imgY, imgSize, imgSize);
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(imgX, imgY, imgSize, imgSize);
+            
+            const textX = imgX + imgSize + 15;
+            
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 22px "Bebas Neue", sans-serif';
+            const productText = `${i + 1}. ${sp.product.name}`;
+            ctx.fillText(productText, textX, currentY + 15);
+            
+            ctx.font = '18px "Bebas Neue", sans-serif';
+            const detailsText = `${sp.product.team} • ${sp.product.scale} • CANT: ${sp.quantity} • Q${sp.product.price.toFixed(2)}`;
+            ctx.fillText(detailsText, textX, currentY + 38);
+            
+            currentY += imgSize + 15;
+          } else {
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 24px "Bebas Neue", sans-serif';
+            
+            const productText = `${i + 1}. ${sp.product.name}`;
+            ctx.fillText(productText, 40, currentY);
+            currentY += 25;
+            
+            ctx.font = '20px "Bebas Neue", sans-serif';
+            const detailsText = `   ${sp.product.team} • ${sp.product.scale} • CANT: ${sp.quantity} • Q${sp.product.price.toFixed(2)}`;
+            ctx.fillText(detailsText, 40, currentY);
+            currentY += 30;
+          }
         }
       }
 
       currentY += 10;
     }
 
-    // Ensure there's space before social media section
-    const minYBeforeSocial = 750;
-    if (currentY < minYBeforeSocial) {
-      currentY = minYBeforeSocial;
-    }
+    // Determinar si mostrar footer y redes sociales
+    const spaceRemaining = 1000 - currentY;
+    const needsFooter = spaceRemaining >= 140; // Espacio mínimo para footer (100) + redes (55) + margen
 
-    // Social media icons and handles
-    const socialY = currentY;
-    
-    // Instagram
-    if (instagramImage && instagramImage.complete) {
-      ctx.drawImage(instagramImage, 100, socialY, 55, 55);
-    }
-    ctx.fillStyle = '#ff3333';
-    ctx.font = 'bold 30px "Bebas Neue", "Arial Black", sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText('FASTLANEF1SHOP', 165, socialY + 38);
+    if (needsFooter) {
+      // Ensure there's space before social media section
+      const minYBeforeSocial = 750;
+      if (currentY < minYBeforeSocial) {
+        currentY = minYBeforeSocial;
+      }
 
-    // TikTok
-    if (tiktokImage && tiktokImage.complete) {
-      ctx.drawImage(tiktokImage, 450, socialY, 55, 55);
-    }
-    ctx.fillText('FASTLANEF1.SHOP', 515, socialY + 38);
+      // Social media icons and handles
+      const socialY = currentY;
+      
+      // Instagram
+      if (instagramImage && instagramImage.complete) {
+        ctx.drawImage(instagramImage, 100, socialY, 55, 55);
+      }
+      ctx.fillStyle = '#ff3333';
+      ctx.font = 'bold 30px "Bebas Neue", "Arial Black", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('FASTLANEF1SHOP', 165, socialY + 38);
 
-    // Draw footer
-    if (footerImage && footerImage.complete) {
-      ctx.drawImage(footerImage, 0, 900, canvas.width, 100);
+      // TikTok
+      if (tiktokImage && tiktokImage.complete) {
+        ctx.drawImage(tiktokImage, 450, socialY, 55, 55);
+      }
+      ctx.fillText('FASTLANEF1.SHOP', 515, socialY + 38);
+
+      // Draw footer
+      if (footerImage && footerImage.complete) {
+        ctx.drawImage(footerImage, 0, 900, canvas.width, 100);
+      }
+    } else {
+      // Si no hay espacio para footer, solo mostrar redes sociales más arriba si hay espacio
+      if (spaceRemaining >= 65) {
+        const socialY = currentY + 10;
+        
+        if (instagramImage && instagramImage.complete) {
+          ctx.drawImage(instagramImage, 100, socialY, 45, 45);
+        }
+        ctx.fillStyle = '#ff3333';
+        ctx.font = 'bold 24px "Bebas Neue", "Arial Black", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('FASTLANEF1SHOP', 155, socialY + 30);
+
+        if (tiktokImage && tiktokImage.complete) {
+          ctx.drawImage(tiktokImage, 450, socialY, 45, 45);
+        }
+        ctx.fillText('FASTLANEF1.SHOP', 505, socialY + 30);
+      }
+      // Si tampoco hay espacio para redes, simplemente no las mostramos
     }
   }
 
