@@ -398,7 +398,7 @@
     
     ctx.fillStyle = '#000000';
     ctx.font = 'bold 32px "Bebas Neue", sans-serif';
-    const pagoText = pagoContraEntrega ? (monto ? `Q${monto}` : '') : 'SIN COBRO';
+    const pagoText = pagoContraEntrega ? `Q. ${monto && String(monto).trim() !== '' ? parseFloat(monto).toFixed(2) : '0.00'}` : 'SIN COBRO';
     ctx.fillText(pagoText, 275, currentY);
     currentY += 45;
 
