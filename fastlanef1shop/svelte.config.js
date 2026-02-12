@@ -19,7 +19,7 @@ const config = {
 			strict: false         
 		}),
 		paths: {
-			base: process.env.NODE_ENV === 'production' ? '/FastLaneF1Shop' : '',
+			base: '',
 		}
 	}
 };
