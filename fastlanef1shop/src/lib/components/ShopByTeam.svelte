@@ -53,7 +53,9 @@
               <img
                 src={team.imagePath}
                 alt={team.name}
-                class="w-full h-full object-contain brightness-0 invert"
+                class={`w-full h-full object-contain ${
+                  team.id !== 'red-bull' ? 'brightness-0 invert' : ''
+                }`}
                 loading="lazy"
               />
             {:else}
