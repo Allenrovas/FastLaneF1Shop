@@ -7,6 +7,7 @@ export interface Category {
   description?: string;
   variant: string;
   icon: string;
+  imagePath?: string;
   type: 'general' | 'team' | 'manufacturer' | 'scale' | 'driver';
 }
 
@@ -31,11 +32,17 @@ export async function loadCategories(): Promise<void> {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const data: Category[] = await response.json();
     categories.set(data);
+    //Load images if type are team para los primeros 8 equipos
+    const teams = data.filter(cat => cat.type === 'team').slice(0, 8);
+    teams.forEach(team => {
+      team.imagePath = `${GITHUB_REPO_URL}/images/teams/${team.id}.svg`;
+      console.log(`Cargando imagen para ${team.name} desde ${team.imagePath}`);
+    });
     
-    console.log(`✓ ${data.length} categorías cargadas desde GitHub`);
+
     
   } catch (error) {
     console.error('Error loading categories:', error);

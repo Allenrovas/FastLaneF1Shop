@@ -182,7 +182,7 @@ ${orderSummary}
   <meta name="description" content="Finaliza tu compra de monoplazas de Fórmula 1" />
 </svelte:head>
 
-<div class="min-h-screen bg-gradient-to-br from-surface-50 via-surface-25 to-surface-100 dark:from-surface-900 dark:via-surface-925 dark:to-surface-800 py-8">
+<div class="min-h-screen bg-surface-900 py-8">
   <div class="container mx-auto px-4 max-w-6xl">
     
     <!-- Header -->
@@ -196,10 +196,10 @@ ${orderSummary}
       </button>
       
       <div class="text-center">
-        <h1 class="text-4xl font-bold bg-gradient-to-r from-secondary-800 to-secondary-600 bg-clip-text text-transparent mb-4">
+        <h1 class="text-4xl font-bold text-white mb-4">
           Finalizar Pedido
         </h1>
-        <p class="text-surface-600 dark:text-surface-300 text-lg">
+        <p class="text-surface-200 text-lg">
           Completa tus datos para procesar tu pedido vía WhatsApp
         </p>
       </div>
@@ -208,7 +208,7 @@ ${orderSummary}
     <!-- Progress Indicator -->
     <div class="flex justify-center mb-8">
       <div class="flex items-center space-x-4">
-        <div class="flex items-center {currentStep >= 1 ? 'text-secondary-800' : 'text-surface-400'}">
+        <div class="flex items-center {currentStep >= 1 ? 'text-secondary-800' : 'text-surface-200'}">
           <div class="w-8 h-8 rounded-full {currentStep >= 1 ? 'bg-secondary-800 text-white' : 'bg-surface-300 text-surface-600'} flex items-center justify-center font-semibold text-sm">
             {#if currentStep > 1}
               <LucideCheck class="w-4 h-4" />
@@ -221,7 +221,7 @@ ${orderSummary}
         
         <div class="w-16 h-0.5 {currentStep >= 2 ? 'bg-secondary-800' : 'bg-surface-300'}"></div>
         
-        <div class="flex items-center {currentStep >= 2 ? 'text-secondary-800' : 'text-surface-400'}">
+        <div class="flex items-center {currentStep >= 2 ? 'text-secondary-800' : 'text-surface-200'}">
           <div class="w-8 h-8 rounded-full {currentStep >= 2 ? 'bg-secondary-800 text-white' : 'bg-surface-300 text-surface-600'} flex items-center justify-center font-semibold text-sm">
             2
           </div>
@@ -238,7 +238,7 @@ ${orderSummary}
         {#if currentStep === 1}
           <!-- Paso 1: Datos del Cliente -->
           <div 
-            class="card variant-ghost-surface border border-surface-200 dark:border-surface-600 p-8"
+            class="bg-surface-800 border border-surface-700 rounded-lg p-8"
             in:fly={{ x: -20, duration: 400 }}
           >
             <div class="flex items-center mb-6">
@@ -246,10 +246,10 @@ ${orderSummary}
                 <LucideUser class="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                <h2 class="text-2xl font-bold text-white">
                   Datos del Cliente
                 </h2>
-                <p class="text-surface-600 dark:text-surface-300">
+                <p class="text-surface-200">
                   Información necesaria para la entrega
                 </p>
               </div>
@@ -399,7 +399,7 @@ ${orderSummary}
         {:else}
           <!-- Paso 2: Resumen del Pedido -->
           <div 
-            class="card variant-ghost-surface border border-surface-200 dark:border-surface-600 p-8"
+            class="bg-surface-800 border border-surface-700 rounded-lg p-8"
             in:fly={{ x: 20, duration: 400 }}
           >
             <div class="flex items-center mb-6">
@@ -407,10 +407,10 @@ ${orderSummary}
                 <LucideCheck class="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                <h2 class="text-2xl font-bold text-white">
                   Confirmar Pedido
                 </h2>
-                <p class="text-surface-600 dark:text-surface-300">
+                <p class="text-surface-200">
                   Revisa los datos antes de enviar a WhatsApp
                 </p>
               </div>
@@ -419,35 +419,35 @@ ${orderSummary}
             <!-- Resumen de datos -->
             <div class="space-y-4 mb-8">
               <div class="card variant-ghost-primary p-4">
-                <h3 class="font-bold text-lg mb-3 flex items-center text-surface-900 dark:text-surface-50">
+                <h3 class="font-bold text-lg mb-3 flex items-center text-white">
                   <LucideUser class="mr-2 w-5 h-5 text-primary-500" />
                   Datos de Entrega
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span class="text-surface-600 dark:text-surface-300">Nombre:</span>
-                    <p class="font-semibold text-surface-900 dark:text-surface-50">{formData.name}</p>
+                    <span class="text-surface-200">Nombre:</span>
+                    <p class="font-semibold text-white">{formData.name}</p>
                   </div>
                   <div>
-                    <span class="text-surface-600 dark:text-surface-300">Teléfono:</span>
-                    <p class="font-semibold text-surface-900 dark:text-surface-50">{formData.phone}</p>
+                    <span class="text-surface-200">Teléfono:</span>
+                    <p class="font-semibold text-white">{formData.phone}</p>
                   </div>
                   <div class="md:col-span-2">
-                    <span class="text-surface-600 dark:text-surface-300">Dirección:</span>
-                    <p class="font-semibold text-surface-900 dark:text-surface-50">{formData.address}</p>
+                    <span class="text-surface-200">Dirección:</span>
+                    <p class="font-semibold text-white">{formData.address}</p>
                   </div>
                   <div>
-                    <span class="text-surface-600 dark:text-surface-300">Ciudad:</span>
-                    <p class="font-semibold text-surface-900 dark:text-surface-50">{formData.city}</p>
+                    <span class="text-surface-200">Ciudad:</span>
+                    <p class="font-semibold text-white">{formData.city}</p>
                   </div>
                   <div>
-                    <span class="text-surface-600 dark:text-surface-300">Departamento:</span>
-                    <p class="font-semibold text-surface-900 dark:text-surface-50">{formData.department}</p>
+                    <span class="text-surface-200">Departamento:</span>
+                    <p class="font-semibold text-white">{formData.department}</p>
                   </div>
                   {#if formData.reference}
                     <div class="md:col-span-2">
-                      <span class="text-surface-600 dark:text-surface-300">Referencia:</span>
-                      <p class="font-semibold text-surface-900 dark:text-surface-50">{formData.reference}</p>
+                      <span class="text-surface-200">Referencia:</span>
+                      <p class="font-semibold text-white">{formData.reference}</p>
                     </div>
                   {/if}
                 </div>
@@ -501,8 +501,8 @@ ${orderSummary}
       <!-- Resumen del Carrito (Sidebar) -->
       <div class="lg:col-span-1">
         <div class="sticky top-8">
-          <div class="card variant-ghost-surface border border-surface-200 dark:border-surface-600 p-6">
-            <h3 class="text-xl font-bold mb-6 flex items-center text-surface-900 dark:text-surface-50">
+          <div class="bg-surface-800 border border-surface-700 rounded-lg p-6">
+            <h3 class="text-xl font-bold mb-6 flex items-center text-white">
               <LucideShoppingCart class="mr-2 w-5 h-5 text-primary-200" />
               Resumen del Pedido
             </h3>
@@ -510,8 +510,8 @@ ${orderSummary}
             <!-- Productos -->
             <div class="space-y-4 mb-6 max-h-96 overflow-y-auto">
               {#each $cart as item}
-                <div class="flex items-center space-x-3 p-3 bg-surface-100 dark:bg-surface-700 rounded-lg">
-                  <div class="w-12 h-12 bg-surface-200 dark:bg-surface-600 rounded-md overflow-hidden flex-shrink-0">
+                <div class="flex items-center space-x-3 p-3 bg-surface-700 rounded-lg">
+                  <div class="w-12 h-12 bg-surface-600 rounded-md overflow-hidden flex-shrink-0">
                     <img 
                       src={getProductImageUrl(item, 0)} 
                       alt={item.name}
@@ -522,23 +522,23 @@ ${orderSummary}
                       }}
                     />
                     <div class="w-full h-full hidden items-center justify-center">
-                      <LucideF1 class="w-6 h-6 text-surface-500" />
+                      <LucideF1 class="w-6 h-6 text-surface-300" />
                     </div>
                   </div>
                   
                   <div class="flex-1 min-w-0">
-                    <h4 class="font-semibold text-sm text-surface-900 dark:text-surface-50 line-clamp-2">
+                    <h4 class="font-semibold text-sm text-white line-clamp-2">
                       {item.name}
                     </h4>
                     <div class="flex items-center justify-between mt-1">
-                      <span class="text-xs text-surface-600 dark:text-surface-300">
+                      <span class="text-xs text-surface-200">
                         {item.scale} • {item.team}
                       </span>
                       <div class="text-right">
-                        <div class="text-xs text-surface-600 dark:text-surface-300">
+                        <div class="text-xs text-surface-200">
                           {item.quantity} × Q. {item.price.toFixed(2)}
                         </div>
-                        <div class="font-semibold text-sm text-success-600 dark:text-success-400">
+                        <div class="font-semibold text-sm text-success-400">
                           Q. {(item.price * item.quantity).toFixed(2)}
                         </div>
                       </div>
@@ -549,21 +549,21 @@ ${orderSummary}
             </div>
             
             <!-- Totales -->
-            <div class="border-t border-surface-200 dark:border-surface-600 pt-4 space-y-3">
+            <div class="border-t border-surface-600 pt-4 space-y-3">
               <div class="flex justify-between items-center">
-                <span class="flex items-center text-surface-600 dark:text-surface-300">
+                <span class="flex items-center text-surface-200">
                   <LucideCalculator class="mr-2 w-4 h-4" />
                   Subtotal ({$cartItemCount} items):
                 </span>
-                <span class="font-semibold text-surface-900 dark:text-surface-50">
+                <span class="font-semibold text-white">
                   Q. {$cartTotal.toFixed(2)}
                 </span>
               </div>
               
-              <div class="border-t border-surface-200 dark:border-surface-600 pt-3">
+              <div class="border-t border-surface-600 pt-3">
                 <div class="flex justify-between items-center">
-                  <span class="text-xl font-bold text-surface-900 dark:text-surface-50">Total:</span>
-                  <span class="text-2xl font-bold text-success-600 dark:text-success-400">
+                  <span class="text-xl font-bold text-white">Total:</span>
+                  <span class="text-2xl font-bold text-success-400">
                     Q. {$cartTotal.toFixed(2)}
                   </span>
                 </div>
@@ -571,14 +571,14 @@ ${orderSummary}
             </div>
 
             <!-- Información adicional -->
-            <div class="mt-6 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+            <div class="mt-6 p-4 bg-primary-900/20 rounded-lg">
               <div class="flex items-start">
                 <TablerBrandWhatsapp class="w-5 h-5 text-success-600 mr-2 mt-0.5 flex-shrink-0" />
                 <div class="text-sm">
-                  <p class="font-semibold text-surface-900 dark:text-surface-50 mb-1">
+                  <p class="font-semibold text-white mb-1">
                     Pago contra entrega
                   </p>
-                  <p class="text-surface-600 dark:text-surface-300">
+                  <p class="text-surface-200">
                     Tu pedido será enviado por WhatsApp para coordinar la entrega y el pago.
                   </p>
                 </div>

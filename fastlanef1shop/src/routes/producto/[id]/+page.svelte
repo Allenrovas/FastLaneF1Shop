@@ -5,14 +5,14 @@
   import { fade, fly, scale } from 'svelte/transition';
   import { goto } from '$app/navigation';
   import { base } from '$app/paths';
-  import { 
-    cart, 
-    cartTotal, 
-    cartItemCount, 
+  import {
+    cart,
+    cartTotal,
+    cartItemCount,
     addToCart,
     toastNotification,
     reloadCart,
-    type Product 
+    type Product
   } from '$lib/stores/cart';
   import { categories, loadCategories, type Category } from '$lib/stores/categories';
 
@@ -44,7 +44,7 @@
   import LucideGauge from '~icons/lucide/gauge';
   import LucideTimer from '~icons/lucide/timer';
   import LucideArrowLeft from '~icons/lucide/arrow-left';
-  import LucideEye from '~icons/lucide/eye';  
+  import LucideEye from '~icons/lucide/eye';
   import LucideTruck from '~icons/lucide/truck';
   import LucideShield from '~icons/lucide/shield-check';
 
@@ -71,7 +71,7 @@
   // Derived stores
   const currentCategories = derived(
     [categories, product],
-    ([$categories, $product]) => 
+    ([$categories, $product]) =>
       $product ? $categories.filter(cat => $product.categories.includes(cat.id)) : []
   );
 
@@ -82,35 +82,35 @@
     try {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       isLoading.set(true);
-      
+
       const response = await fetch(`${GITHUB_REPO_URL}/data/products.json`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data: Product[] = await response.json();
       const foundProduct = data.find(p => p.id === productId);
-      
+
       if (!foundProduct) {
         throw new Error('Product not found');
       }
-      
+
       product.set(foundProduct);
-      
+
       // Set related products (same categories, excluding current)
       const related = data
-      .filter(p => 
-        p.id !== foundProduct.id && 
+      .filter(p =>
+        p.id !== foundProduct.id &&
         p.categories.some(cat => foundProduct.categories.includes(cat)) &&
-        p.inStock // ✅ Solo productos en stock
+        p.inStock
       )
       .slice(0, 3);
     relatedProducts.set(related);
-      
+
     } catch (error) {
       console.error('Error loading product:', error);
-      
+
       // Fallback mock data con nuevas propiedades
       const mockProduct: Product = {
         id: productId,
@@ -144,9 +144,9 @@
         scale: "1:43",
         driver: "Max Verstappen"
       };
-      
+
       product.set(mockProduct);
-      
+
       // Mock related products
       const mockRelated: Product[] = [
         {
@@ -215,12 +215,12 @@
 
   function handleNotifyAvailability(): void {
     if (!$product) return;
-    
+
     const whatsappMessage = encodeURIComponent(
       `Hola! Me gustaría que me notifiquen cuando el producto "${$product.name}" esté disponible nuevamente.\n\n` +
       `Link del producto: ${window.location.href}`
     );
-    
+
     const whatsappURL = `https://wa.me/${WHATSAPP_PHONE}?text=${whatsappMessage}`;
     window.open(whatsappURL, '_blank');
   }
@@ -235,9 +235,9 @@
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width) * 100;
     const y = ((event.clientY - rect.top) / rect.height) * 100;
-    
+
     imagePosition.set({ x, y });
-    
+
     if ($zoomLevel === 1) {
       zoomLevel.set(2);
     } else {
@@ -266,22 +266,22 @@
     try {
       const currentUrl = `${window.location.origin}${$page.url.pathname}`;
       await navigator.clipboard.writeText(currentUrl);
-        
+
       // Mostrar toast de éxito
       toastNotification.set({
         message: 'Enlace copiado al portapapeles',
         type: 'success',
         visible: true
       });
-      
+
       // Ocultar toast después de 3 segundos
       setTimeout(() => {
         toastNotification.update(toast => ({ ...toast, visible: false }));
       }, 3000);
-      
+
     } catch (err) {
       console.error('Error al copiar el link:', err);
-      
+
       // Fallback para navegadores más antiguos
       try {
         const textArea = document.createElement('textarea');
@@ -290,18 +290,18 @@
         textArea.select();
         document.execCommand('copy');
         document.body.removeChild(textArea);
-        
+
         // Toast de éxito para fallback
         toastNotification.set({
           message: 'Enlace copiado al portapapeles',
           type: 'success',
           visible: true
         });
-        
+
         setTimeout(() => {
           toastNotification.update(toast => ({ ...toast, visible: false }));
         }, 3000);
-        
+
       } catch (fallbackErr) {
         // Toast de error si falla completamente
         toastNotification.set({
@@ -309,7 +309,7 @@
           type: 'error',
           visible: true
         });
-        
+
         setTimeout(() => {
           toastNotification.update(toast => ({ ...toast, visible: false }));
         }, 3000);
@@ -321,7 +321,7 @@
     reloadCart();
     loadCategories();
     loadProduct();
-    
+
     return () => {
       document.body.style.overflow = 'auto';
     };
@@ -337,44 +337,42 @@
   <!-- Loading State -->
   <div class="container mx-auto px-4 py-20 text-center" in:fade>
     <div class="flex justify-center items-center space-x-4 mb-8">
-      <div class="placeholder animate-pulse w-16 h-16 rounded-full bg-primary-300 dark:bg-primary-600"></div>
-      <div class="placeholder animate-pulse w-12 h-12 rounded-full bg-secondary-300 dark:bg-secondary-600"></div>
-      <div class="placeholder animate-pulse w-8 h-8 rounded-full bg-warning-300 dark:bg-warning-600"></div>
+      <div class="w-16 h-16 rounded-full bg-surface-700 animate-pulse"></div>
     </div>
-    <h3 class="text-2xl font-semibold text-surface-900 dark:text-surface-50 mb-4">
+    <h3 class="text-2xl font-semibold text-white mb-4">
       Cargando detalles del monoplaza...
     </h3>
-    <p class="text-surface-600 dark:text-surface-300">Preparando la experiencia premium para ti</p>
+    <p class="text-surface-200">Preparando la experiencia premium para ti</p>
   </div>
 {:else if $product}
   <!-- Breadcrumb -->
-  <section class="container mx-auto px-4 py-6 bg-surface-50 dark:bg-surface-900">
+  <section class="container mx-auto px-4 py-6 bg-surface-900">
     <nav class="breadcrumb">
       <ol class="flex items-center space-x-3 text-sm">
         <li>
-          <a 
+          <a
             href="{base || '/'}"
-            class="flex items-center space-x-2 text-surface-600 dark:text-surface-300 hover:text-primary-500 transition-colors duration-200 font-medium"
+            class="flex items-center space-x-2 text-surface-200 hover:text-primary-500 transition-colors duration-200 font-medium"
           >
             <span>Inicio</span>
           </a>
         </li>
-        <li class="text-surface-400 dark:text-surface-500">
+        <li class="text-surface-300">
           <LucideChevronRight class="w-4 h-4" />
         </li>
         <li class="flex items-center space-x-2">
-          <a 
+          <a
             href={`${base}/categoria/${$product.team.toLowerCase().replace(/\s+/g, '-')}`}
-            class="flex items-center space-x-2 text-surface-600 dark:text-surface-300 hover:text-primary-500 transition-colors duration-200 font-medium"
+            class="flex items-center space-x-2 text-surface-200 hover:text-primary-500 transition-colors duration-200 font-medium"
           >
             <span>{$product.team}</span>
           </a>
         </li>
-        <li class="text-surface-400 dark:text-surface-500">
+        <li class="text-surface-300">
           <LucideChevronRight class="w-4 h-4" />
         </li>
         <li class="flex items-center space-x-2">
-          <span class="font-semibold text-surface-900 dark:text-surface-50">
+          <span class="font-semibold text-white">
             {$product.name}
           </span>
         </li>
@@ -384,26 +382,25 @@
 
   <!-- Product Detail Section -->
   <section class="container mx-auto px-4 py-12">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12" in:fade={{ duration: 600 }}>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12" in:fade={{ duration: 400 }}>
       <!-- Product Images -->
       <div class="space-y-4">
         <!-- Main Image -->
-        <div class="relative bg-surface-100 dark:bg-surface-700 rounded-2xl overflow-hidden aspect-square group">
-        <img 
-          src={getProductImageUrl($product, $selectedImageIndex)} 
+        <div class="relative bg-surface-800 rounded-2xl overflow-hidden aspect-square border border-surface-700 group">
+        <img
+          src={getProductImageUrl($product, $selectedImageIndex)}
           alt={$product.name}
           class="w-full h-full object-cover transition-all duration-300 cursor-zoom-in select-none"
           style="transform: scale({$zoomLevel}); transform-origin: {$imagePosition.x}% {$imagePosition.y}%;"
           on:click={handleImageZoom}
           on:error={handleImageError}
-          in:scale={{ duration: 400 }}
           draggable="false"
         />
-        
+
         <!-- Image Controls -->
         <div class="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button 
-            class="btn btn-sm variant-filled-surface rounded-full shadow-lg hover:scale-110 transition-transform"
+          <button
+            class="btn btn-sm variant-filled-surface rounded-full shadow-lg"
             on:click|stopPropagation={() => {
               if ($zoomLevel === 1) {
                 zoomLevel.set(2);
@@ -417,17 +414,17 @@
             <LucideZoomIn class="w-4 h-4" />
           </button>
         </div>
-          
+
           <!-- Limited Edition Badge -->
           {#if $product.limitedEdition}
             <div class="absolute top-4 left-4">
-              <span class="badge variant-filled-warning text-sm font-bold shadow-lg animate-pulse">
+              <span class="badge variant-filled-warning text-sm font-bold shadow-lg">
                 <LucideStar class="mr-1 w-4 h-4" />
                 Edición Limitada
               </span>
             </div>
           {/if}
-          
+
           <!-- Stock Status -->
           <div class="absolute bottom-4 left-4">
             <span class="badge {$product.inStock ? 'variant-filled-success' : 'variant-filled-error'} text-sm font-bold shadow-lg">
@@ -441,17 +438,17 @@
             </span>
           </div>
         </div>
-        
+
         <!-- Thumbnail Images -->
         <div class="flex space-x-4 overflow-x-auto pb-2">
           {#each $product.images as image, index}
             <button
-              class="flex-shrink-0 w-20 h-20 bg-surface-200 dark:bg-surface-600 rounded-lg overflow-hidden border-2 transition-all duration-300 
-              {$selectedImageIndex === index ? 'border-primary-500 scale-105' : 'border-transparent hover:border-surface-300'}"
+              class="flex-shrink-0 w-20 h-20 bg-surface-800 rounded-lg overflow-hidden border-2 transition-colors duration-200
+              {$selectedImageIndex === index ? 'border-primary-500' : 'border-transparent hover:border-surface-500'}"
               on:click={() => selectedImageIndex.set(index)}
             >
-              <img 
-                src={getProductImageUrl($product, index)} 
+              <img
+                src={getProductImageUrl($product, index)}
                 alt="{$product.name} - Vista {index + 1}"
                 class="w-full h-full object-cover"
                 on:error={handleImageError}
@@ -464,7 +461,7 @@
       <!-- Product Information -->
       <div class="space-y-6">
         <!-- Product Header -->
-        <div in:fly={{ y: 30, duration: 600, delay: 200 }}>
+        <div>
           <!-- Category badges -->
           <div class="flex flex-wrap gap-2 mb-4">
             {#each $currentCategories as category}
@@ -473,7 +470,7 @@
               </span>
             {/each}
           </div>
-          
+
           <!-- Product details badges -->
           <div class="flex flex-wrap gap-2 mb-6">
             <span class="badge variant-soft-primary text-sm font-medium">
@@ -495,30 +492,18 @@
               {$product.year}
             </span>
           </div>
-          
-          <h1 class="text-4xl font-bold text-surface-900 dark:text-surface-50 mb-4 leading-tight">
+
+          <h1 class="text-4xl font-bold text-white mb-4 leading-tight">
             {$product.name}
           </h1>
-          
-          <!-- Rating -->
-          <!-- <div class="flex items-center space-x-3 mb-4">
-            <div class="flex space-x-1">
-              {#each Array(5) as _, i}
-                <LucideStar class="text-warning-500 w-5 h-5 fill-current" />
-              {/each}
-            </div>
-            <span class="text-surface-600 dark:text-surface-300 text-sm">
-              (4.9/5.0 • 127 reseñas)
-            </span>
-          </div> -->
-          
+
           <!-- Price -->
           <div class="flex items-center space-x-4 mb-6">
-            <span class="text-4xl font-bold text-success-600 dark:text-success-400">
+            <span class="text-4xl font-bold text-success-400">
               Q. {$product.price.toFixed(2)}
             </span>
             {#if $product.originalPrice && $product.originalPrice > $product.price}
-              <span class="text-2xl text-surface-500 dark:text-surface-400 line-through">
+              <span class="text-2xl text-surface-200 line-through">
                 Q. {$product.originalPrice.toFixed(2)}
               </span>
               <span class="badge variant-filled-error text-sm font-bold">
@@ -529,25 +514,24 @@
         </div>
 
         <!-- Product Description -->
-        <div class="prose prose-sm max-w-none" in:fly={{ y: 30, duration: 600, delay: 300 }}>
-          <p class="text-surface-700 dark:text-surface-200 leading-relaxed text-lg">
+        <div class="prose prose-sm max-w-none">
+          <p class="text-surface-300 leading-relaxed text-lg">
             {$product.description}
           </p>
         </div>
 
         <!-- Key Features -->
         {#if $product.features && $product.features.length > 0}
-          <div in:fly={{ y: 30, duration: 600, delay: 400 }}>
-            <h3 class="text-xl font-bold text-surface-900 dark:text-surface-50 mb-4 flex items-center">
+          <div>
+            <h3 class="text-xl font-bold text-white mb-4 flex items-center">
               <LucideCog class="mr-2 w-5 h-5 text-primary-500" />
               Características Principales
             </h3>
             <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {#each $product.features as feature, i}
-                <li class="flex items-center space-x-3 p-3 bg-surface-100 dark:bg-surface-700 rounded-lg"
-                    in:fly={{ x: -30, duration: 400, delay: 500 + (i * 100) }}>
-                  <LucideCheck class="text-success-500 w-5 h-5" />
-                  <span class="text-surface-800 dark:text-surface-100 font-medium">{feature}</span>
+              {#each $product.features as feature}
+                <li class="flex items-center space-x-3 p-3 bg-surface-800 rounded-lg border border-surface-700">
+                  <LucideCheck class="text-success-500 w-5 h-5 flex-shrink-0" />
+                  <span class="text-surface-200 font-medium">{feature}</span>
                 </li>
               {/each}
             </ul>
@@ -555,14 +539,13 @@
         {/if}
 
         <!-- Add to Cart Section -->
-        <div class="bg-surface-100 dark:bg-surface-700 p-6 rounded-2xl" 
-             in:fly={{ y: 30, duration: 600, delay: 600 }}>
+        <div class="bg-surface-800 border border-surface-700 p-6 rounded-2xl">
           <div class="flex items-center justify-between mb-6">
             <div>
-              <h3 class="text-lg font-bold text-surface-900 dark:text-surface-50 mb-2">
+              <h3 class="text-lg font-bold text-white mb-2">
                 Añadir a tu colección
               </h3>
-              <div class="flex items-center space-x-4 text-sm text-surface-600 dark:text-surface-300">
+              <div class="flex items-center space-x-4 text-sm text-surface-200">
                 <span class="flex items-center">
                   <LucideTruck class="mr-1 w-4 h-4" />
                   Envíos a toda Guatemala
@@ -574,9 +557,9 @@
               </div>
             </div>
           </div>
-          
+
           <button
-            class="btn variant-filled-primary w-full text-lg font-semibold py-4 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+            class="btn variant-filled-primary w-full text-lg font-semibold py-4 transition-colors duration-200 shadow-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
             on:click={() => $product.inStock ? handleAddToCart($product) : handleNotifyAvailability()}
             disabled={false}
           >
@@ -588,13 +571,13 @@
               Notificarme cuando esté disponible
             {/if}
           </button>
-          
-          <div class="flex items-center justify-center mt-4 space-x-4 text-sm text-surface-500 dark:text-surface-400">
+
+          <div class="flex items-center justify-center mt-4 space-x-4 text-sm text-surface-200">
             <span class="flex items-center">
               <LucideLock class="mr-1 w-4 h-4" />
               Compra segura
             </span>
-            <div class="w-px h-4 bg-surface-300 dark:bg-surface-600"></div>
+            <div class="w-px h-4 bg-surface-600"></div>
             <span class="flex items-center">
               <LucideCreditCard class="mr-1 w-4 h-4" />
               Pago fácil
@@ -603,24 +586,10 @@
         </div>
 
         <!-- Share Section -->
-        <div class="flex items-center justify-between pt-6 border-t border-surface-200 dark:border-surface-600">
-          <span class="text-surface-600 dark:text-surface-300 font-medium">Compartir:</span>
+        <div class="flex items-center justify-between pt-6 border-t border-surface-700">
+          <span class="text-surface-200 font-medium">Compartir:</span>
           <div class="flex space-x-3">
-            <!-- <button 
-              class="btn btn-sm variant-soft-primary rounded-full w-10 h-10 !p-0"
-              on:click={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank')}
-              title="Compartir en Facebook"
-            >
-              <LucideFacebook class="w-4 h-4" />
-            </button>
-            <button 
-              class="btn btn-sm variant-soft-secondary rounded-full w-10 h-10 !p-0"
-              on:click={() => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent($product.name)}`, '_blank')}
-              title="Compartir en Twitter"
-            > 
-              <LucideTwitter class="w-4 h-4" />
-            </button>-->
-            <button 
+            <button
               class="btn btn-sm variant-soft-success rounded-full w-10 h-10 !p-0"
               on:click={() => {
                 if (navigator.share) {
@@ -637,7 +606,7 @@
             >
               <LucideShare class="w-4 h-4" />
             </button>
-            <button 
+            <button
               class="btn btn-sm variant-soft-warning rounded-full w-10 h-10 !p-0"
               on:click={handleCopyLink}
               title="Copiar enlace"
@@ -652,19 +621,17 @@
 
   <!-- Technical Specifications -->
   {#if $product.specifications}
-    <section class=" px-4 py-12 bg-surface-100 dark:bg-surface-800"
-             in:fly={{ y: 50, duration: 600, delay: 800 }}>
+    <section class="px-4 py-12 bg-surface-800 border-t border-b border-surface-700">
       <div class="max-w-4xl container mx-auto">
-        <h2 class="text-3xl font-bold text-center text-surface-900 dark:text-surface-50 mb-12 flex items-center justify-center">
+        <h2 class="text-3xl font-bold text-center text-white mb-12 flex items-center justify-center">
           <LucideCog class="mr-3 w-7 h-7 text-primary-500" />
           Especificaciones Técnicas
         </h2>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {#each Object.entries($product.specifications) as [key, value], i}
-            <div class="card variant-ghost-surface p-6 text-center border border-surface-200 dark:border-surface-600"
-                 in:scale={{ duration: 400, delay: 900 + (i * 100) }}>
-              <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          {#each Object.entries($product.specifications) as [key, value]}
+            <div class="bg-surface-900 border border-surface-700 rounded-lg p-6 text-center">
+              <div class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 {#if key === 'engine'}
                   <LucideEngine class="w-8 h-8 text-white" />
                 {:else if key === 'power'}
@@ -677,10 +644,10 @@
                   <LucideTimer class="w-8 h-8 text-white" />
                 {/if}
               </div>
-              <h3 class="font-bold text-surface-900 dark:text-surface-50 mb-2 capitalize">
+              <h3 class="font-bold text-white mb-2 capitalize">
                 {key.replace(/([A-Z])/g, ' $1').trim()}
               </h3>
-              <p class="text-lg font-semibold text-primary-600 dark:text-primary-400">
+              <p class="text-lg font-semibold text-primary-400">
                 {value}
               </p>
             </div>
@@ -692,18 +659,17 @@
 
   <!-- Related Products con ProductCard -->
   {#if $relatedProducts.length > 0}
-    <section class="px-4 py-12 bg-surface-50 dark:bg-surface-900"
-             in:fly={{ y: 50, duration: 600, delay: 1000 }}>
+    <section class="px-4 py-12 bg-surface-900">
       <div class="container mx-auto">
         <div class="text-center mx-auto mb-12">
-          <h2 class="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-4">
+          <h2 class="text-3xl font-bold text-white mb-4">
             Productos Relacionados
           </h2>
-          <p class="text-surface-600 dark:text-surface-300 max-w-2xl mx-auto">
+          <p class="text-surface-200 max-w-2xl mx-auto">
             Descubre otros monoplazas que comparten categorías con este modelo
           </p>
         </div>
-        
+
         <!-- Grid con ProductCard -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {#each $relatedProducts as relatedProduct, i}
@@ -719,18 +685,18 @@
             />
           {/each}
         </div>
-        
+
         <!-- Call to Action -->
         <div class="text-center mt-12">
-          <div class="bg-gradient-to-r from-surface-100 to-surface-200 dark:from-surface-800 dark:to-surface-700 rounded-2xl p-8 max-w-2xl mx-auto">
-            <h3 class="text-xl font-bold text-surface-900 dark:text-surface-50 mb-4">
+          <div class="bg-surface-800 border border-surface-700 rounded-2xl p-8 max-w-2xl mx-auto">
+            <h3 class="text-xl font-bold text-white mb-4">
               ¿Buscas más modelos similares?
             </h3>
-            <p class="text-surface-600 dark:text-surface-300 mb-6">
+            <p class="text-surface-200 mb-6">
               Explora nuestra colección completa y descubre más monoplazas increíbles
             </p>
-            <button 
-              class="btn variant-filled-primary text-lg px-8 py-3 hover:scale-105 transition-transform duration-200"
+            <button
+              class="btn variant-filled-primary text-lg px-8 py-3 transition-colors duration-200"
               on:click={() => goto(base || '/')}
             >
               <LucideEye class="mr-2 w-5 h-5" />
@@ -745,22 +711,22 @@
   <!-- Product Not Found -->
   <div class="container mx-auto px-4 py-20 text-center" in:fade>
     <div class="max-w-md mx-auto">
-      <div class="text-8xl mb-8 text-surface-300 dark:text-surface-600 opacity-50">🏎️</div>
-      <h2 class="text-3xl font-bold text-surface-900 dark:text-surface-50 mb-4">
+      <div class="text-8xl mb-8 text-surface-600 opacity-50">🏎️</div>
+      <h2 class="text-3xl font-bold text-white mb-4">
         Producto no encontrado
       </h2>
-      <p class="text-surface-600 dark:text-surface-300 mb-8 leading-relaxed">
+      <p class="text-surface-200 mb-8 leading-relaxed">
         El monoplaza que buscas no está disponible o ha sido movido a otra ubicación.
       </p>
       <div class="space-y-3">
-        <button 
+        <button
           class="btn variant-filled-primary px-8 py-3"
           on:click={() => goto(base || '/')}
         >
           <LucideHome class="mr-2 w-4 h-4" />
           Volver al Inicio
         </button>
-        <button 
+        <button
           class="btn variant-soft-surface px-8 py-3"
           on:click={() => history.back()}
         >
@@ -779,69 +745,57 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
+
   .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
-  .card-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .card-hover:hover {
-    transform: translateY(-8px);
-  }
-  
+
   .cursor-zoom-in {
     cursor: zoom-in;
   }
-  
+
   /* Custom scrollbar for thumbnails */
   .overflow-x-auto::-webkit-scrollbar {
     height: 6px;
   }
-  
+
   .overflow-x-auto::-webkit-scrollbar-track {
     background: rgb(var(--color-surface-200));
   }
-  
+
   .overflow-x-auto::-webkit-scrollbar-thumb {
     background: rgb(var(--color-primary-500));
     border-radius: 3px;
   }
 
-  .cursor-zoom-in {
-    cursor: zoom-in;
-  }
-  
   .cursor-zoom-out {
     cursor: zoom-out;
   }
-  
+
   .cursor-move {
     cursor: move;
   }
-  
+
   .select-none {
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
   }
-  
+
   /* Prevenir scroll del body cuando el modal está abierto */
   :global(body.modal-open) {
     overflow: hidden !important;
   }
-  
+
   /* Animación suave para el zoom */
   .zoom-transition {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
+
   /* Mejora para los controles flotantes */
   .floating-controls {
     backdrop-filter: blur(8px);

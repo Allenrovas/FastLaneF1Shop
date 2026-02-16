@@ -653,17 +653,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo+Black&display=swap" rel="stylesheet">
 </svelte:head>
 
-<div class="min-h-screen bg-gradient-to-br from-surface-900 via-surface-800 to-surface-900 dark:from-surface-950 dark:via-surface-900 dark:to-surface-950 p-6">
+<div class="min-h-screen bg-gradient-to-br from-surface-900 via-surface-800 to-surface-900 p-6">
   <div class="max-w-7xl mx-auto">
 
     <div class="grid lg:grid-cols-2 gap-6 lg:gap-8">
       <!-- Editor Panel -->
       <div 
-        class="card card-hover overflow-hidden bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 
-        transition-all duration-300 hover:shadow-2xl hover:border-error-300 dark:hover:border-error-600"
+        class="card card-hover overflow-hidden bg-surface-800 border border-surface-700
+        transition-all duration-300 hover:shadow-2xl hover:border-primary-500/50"
         in:fly={{ x: -50, duration: 600, delay: 100 }}
       >
-        <header class="card-header bg-gradient-to-r from-error-500 to-error-600 p-6">
+        <header class="card-header bg-gradient-to-r from-primary-500 to-primary-600 p-6">
           <h2 class="text-2xl font-bold text-white flex items-center">
             <LucideImage class="mr-3 w-6 h-6" />
             EDITOR DE ORDEN
@@ -673,8 +673,8 @@
         <div class="p-6 space-y-6">
           <!-- Dirección -->
           <div class="form-group">
-            <label for="direccion" class="flex items-center text-surface-700 dark:text-surface-200 font-semibold text-sm uppercase tracking-wider mb-2">
-              <LucideMapPin class="mr-2 w-4 h-4 text-error-500" />
+            <label for="direccion" class="flex items-center text-surface-200 font-semibold text-sm uppercase tracking-wider mb-2">
+              <LucideMapPin class="mr-2 w-4 h-4 text-primary-500" />
               DIRECCIÓN
             </label>
             <textarea
@@ -683,16 +683,16 @@
               on:input={(e) => { direccion = toUpperCase(direccion); }}
               placeholder="INGRESA LA DIRECCIÓN COMPLETA"
               rows="3"
-              class="textarea bg-surface-100 dark:bg-surface-700 border-2 border-surface-300 dark:border-surface-600 
-              focus:border-error-500 dark:focus:border-error-400 focus:ring-2 focus:ring-error-200 dark:focus:ring-error-900 
-              transition-all duration-200 resize-none"
+              class="textarea bg-surface-700 border-2 border-surface-600
+              focus:border-primary-500 focus:ring-2 focus:ring-primary-900
+              transition-all duration-200 text-white resize-none"
             />
           </div>
 
           <!-- Nombre -->
           <div class="form-group">
-            <label for="nombre" class="flex items-center text-surface-700 dark:text-surface-200 font-semibold text-sm uppercase tracking-wider mb-2">
-              <LucideUser class="mr-2 w-4 h-4 text-error-500" />
+            <label for="nombre" class="flex items-center text-surface-200 font-semibold text-sm uppercase tracking-wider mb-2">
+              <LucideUser class="mr-2 w-4 h-4 text-primary-500" />
               NOMBRE
             </label>
             <input
@@ -701,16 +701,16 @@
               bind:value={nombre}
               on:input={(e) => { nombre = toUpperCase(nombre); }}
               placeholder="NOMBRE DEL CLIENTE"
-              class="input bg-surface-100 dark:bg-surface-700 border-2 border-surface-300 dark:border-surface-600 
-              focus:border-error-500 dark:focus:border-error-400 focus:ring-2 focus:ring-error-200 dark:focus:ring-error-900 
-              transition-all duration-200"
+              class="input bg-surface-700 border-2 border-surface-600
+              focus:border-primary-500 focus:ring-2 focus:ring-primary-900
+              transition-all duration-200 text-white"
             />
           </div>
 
           <!-- Teléfono -->
           <div class="form-group">
-            <label for="telefono" class="flex items-center text-surface-700 dark:text-surface-200 font-semibold text-sm uppercase tracking-wider mb-2">
-              <LucidePhone class="mr-2 w-4 h-4 text-error-500" />
+            <label for="telefono" class="flex items-center text-surface-200 font-semibold text-sm uppercase tracking-wider mb-2">
+              <LucidePhone class="mr-2 w-4 h-4 text-primary-500" />
               TELÉFONO
             </label>
             <input
@@ -719,31 +719,31 @@
               bind:value={telefono}
               on:input={(e) => { telefono = toUpperCase(telefono); }}
               placeholder="NÚMERO DE TELÉFONO"
-              class="input bg-surface-100 dark:bg-surface-700 border-2 border-surface-300 dark:border-surface-600 
-              focus:border-error-500 dark:focus:border-error-400 focus:ring-2 focus:ring-error-200 dark:focus:ring-error-900 
-              transition-all duration-200"
+              class="input bg-surface-700 border-2 border-surface-600
+              focus:border-primary-500 focus:ring-2 focus:ring-primary-900
+              transition-all duration-200 text-white"
             />
           </div>
 
           <!-- Pago contra entrega -->
           <div class="form-group">
-            <div class="card variant-soft-surface p-4 rounded-lg border border-surface-300 dark:border-surface-600">
+            <div class="card variant-soft-surface p-4 rounded-lg border border-surface-600">
               <label class="flex items-center space-x-3 cursor-pointer">
                 <input
                   id="pagoCheck"
                   type="checkbox"
                   bind:checked={pagoContraEntrega}
-                  class="checkbox scale-125 accent-error-500"
+                  class="checkbox scale-125 accent-primary-500"
                 />
-                <span class="font-semibold text-surface-800 dark:text-surface-100 flex items-center">
-                  <LucideDollarSign class="mr-2 w-5 h-5 text-error-500" />
+                <span class="font-semibold text-surface-100 flex items-center">
+                  <LucideDollarSign class="mr-2 w-5 h-5 text-primary-500" />
                   PAGO CONTRA ENTREGA
                 </span>
               </label>
 
               {#if pagoContraEntrega}
                 <div class="mt-4 pl-9" in:fly={{ y: -10, duration: 300 }}>
-                  <label for="monto" class="flex items-center text-surface-600 dark:text-surface-300 font-medium text-sm mb-2">
+                  <label for="monto" class="flex items-center text-surface-300 font-medium text-sm mb-2">
                     MONTO (Q)
                   </label>
                   <input
@@ -753,8 +753,8 @@
                     placeholder="INGRESA EL MONTO"
                     min="0"
                     step="0.01"
-                    class="input bg-surface-100 dark:bg-surface-700 border-2 border-surface-300 dark:border-surface-600 
-                    focus:border-error-500 dark:focus:border-error-400 focus:ring-2 focus:ring-error-200 dark:focus:ring-error-900 
+                    class="input bg-surface-700 border-2 border-surface-600 
+                    focus:border-primary-500 focus:ring-2 focus:ring-primary-900 
                     transition-all duration-200"
                   />
                 </div>
@@ -764,23 +764,23 @@
 
           <!-- Nota Adicional -->
           <div class="form-group">
-            <div class="card variant-soft-surface p-4 rounded-lg border border-surface-300 dark:border-surface-600">
+            <div class="card variant-soft-surface p-4 rounded-lg border border-surface-600">
               <label class="flex items-center space-x-3 cursor-pointer">
                 <input
                   id="notaCheck"
                   type="checkbox"
                   bind:checked={notaAdicional}
-                  class="checkbox scale-125 accent-error-500"
+                  class="checkbox scale-125 accent-primary-500"
                 />
-                <span class="font-semibold text-surface-800 dark:text-surface-100 flex items-center">
-                  <LucideFileText class="mr-2 w-5 h-5 text-error-500" />
+                <span class="font-semibold text-surface-100 flex items-center">
+                  <LucideFileText class="mr-2 w-5 h-5 text-primary-500" />
                   NOTA ADICIONAL
                 </span>
               </label>
 
               {#if notaAdicional}
                 <div class="mt-4 pl-9" in:fly={{ y: -10, duration: 300 }}>
-                  <label for="notaTexto" class="flex items-center text-surface-600 dark:text-surface-300 font-medium text-sm mb-2">
+                  <label for="notaTexto" class="flex items-center text-surface-300 font-medium text-sm mb-2">
                     TEXTO DE LA NOTA
                   </label>
                   <textarea
@@ -789,8 +789,8 @@
                     on:input={(e) => { notaTexto = toUpperCase(notaTexto); }}
                     placeholder="ESCRIBE TU NOTA ADICIONAL AQUÍ..."
                     rows={4}
-                    class="input bg-surface-100 dark:bg-surface-700 border-2 border-surface-300 dark:border-surface-600 
-                    focus:border-error-500 dark:focus:border-error-400 focus:ring-2 focus:ring-error-200 dark:focus:ring-error-900 
+                    class="input bg-surface-700 border-2 border-surface-600 
+                    focus:border-primary-500 focus:ring-2 focus:ring-primary-900 
                     transition-all duration-200"
                   />
                 </div>
@@ -800,16 +800,16 @@
 
           <!-- Productos Section -->
           <div class="form-group">
-            <label class="flex items-center text-surface-700 dark:text-surface-200 font-semibold text-sm uppercase tracking-wider mb-2">
-              <LucideShoppingCart class="mr-2 w-4 h-4 text-error-500" />
+            <label class="flex items-center text-surface-200 font-semibold text-sm uppercase tracking-wider mb-2">
+              <LucideShoppingCart class="mr-2 w-4 h-4 text-primary-500" />
               PRODUCTOS ({selectedProducts.length})
             </label>
             
             <!-- Autocomplete de Skeleton con Popup -->
             <div class="autocomplete-wrapper">
               <input
-                class="input autocomplete bg-surface-100 dark:bg-surface-700 border-2 border-surface-300 dark:border-surface-600 
-                focus:border-error-500 dark:focus:border-error-400 focus:ring-2 focus:ring-error-200 dark:focus:ring-error-900 
+                class="input autocomplete bg-surface-700 border-2 border-surface-600 
+                focus:border-primary-500 focus:ring-2 focus:ring-primary-900 
                 transition-all duration-200"
                 type="search"
                 name="autocomplete-products"
@@ -830,8 +830,8 @@
             {#if selectedProducts.length > 0}
               <div class="mt-4 space-y-2 max-h-60 overflow-y-auto">
                 {#each selectedProducts as sp}
-                  <div class="flex items-center space-x-3 p-3 bg-surface-100 dark:bg-surface-700 rounded-lg">
-                    <div class="w-10 h-10 bg-surface-200 dark:bg-surface-600 rounded-md overflow-hidden flex-shrink-0">
+                  <div class="flex items-center space-x-3 p-3 bg-surface-700 rounded-lg">
+                    <div class="w-10 h-10 bg-surface-600 rounded-md overflow-hidden flex-shrink-0">
                       <img 
                         src={getProductImageUrl(sp.product)} 
                         alt={sp.product.name}
@@ -842,23 +842,23 @@
                         }}
                       />
                       <div class="w-full h-full hidden items-center justify-center">
-                        <LucidePackage class="w-5 h-5 text-surface-500" />
+                        <LucidePackage class="w-5 h-5 text-surface-300" />
                       </div>
                     </div>
                     
                     <div class="flex-1 min-w-0">
-                      <h4 class="font-semibold text-sm text-surface-900 dark:text-surface-50 truncate">
+                      <h4 class="font-semibold text-sm text-white truncate">
                         {sp.product.name}
                       </h4>
                       <div class="flex items-center justify-between mt-1">
-                        <span class="text-xs text-surface-600 dark:text-surface-300">
+                        <span class="text-xs text-surface-300">
                           {sp.product.scale} • {sp.product.team}
                         </span>
                         <div class="text-right">
-                          <div class="text-xs text-surface-600 dark:text-surface-300">
+                          <div class="text-xs text-surface-300">
                             {sp.quantity} × Q{sp.product.price.toFixed(2)}
                           </div>
-                          <div class="font-semibold text-sm text-success-600 dark:text-success-400">
+                          <div class="font-semibold text-sm text-success-400">
                             Q{(sp.product.price * sp.quantity).toFixed(2)}
                           </div>
                         </div>
@@ -879,7 +879,7 @@
                         value={sp.quantity}
                         on:change={(e) => updateQuantity(sp.product.id, parseInt(e.currentTarget.value) || 1)}
                         min="1"
-                        class="input w-12 h-7 text-center text-xs p-1 bg-surface-50 dark:bg-surface-600"
+                        class="input w-12 h-7 text-center text-xs p-1 bg-surface-600 text-white"
                       />
                       <button
                         type="button"
@@ -902,18 +902,18 @@
               </div>
 
               <!-- Totales -->
-              <div class="mt-4 pt-4 border-t border-surface-200 dark:border-surface-600">
+              <div class="mt-4 pt-4 border-t border-surface-600">
                 <div class="flex justify-between text-sm">
-                  <span class="text-surface-600 dark:text-surface-300">Total items:</span>
-                  <span class="font-semibold text-surface-900 dark:text-surface-50">{getTotalProducts()}</span>
+                  <span class="text-surface-300">Total items:</span>
+                  <span class="font-semibold text-white">{getTotalProducts()}</span>
                 </div>
                 <div class="flex justify-between text-sm mt-1">
-                  <span class="text-surface-600 dark:text-surface-300">Total:</span>
-                  <span class="font-semibold text-success-600 dark:text-success-400">Q{getTotalPrice().toFixed(2)}</span>
+                  <span class="text-surface-300">Total:</span>
+                  <span class="font-semibold text-success-400">Q{getTotalPrice().toFixed(2)}</span>
                 </div>
               </div>
             {:else}
-              <p class="text-sm text-surface-500 dark:text-surface-400 text-center py-4 mt-4">
+              <p class="text-sm text-surface-200 text-center py-4 mt-4">
                 No hay productos agregados. Busca y selecciona productos arriba.
               </p>
             {/if}
@@ -923,7 +923,7 @@
           <button
             on:click={downloadImage}
             disabled={isGenerating}
-            class="btn variant-filled-error w-full font-bold text-lg shadow-lg hover:shadow-xl 
+            class="btn variant-filled-primary w-full font-bold text-lg shadow-lg hover:shadow-xl 
             hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
             {isGenerating ? 'animate-pulse' : ''}"
           >
@@ -935,23 +935,23 @@
 
       <!-- Preview Panel -->
       <div 
-        class="card card-hover overflow-hidden bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 
-        transition-all duration-300 hover:shadow-2xl hover:border-error-300 dark:hover:border-error-600 lg:sticky lg:top-6"
+        class="card card-hover overflow-hidden bg-surface-800 border border-surface-700
+        transition-all duration-300 hover:shadow-2xl hover:border-primary-500/50 lg:sticky lg:top-6"
         in:fly={{ x: 50, duration: 600, delay: 200 }}
       >
-        <header class="card-header bg-gradient-to-r from-surface-100 to-surface-50 dark:from-surface-700 dark:to-surface-800 p-6 border-b-2 border-surface-200 dark:border-surface-600">
-          <h2 class="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center">
+        <header class="card-header bg-gradient-to-r from-surface-700 to-surface-800 p-6 border-b-2 border-surface-600">
+          <h2 class="text-2xl font-bold text-white flex items-center">
             <LucideCheck class="mr-3 w-6 h-6 text-success-500" />
             VISTA PREVIA
           </h2>
         </header>
 
         <div class="p-6">
-          <div class="bg-gradient-to-br from-surface-50 to-surface-100 dark:from-surface-900 dark:to-surface-950 
-          rounded-xl p-4 shadow-inner border-2 border-surface-200 dark:border-surface-700">
+          <div class="bg-gradient-to-br from-surface-900 to-surface-950
+          rounded-xl p-4 shadow-inner border-2 border-surface-700">
             <canvas
               bind:this={canvas}
-              class="w-full h-auto rounded-lg shadow-2xl border border-surface-300 dark:border-surface-600"
+              class="w-full h-auto rounded-lg shadow-2xl border border-surface-600"
             />
           </div>
         </div>
@@ -1001,12 +1001,12 @@
   }
 
   .checkbox:checked {
-    @apply bg-error-500 border-error-500;
+    @apply bg-primary-500 border-primary-500;
   }
 
   /* Estilos personalizados para Autocomplete de Skeleton con Popup */
   .autocomplete-wrapper [data-popup] {
-    @apply bg-surface-50 dark:bg-surface-800 border-2 border-error-300 dark:border-error-600 shadow-2xl;
+    @apply bg-surface-800 border-2 border-primary-500/50 shadow-2xl;
   }
 
   .autocomplete-wrapper :global(.autocomplete-list) {
@@ -1014,11 +1014,11 @@
   }
 
   .autocomplete-wrapper :global(.autocomplete-list-item) {
-    @apply p-3 hover:bg-error-50 dark:hover:bg-error-900/20 transition-colors cursor-pointer;
+    @apply p-3 hover:bg-primary-900/20 transition-colors cursor-pointer;
   }
 
   .autocomplete-wrapper :global(.autocomplete-list-item[aria-selected="true"]) {
-    @apply bg-error-50 dark:bg-error-900/20;
+    @apply bg-primary-900/20;
   }
 
   .autocomplete-input,

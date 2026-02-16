@@ -9,7 +9,17 @@ export default {
 	darkMode: 'class',
 	content: ['./src/**/*.{html,js,svelte,ts}', join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')],
 	theme: {
-		extend: {},
+		extend: {
+			colors: {
+				'f1-red': '#e22928',
+				'f1-black': '#000000',
+				'f1-carbon': '#1a1a1a',
+			},
+			fontFamily: {
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+				racing: ['Orbitron', 'system-ui', 'sans-serif'],
+			},
+		},
 	},
 	plugins: [
 		forms,

@@ -44,7 +44,7 @@
 </svelte:head>
 
 {#if mounted}
-  <div class="min-h-screen flex flex-col items-center justify-center bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-surface-100 p-4" in:fade={{ duration: 400 }}>
+  <div class="min-h-screen flex flex-col items-center justify-center bg-surface-900 text-white p-4" in:fade={{ duration: 400 }}>
 	<div class="text-center max-w-md">
 	  <div class="text-9xl mb-4 font-bold">{ $page.status }</div>
 	  <h1 class="text-3xl font-semibold mb-2">{ errorTitle }</h1>
