@@ -355,7 +355,19 @@
                 in:fly={{ x: -30, duration: 300, delay: i * 50 }}
               >
                 <span class="flex items-center gap-1.5">
-                  <svelte:component this={IconComponent} class="w-3.5 h-3.5" />
+                  {#if category.type === 'team' && category.imagePath}
+                    <img
+                      src={category.imagePath}
+                      alt={category.name}
+                      class="w-3.5 h-3.5 brightness-0 invert"
+                    />
+                  {:else}
+                    <svelte:component
+                      this={IconComponent}
+                      class="w-3.5 h-3.5"
+                    />
+                  {/if}
+
                   <span>{category.name}</span>
                   {#if category.id !== 'all'}
                     <span class="text-xs opacity-70">
@@ -476,7 +488,18 @@
                   on:click={() => toggleCategory(category.id)}
                 >
                   <span class="flex items-center gap-2">
-                    <svelte:component this={IconComponent} class="w-4 h-4" />
+                    {#if category.type === 'team' && category.imagePath}
+                      <img
+                        src={category.imagePath}
+                        alt={category.name}
+                        class="w-4 h-4 brightness-0 invert"
+                      />
+                    {:else}
+                      <svelte:component
+                        this={IconComponent}
+                        class="w-4 h-4"
+                      />
+                    {/if}
                     <span class="text-sm font-medium">{category.name}</span>
                   </span>
                   <span class="flex items-center gap-2">
