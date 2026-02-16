@@ -274,6 +274,18 @@
             </h3>
             <ul class="space-y-3">
               <li>
+                <a href={`${base}/`} class="flex items-center gap-2 text-gray-500 hover:text-primary-500 transition-colors duration-200 group">
+                  <LucideHome class="w-4 h-4 opacity-50 group-hover:opacity-100" />
+                  <span>Inicio</span>
+                </a>
+              </li>
+              <li>
+                <a href={`${base}/catalogo`} class="flex items-center gap-2 text-gray-500 hover:text-primary-500 transition-colors duration-200 group">
+                  <LucideBookOpen class="w-4 h-4 opacity-50 group-hover:opacity-100" />
+                  <span>Catálogo</span>
+                </a>
+              </li>
+              <li>
                 <a href={`${base}/shipping`} class="flex items-center gap-2 text-gray-500 hover:text-primary-500 transition-colors duration-200 group">
                   <LucideTruck class="w-4 h-4 opacity-50 group-hover:opacity-100" />
                   <span>Envíos</span>
