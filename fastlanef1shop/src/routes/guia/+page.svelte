@@ -20,7 +20,7 @@
   import LucidePackage from '~icons/lucide/package';
 
   // Importar imágenes
-  import logoImageSrc from '$lib/assets/Logo.png';
+  import logoImageSrc from '$lib/assets/F1L CON LETRAS.png';
   import instagramLogoSrc from '$lib/assets/Instagram.png';
   import tiktokLogoSrc from '$lib/assets/Tiktok.png';
   import footerImageSrc from '$lib/assets/Footer.png';

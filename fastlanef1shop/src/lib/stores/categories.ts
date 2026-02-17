@@ -36,7 +36,7 @@ export async function loadCategories(): Promise<void> {
     const data: Category[] = await response.json();
     categories.set(data);
     //Load images if type are team para los primeros 8 equipos
-    const teams = data.filter(cat => cat.type === 'team').slice(0, 8);
+    const teams = data.filter(cat => cat.type === 'team');
     teams.forEach(team => {
       team.imagePath = `${GITHUB_REPO_URL}/images/teams/${team.id}.svg`;
       console.log(`Cargando imagen para ${team.name} desde ${team.imagePath}`);
