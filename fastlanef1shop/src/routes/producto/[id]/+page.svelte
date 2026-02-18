@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { writable, derived } from 'svelte/store';
-  import { fade, fly, scale } from 'svelte/transition';
+  import { fade, fly } from 'svelte/transition';
   import { goto } from '$app/navigation';
   import { base } from '$app/paths';
   import {
@@ -16,10 +16,9 @@
   } from '$lib/stores/cart';
   import { categories, loadCategories, type Category } from '$lib/stores/categories';
 
-  // Importar el componente ProductCard
   import ProductCard from '$lib/components/ProductCard.svelte';
 
-  // Importar iconos con unplugin
+  // Icons
   import LucideHome from '~icons/lucide/home';
   import LucideChevronRight from '~icons/lucide/chevron-right';
   import LucideF1 from '~icons/lucide/car-front';
@@ -28,13 +27,10 @@
   import LucideCheck from '~icons/lucide/check-circle';
   import LucideClose from '~icons/lucide/x-circle';
   import LucideZoomIn from '~icons/lucide/zoom-in';
-  import LucideMaximize from '~icons/lucide/maximize';
   import LucideCartPlus from '~icons/lucide/shopping-cart';
   import LucideClock from '~icons/lucide/clock';
   import LucideLock from '~icons/lucide/lock';
   import LucideCreditCard from '~icons/lucide/credit-card';
-  import LucideFacebook from '~icons/lucide/facebook';
-  import LucideTwitter from '~icons/lucide/twitter';
   import LucideShare from '~icons/lucide/share-2';
   import LucideLink from '~icons/lucide/link';
   import LucideCog from '~icons/lucide/cog';
@@ -55,11 +51,8 @@
   const zoomLevel = writable<number>(1);
   const imagePosition = writable<{ x: number; y: number }>({ x: 0, y: 0 });
 
-
   // GitHub configuration
   const GITHUB_REPO_URL = 'https://raw.githubusercontent.com/Allenrovas/Datos_Catalogo/main';
-
-  // Configuración de WhatsApp
   const WHATSAPP_PHONE = '+50249395444';
 
   // Get product ID from URL
@@ -76,6 +69,17 @@
   );
 
   const relatedProducts = writable<Product[]>([]);
+
+  // Sticky bar visibility
+  let showStickyBar = false;
+  let ctaSectionEl: HTMLElement;
+
+  function handleScroll() {
+    if (ctaSectionEl) {
+      const rect = ctaSectionEl.getBoundingClientRect();
+      showStickyBar = rect.bottom < 0;
+    }
+  }
 
   // Load single product
   async function loadProduct(): Promise<void> {
@@ -98,20 +102,18 @@
 
       product.set(foundProduct);
 
-      // Set related products (same categories, excluding current)
       const related = data
-      .filter(p =>
-        p.id !== foundProduct.id &&
-        p.categories.some(cat => foundProduct.categories.includes(cat)) &&
-        p.inStock
-      )
-      .slice(0, 3);
-    relatedProducts.set(related);
+        .filter(p =>
+          p.id !== foundProduct.id &&
+          p.categories.some(cat => foundProduct.categories.includes(cat)) &&
+          p.inStock
+        )
+        .slice(0, 3);
+      relatedProducts.set(related);
 
     } catch (error) {
       console.error('Error loading product:', error);
 
-      // Fallback mock data con nuevas propiedades
       const mockProduct: Product = {
         id: productId,
         name: "Red Bull RB19 Max Verstappen",
@@ -147,7 +149,6 @@
 
       product.set(mockProduct);
 
-      // Mock related products
       const mockRelated: Product[] = [
         {
           id: 2,
@@ -246,7 +247,6 @@
     }
   }
 
-  // Event handlers para ProductCard en productos relacionados
   function handleRelatedProductClick(productId: number): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     goto(`${base}/producto/${productId}`);
@@ -267,14 +267,12 @@
       const currentUrl = `${window.location.origin}${$page.url.pathname}`;
       await navigator.clipboard.writeText(currentUrl);
 
-      // Mostrar toast de éxito
       toastNotification.set({
         message: 'Enlace copiado al portapapeles',
         type: 'success',
         visible: true
       });
 
-      // Ocultar toast después de 3 segundos
       setTimeout(() => {
         toastNotification.update(toast => ({ ...toast, visible: false }));
       }, 3000);
@@ -282,7 +280,6 @@
     } catch (err) {
       console.error('Error al copiar el link:', err);
 
-      // Fallback para navegadores más antiguos
       try {
         const textArea = document.createElement('textarea');
         textArea.value = window.location.href;
@@ -291,7 +288,6 @@
         document.execCommand('copy');
         document.body.removeChild(textArea);
 
-        // Toast de éxito para fallback
         toastNotification.set({
           message: 'Enlace copiado al portapapeles',
           type: 'success',
@@ -303,7 +299,6 @@
         }, 3000);
 
       } catch (fallbackErr) {
-        // Toast de error si falla completamente
         toastNotification.set({
           message: 'No se pudo copiar el enlace',
           type: 'error',
@@ -317,13 +312,25 @@
     }
   }
 
+  // Spec key display names
+  const specLabels: Record<string, string> = {
+    engine: 'Motor',
+    power: 'Potencia',
+    weight: 'Peso',
+    topSpeed: 'Velocidad Máx.',
+    acceleration: 'Aceleración'
+  };
+
   onMount(() => {
     reloadCart();
     loadCategories();
     loadProduct();
 
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     return () => {
       document.body.style.overflow = 'auto';
+      window.removeEventListener('scroll', handleScroll);
     };
   });
 </script>
@@ -336,283 +343,372 @@
 {#if $isLoading}
   <!-- Loading State -->
   <div class="container mx-auto px-4 py-20 text-center" in:fade>
-    <div class="flex justify-center items-center space-x-4 mb-8">
+    <div class="flex justify-center items-center mb-8">
       <div class="w-16 h-16 rounded-full bg-surface-700 animate-pulse"></div>
     </div>
     <h3 class="text-2xl font-semibold text-white mb-4">
       Cargando detalles del monoplaza...
     </h3>
-    <p class="text-surface-200">Preparando la experiencia premium para ti</p>
+    <p class="text-surface-300">Preparando la experiencia premium para ti</p>
   </div>
 {:else if $product}
   <!-- Breadcrumb -->
-  <section class="container mx-auto px-4 py-6 bg-surface-900">
-    <nav class="breadcrumb">
-      <ol class="flex items-center space-x-3 text-sm">
-        <li>
-          <a
-            href="{base || '/'}"
-            class="flex items-center space-x-2 text-surface-200 hover:text-primary-500 transition-colors duration-200 font-medium"
-          >
-            <span>Inicio</span>
-          </a>
-        </li>
-        <li class="text-surface-300">
-          <LucideChevronRight class="w-4 h-4" />
-        </li>
-        <li class="flex items-center space-x-2">
-          <a
-            href={`${base}/categoria/${$product.team.toLowerCase().replace(/\s+/g, '-')}`}
-            class="flex items-center space-x-2 text-surface-200 hover:text-primary-500 transition-colors duration-200 font-medium"
-          >
-            <span>{$product.team}</span>
-          </a>
-        </li>
-        <li class="text-surface-300">
-          <LucideChevronRight class="w-4 h-4" />
-        </li>
-        <li class="flex items-center space-x-2">
-          <span class="font-semibold text-white">
+  <section class="bg-surface-900 border-b border-surface-800">
+    <div class="container mx-auto px-4 py-4">
+      <nav>
+        <ol class="flex items-center gap-2 text-sm">
+          <li>
+            <a
+              href="{base || '/'}"
+              class="text-surface-400 hover:text-primary-500 transition-colors duration-200 font-medium"
+            >
+              Inicio
+            </a>
+          </li>
+          <li class="text-surface-600">
+            <LucideChevronRight class="w-3.5 h-3.5" />
+          </li>
+          <li>
+            <a
+              href={`${base}/categoria/${$product.team.toLowerCase().replace(/\s+/g, '-')}`}
+              class="text-surface-400 hover:text-primary-500 transition-colors duration-200 font-medium"
+            >
+              {$product.team}
+            </a>
+          </li>
+          <li class="text-surface-600">
+            <LucideChevronRight class="w-3.5 h-3.5" />
+          </li>
+          <li class="text-white font-semibold truncate max-w-[200px]">
             {$product.name}
-          </span>
-        </li>
-      </ol>
-    </nav>
+          </li>
+        </ol>
+      </nav>
+    </div>
   </section>
 
   <!-- Product Detail Section -->
-  <section class="container mx-auto px-4 py-12">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12" in:fade={{ duration: 400 }}>
-      <!-- Product Images -->
-      <div class="space-y-4">
-        <!-- Main Image -->
-        <div class="relative bg-surface-800 rounded-2xl overflow-hidden aspect-square border border-surface-700 group">
-        <img
-          src={getProductImageUrl($product, $selectedImageIndex)}
-          alt={$product.name}
-          class="w-full h-full object-cover transition-all duration-300 cursor-zoom-in select-none"
-          style="transform: scale({$zoomLevel}); transform-origin: {$imagePosition.x}% {$imagePosition.y}%;"
-          on:click={handleImageZoom}
-          on:error={handleImageError}
-          draggable="false"
-        />
+  <section class="bg-surface-900">
+    <div class="container mx-auto px-4 py-6 lg:py-12">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12" in:fade={{ duration: 400 }}>
 
-        <!-- Image Controls -->
-        <div class="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button
-            class="btn btn-sm variant-filled-surface rounded-full shadow-lg"
-            on:click|stopPropagation={() => {
-              if ($zoomLevel === 1) {
-                zoomLevel.set(2);
-              } else {
-                zoomLevel.set(1);
-                imagePosition.set({ x: 50, y: 50 });
-              }
-            }}
-            title="Zoom"
-          >
-            <LucideZoomIn class="w-4 h-4" />
-          </button>
+        <!-- Product Images -->
+        <div class="space-y-4">
+          <!-- Main Image -->
+          <div class="relative bg-surface-800 rounded-xl overflow-hidden aspect-square border border-surface-700 group">
+            <img
+              src={getProductImageUrl($product, $selectedImageIndex)}
+              alt={$product.name}
+              class="w-full h-full object-cover transition-all duration-300 cursor-zoom-in select-none"
+              style="transform: scale({$zoomLevel}); transform-origin: {$imagePosition.x}% {$imagePosition.y}%;"
+              on:click={handleImageZoom}
+              on:error={handleImageError}
+              draggable="false"
+            />
+
+            <!-- Image Controls -->
+            <div class="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button
+                class="w-9 h-9 bg-surface-900/70 backdrop-blur-sm border border-surface-600 rounded-lg flex items-center justify-center text-white hover:bg-surface-800 transition-colors"
+                on:click|stopPropagation={() => {
+                  if ($zoomLevel === 1) {
+                    zoomLevel.set(2);
+                  } else {
+                    zoomLevel.set(1);
+                    imagePosition.set({ x: 50, y: 50 });
+                  }
+                }}
+                title="Zoom"
+              >
+                <LucideZoomIn class="w-4 h-4" />
+              </button>
+            </div>
+
+            <!-- Limited Edition Badge -->
+            {#if $product.limitedEdition}
+              <div class="absolute top-3 left-3">
+                <span class="inline-flex items-center gap-1 bg-primary-500 text-white text-xs font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-md shadow-lg">
+                  <LucideStar class="w-3 h-3" />
+                  Edición Limitada
+                </span>
+              </div>
+            {/if}
+
+            <!-- Stock Status -->
+            <div class="absolute bottom-3 left-3">
+              <span class="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1.5 rounded-md shadow-lg
+                {$product.inStock ? 'bg-success-600 text-white' : 'bg-surface-700 text-surface-300'}">
+                {#if $product.inStock}
+                  <LucideCheck class="w-3 h-3" />
+                  En Stock
+                {:else}
+                  <LucideClose class="w-3 h-3" />
+                  Agotado
+                {/if}
+              </span>
+            </div>
+          </div>
+
+          <!-- Thumbnail Images -->
+          <div class="flex gap-3 overflow-x-auto pb-2">
+            {#each $product.images as image, index}
+              <button
+                class="flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 bg-surface-800 rounded-lg overflow-hidden border-2 transition-all duration-200
+                  {$selectedImageIndex === index ? 'border-primary-500' : 'border-surface-700 hover:border-surface-500'}"
+                on:click={() => selectedImageIndex.set(index)}
+              >
+                <img
+                  src={getProductImageUrl($product, index)}
+                  alt="{$product.name} - Vista {index + 1}"
+                  class="w-full h-full object-cover"
+                  on:error={handleImageError}
+                />
+              </button>
+            {/each}
+          </div>
         </div>
 
-          <!-- Limited Edition Badge -->
-          {#if $product.limitedEdition}
-            <div class="absolute top-4 left-4">
-              <span class="badge variant-filled-warning text-sm font-bold shadow-lg">
-                <LucideStar class="mr-1 w-4 h-4" />
-                Edición Limitada
+        <!-- Product Information -->
+        <div class="space-y-6">
+
+          <!-- MOBILE: Name + Price + CTA first (visible only on mobile) -->
+          <div class="lg:hidden" bind:this={ctaSectionEl}>
+            <!-- Product Name -->
+            <h1 class="text-2xl font-black font-racing uppercase tracking-wider text-white mb-3 leading-tight">
+              {$product.name}
+            </h1>
+
+            <!-- Compact meta line -->
+            <div class="flex flex-wrap items-center gap-2 text-xs text-surface-400 uppercase tracking-wider mb-4">
+              <span>{$product.team}</span>
+              <span class="w-1 h-1 rounded-full bg-surface-600"></span>
+              <span>{$product.scale}</span>
+              <span class="w-1 h-1 rounded-full bg-surface-600"></span>
+              <span>{$product.manufacturer}</span>
+              {#if $product.driver}
+                <span class="w-1 h-1 rounded-full bg-surface-600"></span>
+                <span>{$product.driver}</span>
+              {/if}
+              <span class="w-1 h-1 rounded-full bg-surface-600"></span>
+              <span>{$product.year}</span>
+            </div>
+
+            <!-- Price -->
+            <div class="flex items-baseline gap-3 mb-5">
+              <span class="text-3xl font-black text-primary-500">
+                Q. {$product.price.toFixed(2)}
               </span>
+              {#if $product.originalPrice && $product.originalPrice > $product.price}
+                <span class="text-lg text-surface-500 line-through">
+                  Q. {$product.originalPrice.toFixed(2)}
+                </span>
+                <span class="text-xs font-bold uppercase tracking-wider bg-primary-500/20 text-primary-400 px-2 py-0.5 rounded">
+                  -{Math.round((1 - $product.price / $product.originalPrice) * 100)}%
+                </span>
+              {/if}
+            </div>
+
+            <!-- Mobile CTA Button -->
+            <button
+              class="w-full inline-flex items-center justify-center gap-2 bg-primary-500 text-white font-bold py-3.5 uppercase tracking-wider rounded-lg hover:bg-primary-600 transition-colors duration-200 shadow-lg"
+              on:click={() => $product.inStock ? handleAddToCart($product) : handleNotifyAvailability()}
+            >
+              {#if $product.inStock}
+                <LucideCartPlus class="w-5 h-5" />
+                Añadir al Carrito
+              {:else}
+                <LucideClock class="w-5 h-5" />
+                Notificarme Disponibilidad
+              {/if}
+            </button>
+
+            <!-- Trust signals -->
+            <div class="flex items-center justify-center gap-4 mt-3 text-xs text-surface-400">
+              <span class="flex items-center gap-1">
+                <LucideTruck class="w-3.5 h-3.5" />
+                Envío GT
+              </span>
+              <span class="w-px h-3 bg-surface-700"></span>
+              <span class="flex items-center gap-1">
+                <LucideShield class="w-3.5 h-3.5" />
+                Garantía
+              </span>
+              <span class="w-px h-3 bg-surface-700"></span>
+              <span class="flex items-center gap-1">
+                <LucideLock class="w-3.5 h-3.5" />
+                Compra segura
+              </span>
+            </div>
+          </div>
+
+          <!-- DESKTOP: Full product info (hidden on mobile, shown on lg+) -->
+          <div class="hidden lg:block">
+            <!-- Category badges -->
+            <div class="flex flex-wrap gap-2 mb-4">
+              {#each $currentCategories as category}
+                <span class="badge {category.variant} text-sm font-medium">
+                  {category.name}
+                </span>
+              {/each}
+            </div>
+
+            <!-- Product detail badges -->
+            <div class="flex flex-wrap gap-2 mb-6">
+              <span class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider bg-surface-800 border border-surface-700 text-surface-200 px-3 py-1.5 rounded-lg">
+                <LucideHelmet class="w-3 h-3 text-primary-500" />
+                {$product.team}
+              </span>
+              <span class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider bg-surface-800 border border-surface-700 text-surface-200 px-3 py-1.5 rounded-lg">
+                {$product.manufacturer}
+              </span>
+              <span class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider bg-surface-800 border border-surface-700 text-surface-200 px-3 py-1.5 rounded-lg">
+                Escala {$product.scale}
+              </span>
+              {#if $product.driver}
+                <span class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider bg-surface-800 border border-surface-700 text-surface-200 px-3 py-1.5 rounded-lg">
+                  {$product.driver}
+                </span>
+              {/if}
+              <span class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider bg-surface-800 border border-surface-700 text-surface-200 px-3 py-1.5 rounded-lg">
+                {$product.year}
+              </span>
+            </div>
+
+            <h1 class="text-4xl font-black font-racing uppercase tracking-wider text-white mb-2 leading-tight">
+              {$product.name}
+            </h1>
+            <div class="w-12 h-0.5 bg-primary-500 mb-6"></div>
+
+            <!-- Price -->
+            <div class="flex items-baseline gap-4 mb-6">
+              <span class="text-4xl font-black text-primary-500">
+                Q. {$product.price.toFixed(2)}
+              </span>
+              {#if $product.originalPrice && $product.originalPrice > $product.price}
+                <span class="text-xl text-surface-500 line-through">
+                  Q. {$product.originalPrice.toFixed(2)}
+                </span>
+                <span class="text-xs font-bold uppercase tracking-wider bg-primary-500/20 text-primary-400 px-2.5 py-1 rounded">
+                  -{Math.round((1 - $product.price / $product.originalPrice) * 100)}%
+                </span>
+              {/if}
+            </div>
+          </div>
+
+          <!-- Description (both mobile and desktop) -->
+          <div>
+            <p class="text-surface-300 leading-relaxed text-base lg:text-lg">
+              {$product.description}
+            </p>
+          </div>
+
+          <!-- Key Features -->
+          {#if $product.features && $product.features.length > 0}
+            <div>
+              <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+                <LucideCog class="w-4 h-4 text-primary-500" />
+                Características
+              </h3>
+              <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {#each $product.features as feature}
+                  <li class="flex items-center gap-2.5 p-3 bg-surface-800 rounded-lg border border-surface-700">
+                    <LucideCheck class="text-primary-500 w-4 h-4 flex-shrink-0" />
+                    <span class="text-surface-200 text-sm">{feature}</span>
+                  </li>
+                {/each}
+              </ul>
             </div>
           {/if}
 
-          <!-- Stock Status -->
-          <div class="absolute bottom-4 left-4">
-            <span class="badge {$product.inStock ? 'variant-filled-success' : 'variant-filled-error'} text-sm font-bold shadow-lg">
-              {#if $product.inStock}
-                <LucideCheck class="mr-1 w-4 h-4" />
-                En Stock
-              {:else}
-                <LucideClose class="mr-1 w-4 h-4" />
-                Agotado
-              {/if}
-            </span>
-          </div>
-        </div>
-
-        <!-- Thumbnail Images -->
-        <div class="flex space-x-4 overflow-x-auto pb-2">
-          {#each $product.images as image, index}
-            <button
-              class="flex-shrink-0 w-20 h-20 bg-surface-800 rounded-lg overflow-hidden border-2 transition-colors duration-200
-              {$selectedImageIndex === index ? 'border-primary-500' : 'border-transparent hover:border-surface-500'}"
-              on:click={() => selectedImageIndex.set(index)}
-            >
-              <img
-                src={getProductImageUrl($product, index)}
-                alt="{$product.name} - Vista {index + 1}"
-                class="w-full h-full object-cover"
-                on:error={handleImageError}
-              />
-            </button>
-          {/each}
-        </div>
-      </div>
-
-      <!-- Product Information -->
-      <div class="space-y-6">
-        <!-- Product Header -->
-        <div>
-          <!-- Category badges -->
-          <div class="flex flex-wrap gap-2 mb-4">
-            {#each $currentCategories as category}
-              <span class="badge {category.variant} text-sm font-medium">
-                {category.name}
-              </span>
-            {/each}
-          </div>
-
-          <!-- Product details badges -->
-          <div class="flex flex-wrap gap-2 mb-6">
-            <span class="badge variant-soft-primary text-sm font-medium">
-              <LucideHelmet class="mr-1 w-3 h-3" />
-              {$product.team}
-            </span>
-            <span class="badge variant-soft-secondary text-sm font-medium">
-              {$product.manufacturer}
-            </span>
-            <span class="badge variant-soft-tertiary text-sm font-medium">
-              Escala {$product.scale}
-            </span>
-            {#if $product.driver}
-              <span class="badge variant-soft-warning text-sm font-medium">
-                {$product.driver}
-              </span>
-            {/if}
-            <span class="badge variant-soft-surface text-sm font-medium">
-              {$product.year}
-            </span>
-          </div>
-
-          <h1 class="text-4xl font-bold text-white mb-4 leading-tight">
-            {$product.name}
-          </h1>
-
-          <!-- Price -->
-          <div class="flex items-center space-x-4 mb-6">
-            <span class="text-4xl font-bold text-success-400">
-              Q. {$product.price.toFixed(2)}
-            </span>
-            {#if $product.originalPrice && $product.originalPrice > $product.price}
-              <span class="text-2xl text-surface-200 line-through">
-                Q. {$product.originalPrice.toFixed(2)}
-              </span>
-              <span class="badge variant-filled-error text-sm font-bold">
-                ¡Oferta!
-              </span>
-            {/if}
-          </div>
-        </div>
-
-        <!-- Product Description -->
-        <div class="prose prose-sm max-w-none">
-          <p class="text-surface-300 leading-relaxed text-lg">
-            {$product.description}
-          </p>
-        </div>
-
-        <!-- Key Features -->
-        {#if $product.features && $product.features.length > 0}
-          <div>
-            <h3 class="text-xl font-bold text-white mb-4 flex items-center">
-              <LucideCog class="mr-2 w-5 h-5 text-primary-500" />
-              Características Principales
-            </h3>
-            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {#each $product.features as feature}
-                <li class="flex items-center space-x-3 p-3 bg-surface-800 rounded-lg border border-surface-700">
-                  <LucideCheck class="text-success-500 w-5 h-5 flex-shrink-0" />
-                  <span class="text-surface-200 font-medium">{feature}</span>
-                </li>
-              {/each}
-            </ul>
-          </div>
-        {/if}
-
-        <!-- Add to Cart Section -->
-        <div class="bg-surface-800 border border-surface-700 p-6 rounded-2xl">
-          <div class="flex items-center justify-between mb-6">
-            <div>
-              <h3 class="text-lg font-bold text-white mb-2">
-                Añadir a tu colección
-              </h3>
-              <div class="flex items-center space-x-4 text-sm text-surface-200">
-                <span class="flex items-center">
-                  <LucideTruck class="mr-1 w-4 h-4" />
-                  Envíos a toda Guatemala
+          <!-- Mobile: Category badges (after features) -->
+          <div class="lg:hidden">
+            <div class="flex flex-wrap gap-2">
+              {#each $currentCategories as category}
+                <span class="badge {category.variant} text-xs font-medium">
+                  {category.name}
                 </span>
-                <span class="flex items-center">
-                  <LucideShield class="mr-1 w-4 h-4" />
-                  Garantía premium
+              {/each}
+            </div>
+          </div>
+
+          <!-- Desktop: Add to Cart Section -->
+          <div class="hidden lg:block">
+            <div class="bg-surface-800 border border-surface-700 rounded-xl p-6">
+              <div class="flex items-center justify-between mb-5">
+                <div>
+                  <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-1.5">
+                    Añadir a tu colección
+                  </h3>
+                  <div class="flex items-center gap-4 text-xs text-surface-400">
+                    <span class="flex items-center gap-1">
+                      <LucideTruck class="w-3.5 h-3.5" />
+                      Envíos a toda Guatemala
+                    </span>
+                    <span class="flex items-center gap-1">
+                      <LucideShield class="w-3.5 h-3.5" />
+                      Garantía premium
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                class="w-full inline-flex items-center justify-center gap-2 bg-primary-500 text-white font-bold py-4 text-lg uppercase tracking-wider rounded-lg hover:bg-primary-600 transition-colors duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                on:click={() => $product.inStock ? handleAddToCart($product) : handleNotifyAvailability()}
+                disabled={false}
+              >
+                {#if $product.inStock}
+                  <LucideCartPlus class="w-5 h-5" />
+                  Añadir al Carrito — Q. {$product.price.toFixed(2)}
+                {:else}
+                  <LucideClock class="w-5 h-5" />
+                  Notificarme cuando esté disponible
+                {/if}
+              </button>
+
+              <div class="flex items-center justify-center mt-4 gap-4 text-xs text-surface-400">
+                <span class="flex items-center gap-1">
+                  <LucideLock class="w-3.5 h-3.5" />
+                  Compra segura
+                </span>
+                <span class="w-px h-3 bg-surface-700"></span>
+                <span class="flex items-center gap-1">
+                  <LucideCreditCard class="w-3.5 h-3.5" />
+                  Pago fácil
                 </span>
               </div>
             </div>
           </div>
 
-          <button
-            class="btn variant-filled-primary w-full text-lg font-semibold py-4 transition-colors duration-200 shadow-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            on:click={() => $product.inStock ? handleAddToCart($product) : handleNotifyAvailability()}
-            disabled={false}
-          >
-            {#if $product.inStock}
-              <LucideCartPlus class="mr-2 w-5 h-5" />
-              Añadir al Carrito - Q. {$product.price.toFixed(2)}
-            {:else}
-              <LucideClock class="mr-2 w-5 h-5" />
-              Notificarme cuando esté disponible
-            {/if}
-          </button>
-
-          <div class="flex items-center justify-center mt-4 space-x-4 text-sm text-surface-200">
-            <span class="flex items-center">
-              <LucideLock class="mr-1 w-4 h-4" />
-              Compra segura
-            </span>
-            <div class="w-px h-4 bg-surface-600"></div>
-            <span class="flex items-center">
-              <LucideCreditCard class="mr-1 w-4 h-4" />
-              Pago fácil
-            </span>
-          </div>
-        </div>
-
-        <!-- Share Section -->
-        <div class="flex items-center justify-between pt-6 border-t border-surface-700">
-          <span class="text-surface-200 font-medium">Compartir:</span>
-          <div class="flex space-x-3">
-            <button
-              class="btn btn-sm variant-soft-success rounded-full w-10 h-10 !p-0"
-              on:click={() => {
-                if (navigator.share) {
-                  navigator.share({
-                    title: $product.name,
-                    text: $product.description,
-                    url: window.location.href
-                  });
-                } else {
-                  handleCopyLink();
-                }
-              }}
-              title="Compartir"
-            >
-              <LucideShare class="w-4 h-4" />
-            </button>
-            <button
-              class="btn btn-sm variant-soft-warning rounded-full w-10 h-10 !p-0"
-              on:click={handleCopyLink}
-              title="Copiar enlace"
-            >
-              <LucideLink class="w-4 h-4" />
-            </button>
+          <!-- Share Section -->
+          <div class="flex items-center justify-between pt-4 border-t border-surface-700">
+            <span class="text-surface-400 text-sm font-medium uppercase tracking-wider">Compartir</span>
+            <div class="flex gap-2">
+              <button
+                class="w-9 h-9 bg-surface-800 border border-surface-700 rounded-lg flex items-center justify-center text-surface-300 hover:text-white hover:border-surface-500 transition-all duration-200"
+                on:click={() => {
+                  if (navigator.share) {
+                    navigator.share({
+                      title: $product.name,
+                      text: $product.description,
+                      url: window.location.href
+                    });
+                  } else {
+                    handleCopyLink();
+                  }
+                }}
+                title="Compartir"
+              >
+                <LucideShare class="w-4 h-4" />
+              </button>
+              <button
+                class="w-9 h-9 bg-surface-800 border border-surface-700 rounded-lg flex items-center justify-center text-surface-300 hover:text-white hover:border-surface-500 transition-all duration-200"
+                on:click={handleCopyLink}
+                title="Copiar enlace"
+              >
+                <LucideLink class="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -621,33 +717,35 @@
 
   <!-- Technical Specifications -->
   {#if $product.specifications}
-    <section class="px-4 py-12 bg-surface-800 border-t border-b border-surface-700">
-      <div class="max-w-4xl container mx-auto">
-        <h2 class="text-3xl font-bold text-center text-white mb-12 flex items-center justify-center">
-          <LucideCog class="mr-3 w-7 h-7 text-primary-500" />
-          Especificaciones Técnicas
-        </h2>
+    <section class="bg-surface-800 border-t border-surface-700">
+      <div class="container mx-auto px-4 py-12 lg:py-16 max-w-4xl">
+        <div class="text-center mb-10">
+          <h2 class="text-2xl lg:text-3xl font-bold text-white uppercase tracking-wider mb-3">
+            Especificaciones Técnicas
+          </h2>
+          <div class="w-16 h-0.5 bg-primary-500 mx-auto"></div>
+        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           {#each Object.entries($product.specifications) as [key, value]}
-            <div class="bg-surface-900 border border-surface-700 rounded-lg p-6 text-center">
-              <div class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div class="bg-surface-900 border border-surface-700 rounded-lg p-5 text-center">
+              <div class="w-12 h-12 bg-surface-700 border border-surface-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 {#if key === 'engine'}
-                  <LucideEngine class="w-8 h-8 text-white" />
+                  <LucideEngine class="w-6 h-6 text-primary-500" />
                 {:else if key === 'power'}
-                  <LucideBolt class="w-8 h-8 text-white" />
+                  <LucideBolt class="w-6 h-6 text-primary-500" />
                 {:else if key === 'weight'}
-                  <LucideWeight class="w-8 h-8 text-white" />
+                  <LucideWeight class="w-6 h-6 text-primary-500" />
                 {:else if key === 'topSpeed'}
-                  <LucideGauge class="w-8 h-8 text-white" />
+                  <LucideGauge class="w-6 h-6 text-primary-500" />
                 {:else}
-                  <LucideTimer class="w-8 h-8 text-white" />
+                  <LucideTimer class="w-6 h-6 text-primary-500" />
                 {/if}
               </div>
-              <h3 class="font-bold text-white mb-2 capitalize">
-                {key.replace(/([A-Z])/g, ' $1').trim()}
+              <h3 class="text-xs font-bold text-surface-400 uppercase tracking-wider mb-1.5">
+                {specLabels[key] || key.replace(/([A-Z])/g, ' $1').trim()}
               </h3>
-              <p class="text-lg font-semibold text-primary-400">
+              <p class="text-sm lg:text-base font-bold text-white leading-snug">
                 {value}
               </p>
             </div>
@@ -657,21 +755,21 @@
     </section>
   {/if}
 
-  <!-- Related Products con ProductCard -->
+  <!-- Related Products -->
   {#if $relatedProducts.length > 0}
-    <section class="px-4 py-12 bg-surface-900">
-      <div class="container mx-auto">
-        <div class="text-center mx-auto mb-12">
-          <h2 class="text-3xl font-bold text-white mb-4">
+    <section class="bg-surface-900 border-t border-surface-700">
+      <div class="container mx-auto px-4 py-12 lg:py-16">
+        <div class="text-center mb-10">
+          <h2 class="text-2xl lg:text-3xl font-bold text-white uppercase tracking-wider mb-3">
             Productos Relacionados
           </h2>
-          <p class="text-surface-200 max-w-2xl mx-auto">
-            Descubre otros monoplazas que comparten categorías con este modelo
+          <div class="w-16 h-0.5 bg-primary-500 mx-auto mb-4"></div>
+          <p class="text-surface-400 text-sm max-w-md mx-auto">
+            Otros monoplazas que podrían interesarte
           </p>
         </div>
 
-        <!-- Grid con ProductCard -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {#each $relatedProducts as relatedProduct, i}
             <ProductCard
               product={relatedProduct}
@@ -686,51 +784,74 @@
           {/each}
         </div>
 
-        <!-- Call to Action -->
+        <!-- CTA -->
         <div class="text-center mt-12">
-          <div class="bg-surface-800 border border-surface-700 rounded-2xl p-8 max-w-2xl mx-auto">
-            <h3 class="text-xl font-bold text-white mb-4">
-              ¿Buscas más modelos similares?
-            </h3>
-            <p class="text-surface-200 mb-6">
-              Explora nuestra colección completa y descubre más monoplazas increíbles
-            </p>
-            <button
-              class="btn variant-filled-primary text-lg px-8 py-3 transition-colors duration-200"
-              on:click={() => goto(base || '/')}
-            >
-              <LucideEye class="mr-2 w-5 h-5" />
-              Ver Toda la Colección
-            </button>
-          </div>
+          <a
+            href="{base}/catalogo"
+            class="inline-flex items-center gap-2 bg-primary-500 text-white font-bold px-8 py-3.5 uppercase tracking-wider rounded-lg hover:bg-primary-600 transition-colors duration-200 shadow-lg"
+          >
+            <LucideEye class="w-5 h-5" />
+            Ver Toda la Colección
+          </a>
         </div>
       </div>
     </section>
+  {/if}
+
+  <!-- Sticky Mobile Bottom Bar -->
+  {#if showStickyBar && $product}
+    <div
+      class="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-surface-900/95 backdrop-blur-md border-t border-surface-700 px-4 py-3 safe-area-bottom"
+      in:fly={{ y: 60, duration: 250 }}
+      out:fly={{ y: 60, duration: 200 }}
+    >
+      <div class="flex items-center gap-3">
+        <div class="flex-1 min-w-0">
+          <div class="text-xs text-surface-400 truncate">{$product.name}</div>
+          <div class="text-lg font-black text-primary-500">Q. {$product.price.toFixed(2)}</div>
+        </div>
+        <button
+          class="flex-shrink-0 inline-flex items-center gap-2 bg-primary-500 text-white font-bold px-6 py-3 uppercase tracking-wider text-sm rounded-lg hover:bg-primary-600 transition-colors duration-200 shadow-lg"
+          on:click={() => $product.inStock ? handleAddToCart($product) : handleNotifyAvailability()}
+        >
+          {#if $product.inStock}
+            <LucideCartPlus class="w-4 h-4" />
+            Añadir
+          {:else}
+            <LucideClock class="w-4 h-4" />
+            Notificar
+          {/if}
+        </button>
+      </div>
+    </div>
   {/if}
 {:else}
   <!-- Product Not Found -->
   <div class="container mx-auto px-4 py-20 text-center" in:fade>
     <div class="max-w-md mx-auto">
-      <div class="text-8xl mb-8 text-surface-600 opacity-50">🏎️</div>
-      <h2 class="text-3xl font-bold text-white mb-4">
+      <div class="w-20 h-20 bg-surface-800 border border-surface-700 rounded-xl flex items-center justify-center mx-auto mb-8">
+        <LucideF1 class="w-10 h-10 text-surface-500" />
+      </div>
+      <h2 class="text-2xl font-bold text-white uppercase tracking-wider mb-4">
         Producto no encontrado
       </h2>
-      <p class="text-surface-200 mb-8 leading-relaxed">
+      <div class="w-12 h-0.5 bg-primary-500 mx-auto mb-6"></div>
+      <p class="text-surface-400 mb-8 leading-relaxed">
         El monoplaza que buscas no está disponible o ha sido movido a otra ubicación.
       </p>
-      <div class="space-y-3">
-        <button
-          class="btn variant-filled-primary px-8 py-3"
-          on:click={() => goto(base || '/')}
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a
+          href="{base || '/'}"
+          class="inline-flex items-center justify-center gap-2 bg-primary-500 text-white font-bold px-6 py-3 uppercase tracking-wider rounded-lg hover:bg-primary-600 transition-colors duration-200"
         >
-          <LucideHome class="mr-2 w-4 h-4" />
+          <LucideHome class="w-4 h-4" />
           Volver al Inicio
-        </button>
+        </a>
         <button
-          class="btn variant-soft-surface px-8 py-3"
+          class="inline-flex items-center justify-center gap-2 text-surface-300 hover:text-white font-medium text-sm uppercase tracking-wider transition-colors duration-200"
           on:click={() => history.back()}
         >
-          <LucideArrowLeft class="mr-2 w-4 h-4" />
+          <LucideArrowLeft class="w-4 h-4" />
           Página Anterior
         </button>
       </div>
@@ -786,20 +907,21 @@
     -ms-user-select: none;
   }
 
-  /* Prevenir scroll del body cuando el modal está abierto */
   :global(body.modal-open) {
     overflow: hidden !important;
   }
 
-  /* Animación suave para el zoom */
   .zoom-transition {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Mejora para los controles flotantes */
   .floating-controls {
     backdrop-filter: blur(8px);
     background: rgba(255, 255, 255, 0.1);
   }
 
+  /* Safe area for devices with home indicator */
+  .safe-area-bottom {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
 </style>
