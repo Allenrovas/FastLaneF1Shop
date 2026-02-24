@@ -270,85 +270,105 @@
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw logo at top (centered)
+    // === HEADER COMPACTO ===
+
+    // Logo arriba a la izquierda (pequeño)
+    const logoH = 62;
+    let logoW = 120;
     if (logoImage && logoImage.complete) {
-      const logoHeight = 110;
-      const logoWidth = (logoImage.width / logoImage.height) * logoHeight;
-      const logoX = (canvas.width - logoWidth) / 2;
-      ctx.drawImage(logoImage, logoX, 30, logoWidth, logoHeight);
+      logoW = (logoImage.width / logoImage.height) * logoH;
+      ctx.drawImage(logoImage, 18, 14, logoW, logoH);
     }
 
-    // "COTIZACIÓN" text
-    ctx.fillStyle = '#000000';
-    ctx.font = 'bold 56px "Bebas Neue", "Arial Black", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('COTIZACIÓN', canvas.width / 2, 200);
+    // Datos del cliente — pequeños, a la par del logo
+    const clientX = 18 + logoW + 18;
+    let clientY = 24;
+    const cFont = 15;
+    const cLine = 19;
 
-    // Start Y position for content
-    let currentY = 260;
-
-    // CLIENTE section
-    ctx.fillStyle = '#ff3333';
-    ctx.font = 'bold 32px "Bebas Neue", "Arial Black", sans-serif';
+    ctx.font = `bold ${cFont}px "Bebas Neue", "Arial Black", sans-serif`;
     ctx.textAlign = 'left';
-    ctx.fillText('CLIENTE:', 40, currentY);
 
-    ctx.fillStyle = '#000000';
-    ctx.font = 'bold 32px "Bebas Neue", sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText(nombreCliente, 135, currentY);
-    currentY += 45;
-
-    // TELÉFONO section
     ctx.fillStyle = '#ff3333';
-    ctx.font = 'bold 32px "Bebas Neue", "Arial Black", sans-serif';
-    ctx.fillText('TELÉFONO:', 40, currentY);
-
+    ctx.fillText('CLIENTE:', clientX, clientY);
     ctx.fillStyle = '#000000';
-    ctx.font = 'bold 32px "Bebas Neue", sans-serif';
-    ctx.fillText(telefono, 150, currentY);
-    currentY += 45;
+    ctx.fillText(nombreCliente, clientX + ctx.measureText('CLIENTE: ').width, clientY);
+    clientY += cLine;
 
-    // EMAIL section (si existe)
+    ctx.fillStyle = '#ff3333';
+    ctx.fillText('TEL:', clientX, clientY);
+    ctx.fillStyle = '#000000';
+    ctx.fillText(telefono, clientX + ctx.measureText('TEL: ').width, clientY);
+    clientY += cLine;
+
     if (email.trim() !== '') {
       ctx.fillStyle = '#ff3333';
-      ctx.font = 'bold 32px "Bebas Neue", "Arial Black", sans-serif';
-      ctx.fillText('EMAIL:', 40, currentY);
-
+      ctx.fillText('EMAIL:', clientX, clientY);
       ctx.fillStyle = '#000000';
-      ctx.font = 'bold 28px "Bebas Neue", sans-serif';
-      ctx.fillText(email.toLowerCase(), 115, currentY);
-      currentY += 45;
+      ctx.fillText(email.toLowerCase(), clientX + ctx.measureText('EMAIL: ').width, clientY);
+      clientY += cLine;
     }
 
-    // VÁLIDA HASTA section
     if (fechaValidez) {
       ctx.fillStyle = '#ff3333';
-      ctx.font = 'bold 32px "Bebas Neue", "Arial Black", sans-serif';
-      ctx.fillText('VÁLIDA HASTA:', 40, currentY);
-
+      ctx.fillText('VÁLIDA:', clientX, clientY);
       ctx.fillStyle = '#000000';
-      ctx.font = 'bold 32px "Bebas Neue", sans-serif';
       const fechaFormateada = new Date(fechaValidez + 'T00:00:00').toLocaleDateString('es-GT', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       }).toUpperCase();
-      ctx.fillText(fechaFormateada, 210, currentY);
-      currentY += 45;
+      ctx.fillText(fechaFormateada, clientX + ctx.measureText('VÁLIDA: ').width, clientY);
     }
+
+    // Redes sociales — derecha del header, a la par del logo y datos
+    const socialIconSize = 26;
+    const socialX = 525;
+    const socialY1 = 22;
+    const socialY2 = socialY1 + socialIconSize + 10;
+
+    if (instagramImage && instagramImage.complete) {
+      ctx.drawImage(instagramImage, socialX, socialY1, socialIconSize, socialIconSize);
+    }
+    ctx.fillStyle = '#ff3333';
+    ctx.font = 'bold 14px "Bebas Neue", "Arial Black", sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('FASTLANEF1SHOP', socialX + socialIconSize + 6, socialY1 + 19);
+
+    if (tiktokImage && tiktokImage.complete) {
+      ctx.drawImage(tiktokImage, socialX, socialY2, socialIconSize, socialIconSize);
+    }
+    ctx.fillText('FASTLANEF1.SHOP', socialX + socialIconSize + 6, socialY2 + 19);
+
+    // Línea separadora
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(18, 98);
+    ctx.lineTo(canvas.width - 18, 98);
+    ctx.stroke();
+
+    // Título "COTIZACIÓN"
+    ctx.fillStyle = '#000000';
+    ctx.font = 'bold 50px "Bebas Neue", "Arial Black", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('COTIZACIÓN', canvas.width / 2, 148);
+
+    // Start Y position for content
+    let currentY = 175;
 
     // NOTA ADICIONAL section
     if (notaAdicional && notaTexto.trim() !== '') {
       ctx.fillStyle = '#ff3333';
-      ctx.font = 'bold 32px "Bebas Neue", "Arial Black", sans-serif';
+      ctx.font = 'bold 26px "Bebas Neue", "Arial Black", sans-serif';
+      ctx.textAlign = 'left';
       ctx.fillText('NOTA:', 40, currentY);
-      currentY += 20;
+      currentY += 18;
 
       ctx.fillStyle = '#000000';
-      ctx.font = 'bold 28px "Bebas Neue", sans-serif';
-      const notaEndY = wrapText(ctx, notaTexto, 40, currentY + 10, 720, 26);
-      currentY = notaEndY + 40;
+      ctx.font = 'bold 22px "Bebas Neue", sans-serif';
+      const notaEndY = wrapText(ctx, notaTexto, 40, currentY + 8, 720, 24);
+      currentY = notaEndY + 35;
     }
 
     // PRODUCTOS section
@@ -524,55 +544,9 @@
       currentY += 50;
     }
 
-    // Determinar si mostrar footer y redes sociales
-    const spaceRemaining = 1000 - currentY;
-    const needsFooter = spaceRemaining >= 140;
-
-    if (needsFooter) {
-      const minYBeforeSocial = 750;
-      if (currentY < minYBeforeSocial) {
-        currentY = minYBeforeSocial;
-      }
-
-      // Social media icons and handles
-      const socialY = currentY;
-
-      // Instagram
-      if (instagramImage && instagramImage.complete) {
-        ctx.drawImage(instagramImage, 100, socialY, 55, 55);
-      }
-      ctx.fillStyle = '#ff3333';
-      ctx.font = 'bold 30px "Bebas Neue", "Arial Black", sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText('FASTLANEF1SHOP', 165, socialY + 38);
-
-      // TikTok
-      if (tiktokImage && tiktokImage.complete) {
-        ctx.drawImage(tiktokImage, 450, socialY, 55, 55);
-      }
-      ctx.fillText('FASTLANEF1.SHOP', 515, socialY + 38);
-
-      // Draw footer
-      if (footerImage && footerImage.complete) {
-        ctx.drawImage(footerImage, 0, 900, canvas.width, 100);
-      }
-    } else {
-      if (spaceRemaining >= 65) {
-        const socialY = currentY + 10;
-
-        if (instagramImage && instagramImage.complete) {
-          ctx.drawImage(instagramImage, 100, socialY, 45, 45);
-        }
-        ctx.fillStyle = '#ff3333';
-        ctx.font = 'bold 24px "Bebas Neue", "Arial Black", sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillText('FASTLANEF1SHOP', 155, socialY + 30);
-
-        if (tiktokImage && tiktokImage.complete) {
-          ctx.drawImage(tiktokImage, 450, socialY, 45, 45);
-        }
-        ctx.fillText('FASTLANEF1.SHOP', 505, socialY + 30);
-      }
+    // Footer
+    if (footerImage && footerImage.complete) {
+      ctx.drawImage(footerImage, 0, 900, canvas.width, 100);
     }
   }
 
@@ -940,25 +914,49 @@
 
       <!-- Preview Panel -->
       <div
-        class="card card-hover overflow-hidden bg-surface-800 border border-surface-700
-        transition-all duration-300 hover:shadow-2xl hover:border-primary-500/50 lg:sticky lg:top-6"
+        class="preview-panel lg:sticky lg:top-6"
         in:fly={{ x: 50, duration: 600, delay: 200 }}
       >
-        <header class="card-header bg-gradient-to-r from-surface-700 to-surface-800 p-6 border-b-2 border-surface-600">
-          <h2 class="text-2xl font-bold text-white flex items-center">
-            <LucideCheck class="mr-3 w-6 h-6 text-success-500" />
-            VISTA PREVIA
-          </h2>
-        </header>
-
-        <div class="p-6">
-          <div class="bg-gradient-to-br from-surface-900 to-surface-950
-          rounded-xl p-4 shadow-inner border-2 border-surface-700">
-            <canvas
-              bind:this={canvas}
-              class="w-full h-auto rounded-lg shadow-2xl border border-surface-600"
-            />
+        <!-- Header — racing livery stripe + sector label -->
+        <div class="preview-header">
+          <div class="flex items-center gap-3">
+            <div class="sector-tag">
+              <span class="sector-tag-inner">P</span>
+            </div>
+            <span class="preview-title">VISTA PREVIA</span>
           </div>
+          <div class="flex items-center gap-2">
+            {#if products.length > 0}
+              <span class="preview-chip">{products.length} ITEM{products.length !== 1 ? 'S' : ''}</span>
+              <span class="preview-chip preview-chip--total">Q{getTotalPrice().toFixed(2)}</span>
+            {:else}
+              <span class="preview-chip preview-chip--empty">VACÍO</span>
+            {/if}
+          </div>
+        </div>
+
+        <!-- Canvas stage — asphalt surface with dot grid -->
+        <div class="canvas-stage">
+          <div class="canvas-frame">
+            <span class="corner corner--tl"></span>
+            <span class="corner corner--tr"></span>
+            <span class="corner corner--bl"></span>
+            <span class="corner corner--br"></span>
+            <canvas bind:this={canvas} class="canvas-render" />
+          </div>
+        </div>
+
+        <!-- Footer status bar -->
+        <div class="preview-footer">
+          <div class="flex items-center gap-2">
+            <span class="status-dot {isGenerating ? 'status-dot--live' : ''}"></span>
+            <span class="preview-status-text">
+              {#if isGenerating}GENERANDO IMAGEN...{:else if nombreCliente && products.length > 0}LISTO PARA EXPORTAR{:else}COMPLETA EL FORMULARIO{/if}
+            </span>
+          </div>
+          {#if nombreCliente}
+            <span class="preview-client-tag">{nombreCliente}</span>
+          {/if}
         </div>
       </div>
     </div>
@@ -1011,5 +1009,170 @@
 
   .checkbox:checked {
     @apply bg-primary-500 border-primary-500;
+  }
+
+  /* ─── Preview Panel ─────────────────────────── */
+
+  .preview-panel {
+    overflow: hidden;
+    border-radius: 12px;
+    background: #0f0f0f;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 24px 64px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Racing livery stripe via left border */
+  .preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: #141414;
+    border-left: 3px solid #ff3333;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* Sector label tag — clipped like F1 broadcast sector T1/T2/T3 */
+  .sector-tag {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    background: #ff3333;
+    clip-path: polygon(0 0, 100% 0, 100% 65%, 78% 100%, 0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .sector-tag-inner {
+    font-family: "Bebas Neue", "Arial Black", sans-serif;
+    font-size: 13px;
+    color: white;
+    line-height: 1;
+    margin-top: -3px;
+  }
+
+  .preview-title {
+    font-family: "Bebas Neue", "Arial Black", sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Status chips */
+  .preview-chip {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .preview-chip--total {
+    background: rgba(255, 51, 51, 0.1);
+    color: #ff7070;
+    border-color: rgba(255, 51, 51, 0.2);
+  }
+
+  .preview-chip--empty {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.05);
+    letter-spacing: 0.12em;
+  }
+
+  /* Asphalt stage with subtle dot grid */
+  .canvas-stage {
+    padding: 28px 24px;
+    background: #080808;
+    background-image: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px
+    );
+    background-size: 20px 20px;
+  }
+
+  /* Frame with corner bracket reticles */
+  .canvas-frame {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 8px;
+  }
+
+  .corner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .corner--tl { top: 0; left: 0; border-top: 2px solid #ff3333; border-left: 2px solid #ff3333; }
+  .corner--tr { top: 0; right: 0; border-top: 2px solid #ff3333; border-right: 2px solid #ff3333; }
+  .corner--bl { bottom: 0; left: 0; border-bottom: 2px solid #ff3333; border-left: 2px solid #ff3333; }
+  .corner--br { bottom: 0; right: 0; border-bottom: 2px solid #ff3333; border-right: 2px solid #ff3333; }
+
+  .canvas-render {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 2px;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.07),
+      0 4px 8px rgba(0, 0, 0, 0.4),
+      0 20px 48px rgba(0, 0, 0, 0.7),
+      0 40px 80px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Footer status bar */
+  .preview-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: #0b0b0b;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    transition: background 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .status-dot--live {
+    background: #ff3333;
+    box-shadow: 0 0 8px rgba(255, 51, 51, 0.5);
+    animation: dot-pulse 1.2s ease-in-out infinite;
+  }
+
+  .preview-status-text {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  .preview-client-tag {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  @keyframes dot-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
   }
 </style>
