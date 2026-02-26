@@ -181,6 +181,8 @@
         await waitForImage(footerImage);
       }
 
+      // Esperar a que las fuentes web estén disponibles en el canvas
+      await document.fonts.ready;
       imagesLoaded = true;
       renderCanvas();
     } catch (error) {
@@ -259,300 +261,336 @@
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size for 4:5 aspect ratio
-    canvas.width = 800;
-    canvas.height = 1000;
+    const W   = 800;
+    const PAD = 40;
 
-    // Clear canvas first
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ── Paleta ──────────────────────────────────────────────
+    const RED    = '#CC0000';
+    const DARK   = '#111111';
+    const GRAY   = '#666666';
+    const BGLT   = '#F5F5F5';
+    const RULE   = '#E0E0E0';
+    const WHITE  = '#FFFFFF';
+    const STRIPE = '#FAFAFA';
 
-    // White background
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // ── Fuentes ─────────────────────────────────────────────
+    const HF = '"Bebas Neue", "Arial Black", sans-serif';
+    const BF = '"Inter", "Segoe UI", Helvetica, Arial, sans-serif';
 
-    // === HEADER COMPACTO ===
+    // ── Constantes de layout ─────────────────────────────────
+    const TOPBAR  = 6;
+    const HDR_H   = 118;
+    const REDSEP  = 2;
+    const CLI_H   = 78;
+    const TBL_HDR = 36;
+    const ROW_H   = 50;
+    const IMG_ROW = 96;
+    const TOT_H   = 54;
+    const FTR_H   = 100;
 
-    // Logo arriba a la izquierda (pequeño)
-    const logoH = 62;
-    let logoW = 120;
+    // ── Cálculo dinámico de altura ───────────────────────────
+    const noteText = (notaAdicional && notaTexto.trim()) ? notaTexto : '';
+    const noteLineCount = noteText
+      ? Math.max(Math.ceil(noteText.length / 65), noteText.split('\n').length)
+      : 0;
+    const NOTE_SEC = noteLineCount > 0 ? (80 + noteLineCount * 24) : 0;
+
+    let rowsH = 0;
+    for (const p of products) rowsH += p.imageDataUrl ? IMG_ROW : ROW_H;
+    const PROD_SEC = products.length > 0 ? (32 + TBL_HDR + rowsH + TOT_H) : 0;
+
+    const H = Math.max(
+      TOPBAR + HDR_H + REDSEP + CLI_H + 1 + NOTE_SEC + PROD_SEC + 44 + FTR_H,
+      940
+    );
+
+    canvas.width  = W;
+    canvas.height = H;
+
+    // ── Fondo blanco ────────────────────────────────────────
+    ctx.fillStyle = WHITE;
+    ctx.fillRect(0, 0, W, H);
+
+    let y = 0;
+
+    // ════════════════════════════════════════════════════════
+    // BARRA ROJA SUPERIOR
+    // ════════════════════════════════════════════════════════
+    ctx.fillStyle = RED;
+    ctx.fillRect(0, 0, W, TOPBAR);
+    y += TOPBAR;
+
+    // ════════════════════════════════════════════════════════
+    // HEADER: logo | redes | título | fechas
+    // ════════════════════════════════════════════════════════
+    const hTop = y;
+
+    // Logo — izquierda
+    const LOGO_H = 70;
+    let logoW = 130;
     if (logoImage && logoImage.complete) {
-      logoW = (logoImage.width / logoImage.height) * logoH;
-      ctx.drawImage(logoImage, 18, 14, logoW, logoH);
+      logoW = (logoImage.width / logoImage.height) * LOGO_H;
+      ctx.drawImage(logoImage, PAD, hTop + (HDR_H - LOGO_H) / 2, logoW, LOGO_H);
     }
 
-    // Datos del cliente — pequeños, a la par del logo
-    const clientX = 18 + logoW + 18;
-    let clientY = 24;
-    const cFont = 15;
-    const cLine = 19;
-
-    ctx.font = `bold ${cFont}px "Bebas Neue", "Arial Black", sans-serif`;
-    ctx.textAlign = 'left';
-
-    ctx.fillStyle = '#ff3333';
-    ctx.fillText('CLIENTE:', clientX, clientY);
-    ctx.fillStyle = '#000000';
-    ctx.fillText(nombreCliente, clientX + ctx.measureText('CLIENTE: ').width, clientY);
-    clientY += cLine;
-
-    ctx.fillStyle = '#ff3333';
-    ctx.fillText('TEL:', clientX, clientY);
-    ctx.fillStyle = '#000000';
-    ctx.fillText(telefono, clientX + ctx.measureText('TEL: ').width, clientY);
-    clientY += cLine;
-
-    if (email.trim() !== '') {
-      ctx.fillStyle = '#ff3333';
-      ctx.fillText('EMAIL:', clientX, clientY);
-      ctx.fillStyle = '#000000';
-      ctx.fillText(email.toLowerCase(), clientX + ctx.measureText('EMAIL: ').width, clientY);
-      clientY += cLine;
-    }
-
-    if (fechaValidez) {
-      ctx.fillStyle = '#ff3333';
-      ctx.fillText('VÁLIDA:', clientX, clientY);
-      ctx.fillStyle = '#000000';
-      const fechaFormateada = new Date(fechaValidez + 'T00:00:00').toLocaleDateString('es-GT', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }).toUpperCase();
-      ctx.fillText(fechaFormateada, clientX + ctx.measureText('VÁLIDA: ').width, clientY);
-    }
-
-    // Redes sociales — derecha del header, a la par del logo y datos
-    const socialIconSize = 26;
-    const socialX = 525;
-    const socialY1 = 22;
-    const socialY2 = socialY1 + socialIconSize + 10;
+    // Redes sociales — junto al logo
+    const SOC_X = PAD + logoW + 26;
+    const ICN   = 20;
+    const soc1Y = hTop + 30;
+    const soc2Y = soc1Y + ICN + 9;
 
     if (instagramImage && instagramImage.complete) {
-      ctx.drawImage(instagramImage, socialX, socialY1, socialIconSize, socialIconSize);
+      ctx.drawImage(instagramImage, SOC_X, soc1Y, ICN, ICN);
     }
-    ctx.fillStyle = '#ff3333';
-    ctx.font = 'bold 14px "Bebas Neue", "Arial Black", sans-serif';
+    ctx.font      = `500 12px ${BF}`;
+    ctx.fillStyle = GRAY;
     ctx.textAlign = 'left';
-    ctx.fillText('FASTLANEF1SHOP', socialX + socialIconSize + 6, socialY1 + 19);
+    ctx.fillText('@fastlanef1shop', SOC_X + ICN + 7, soc1Y + 14);
 
     if (tiktokImage && tiktokImage.complete) {
-      ctx.drawImage(tiktokImage, socialX, socialY2, socialIconSize, socialIconSize);
+      ctx.drawImage(tiktokImage, SOC_X, soc2Y, ICN, ICN);
     }
-    ctx.fillText('FASTLANEF1.SHOP', socialX + socialIconSize + 6, socialY2 + 19);
+    ctx.fillText('@fastlanef1.shop', SOC_X + ICN + 7, soc2Y + 14);
+
+    // "COTIZACIÓN" — derecha
+    ctx.font      = `bold 58px ${HF}`;
+    ctx.fillStyle = DARK;
+    ctx.textAlign = 'right';
+    ctx.fillText('COTIZACIÓN', W - PAD, hTop + 68);
+
+    // Fechas — derecha, bajo el título
+    const fmtDate = (d: Date): string =>
+      d.toLocaleDateString('es-GT', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+
+    ctx.font      = `400 11px ${BF}`;
+    ctx.fillStyle = GRAY;
+    ctx.fillText(`EMITIDA: ${fmtDate(new Date())}`, W - PAD, hTop + 87);
+    if (fechaValidez) {
+      ctx.fillText(
+        `VÁLIDA HASTA: ${fmtDate(new Date(fechaValidez + 'T00:00:00'))}`,
+        W - PAD, hTop + 104
+      );
+    }
+
+    y += HDR_H;
+
+    // ════════════════════════════════════════════════════════
+    // SEPARADOR ROJO
+    // ════════════════════════════════════════════════════════
+    ctx.fillStyle = RED;
+    ctx.fillRect(0, y, W, REDSEP);
+    y += REDSEP;
+
+    // ════════════════════════════════════════════════════════
+    // BLOQUE DE CLIENTE
+    // ════════════════════════════════════════════════════════
+    ctx.fillStyle = BGLT;
+    ctx.fillRect(0, y, W, CLI_H);
+
+    const LBL_Y = y + 24;
+    const VAL_Y = y + 50;
+
+    // Construir campos según qué datos existen
+    const cFields = [] as Array<{ label: string; value: string; small?: boolean }>;
+    cFields.push({ label: 'PARA', value: nombreCliente });
+    if (telefono.trim()) cFields.push({ label: 'TELÉFONO', value: telefono });
+    if (email.trim()) cFields.push({ label: 'EMAIL', value: email.toLowerCase(), small: true });
+
+    const slotW = (W - PAD * 2) / cFields.length;
+    for (let fi = 0; fi < cFields.length; fi++) {
+      const f = cFields[fi];
+      const fx = PAD + fi * slotW;
+      const maxW = slotW - 16;
+
+      ctx.font      = `700 9px ${BF}`;
+      ctx.fillStyle = RED;
+      ctx.textAlign = 'left';
+      ctx.fillText(f.label, fx, LBL_Y);
+
+      ctx.font      = f.small ? `400 12px ${BF}` : `600 15px ${BF}`;
+      ctx.fillStyle = DARK;
+      let v = f.value || '—';
+      while (ctx.measureText(v).width > maxW && v.length > 3) v = v.slice(0, -1);
+      if (v !== (f.value || '—')) v += '…';
+      ctx.fillText(v, fx, VAL_Y);
+    }
+
+    y += CLI_H;
 
     // Línea separadora
-    ctx.strokeStyle = '#e0e0e0';
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = RULE;
+    ctx.lineWidth   = 1;
     ctx.beginPath();
-    ctx.moveTo(18, 98);
-    ctx.lineTo(canvas.width - 18, 98);
+    ctx.moveTo(0, y);
+    ctx.lineTo(W, y);
     ctx.stroke();
+    y += 1;
 
-    // Título "COTIZACIÓN"
-    ctx.fillStyle = '#000000';
-    ctx.font = 'bold 50px "Bebas Neue", "Arial Black", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('COTIZACIÓN', canvas.width / 2, 148);
-
-    // Start Y position for content
-    let currentY = 175;
-
-    // NOTA ADICIONAL section
-    if (notaAdicional && notaTexto.trim() !== '') {
-      ctx.fillStyle = '#ff3333';
-      ctx.font = 'bold 26px "Bebas Neue", "Arial Black", sans-serif';
+    // ════════════════════════════════════════════════════════
+    // NOTA ADICIONAL
+    // ════════════════════════════════════════════════════════
+    if (noteText) {
+      y += 22;
+      ctx.font      = `700 9px ${BF}`;
+      ctx.fillStyle = RED;
       ctx.textAlign = 'left';
-      ctx.fillText('NOTA:', 40, currentY);
-      currentY += 18;
+      ctx.fillText('NOTA ADICIONAL', PAD, y);
+      y += 18;
 
-      ctx.fillStyle = '#000000';
-      ctx.font = 'bold 22px "Bebas Neue", sans-serif';
-      const notaEndY = wrapText(ctx, notaTexto, 40, currentY + 8, 720, 24);
-      currentY = notaEndY + 35;
+      ctx.font      = `400 13px ${BF}`;
+      ctx.fillStyle = DARK;
+      const endNY = wrapText(ctx, noteText, PAD, y, W - PAD * 2, 22);
+      y = endNY + 28;
+
+      ctx.strokeStyle = RULE;
+      ctx.lineWidth   = 1;
+      ctx.beginPath();
+      ctx.moveTo(PAD, y);
+      ctx.lineTo(W - PAD, y);
+      ctx.stroke();
+      y += 1;
     }
 
-    // PRODUCTOS section
-    const hasProducts = products.length > 0;
+    // ════════════════════════════════════════════════════════
+    // TABLA DE PRODUCTOS
+    // ════════════════════════════════════════════════════════
+    if (products.length > 0) {
+      y += 32;
 
-    if (hasProducts) {
-      ctx.fillStyle = '#ff3333';
-      ctx.font = 'bold 32px "Bebas Neue", "Arial Black", sans-serif';
-      ctx.fillText('PRODUCTOS:', 40, currentY);
-      currentY += 35;
+      // Referencias de columnas
+      const CX_NAME = PAD;
+      const CX_QTY  = W - 252;   // cantidad centrada aquí
+      const CX_UPR  = W - 136;   // precio unitario alineado a la derecha aquí
+      const CX_TOT  = W - PAD;   // total alineado a la derecha aquí
 
-      // Calcular si necesitamos dos columnas
-      const spaceAvailable = 750 - currentY;
-      const estimatedHeightPerProduct = 75;
-      const totalProductsHeight = products.length * estimatedHeightPerProduct;
-      const needsTwoColumns = totalProductsHeight > spaceAvailable && products.length >= 3;
+      // ── Encabezado de tabla ──────────────────────────────
+      ctx.fillStyle = '#1A1A1A';
+      ctx.fillRect(PAD, y, W - PAD * 2, TBL_HDR);
 
-      if (needsTwoColumns) {
-        // LAYOUT DE DOS COLUMNAS
-        const columnWidth = 360;
-        const columnGap = 40;
-        const leftColumnX = 40;
-        const rightColumnX = leftColumnX + columnWidth + columnGap;
-        const productsPerColumn = Math.ceil(products.length / 2);
+      ctx.font      = `700 10px ${BF}`;
+      ctx.fillStyle = WHITE;
+      ctx.textAlign = 'left';
+      ctx.fillText('PRODUCTO', CX_NAME + 12, y + 23);
+      ctx.textAlign = 'center';
+      ctx.fillText('CANT.', CX_QTY, y + 23);
+      ctx.textAlign = 'right';
+      ctx.fillText('P. UNIT.', CX_UPR, y + 23);
+      ctx.fillText('TOTAL', CX_TOT, y + 23);
 
-        let leftColumnY = currentY;
-        let rightColumnY = currentY;
+      y += TBL_HDR;
 
-        for (let i = 0; i < products.length; i++) {
-          const product = products[i];
-          const isLeftColumn = i < productsPerColumn;
-          const columnX = isLeftColumn ? leftColumnX : rightColumnX;
-          let columnY = isLeftColumn ? leftColumnY : rightColumnY;
+      // ── Filas de productos ──────────────────────────────
+      for (let i = 0; i < products.length; i++) {
+        const p  = products[i];
+        const rH = p.imageDataUrl ? IMG_ROW : ROW_H;
 
-          if (product.imageDataUrl) {
-            const img = new Image();
-            img.src = product.imageDataUrl;
+        ctx.fillStyle = i % 2 === 0 ? WHITE : STRIPE;
+        ctx.fillRect(PAD, y, W - PAD * 2, rH);
 
-            const imgSize = 50;
-            const imgX = columnX;
-            const imgY = columnY - 5;
+        // Borde inferior de fila
+        ctx.strokeStyle = '#EBEBEB';
+        ctx.lineWidth   = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(PAD, y + rH);
+        ctx.lineTo(W - PAD, y + rH);
+        ctx.stroke();
 
-            ctx.fillStyle = '#f5f5f5';
-            ctx.fillRect(imgX, imgY, imgSize, imgSize);
+        const mY   = y + rH / 2 + 5;
+        let nameX  = CX_NAME + 12;
 
-            if (img.complete) {
-              ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
-            }
+        // Imagen de producto prominente
+        if (p.imageDataUrl) {
+          const SZ  = 78;
+          const iX  = PAD + 9;
+          const iY  = y + (rH - SZ) / 2;
+          const img = new Image();
+          img.src   = p.imageDataUrl;
 
-            ctx.strokeStyle = '#e0e0e0';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(imgX, imgY, imgSize, imgSize);
-
-            const textX = imgX + imgSize + 10;
-            const maxTextWidth = columnWidth - imgSize - 10;
-
-            ctx.fillStyle = '#000000';
-            ctx.font = 'bold 18px "Bebas Neue", sans-serif';
-            const productText = `${i + 1}. ${product.name}`;
-
-            let displayName = productText;
-            if (ctx.measureText(displayName).width > maxTextWidth) {
-              while (ctx.measureText(displayName + '...').width > maxTextWidth && displayName.length > 10) {
-                displayName = displayName.slice(0, -1);
-              }
-              displayName += '...';
-            }
-            ctx.fillText(displayName, textX, columnY + 12);
-
-            ctx.font = '14px "Bebas Neue", sans-serif';
-            const detailsText = `Q${product.price.toFixed(2)} x${product.quantity}`;
-            ctx.fillText(detailsText, textX, columnY + 30);
-
-            if (isLeftColumn) {
-              leftColumnY += imgSize + 12;
-            } else {
-              rightColumnY += imgSize + 12;
-            }
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(iX, iY, SZ, SZ);
+          ctx.clip();
+          if (img.complete && img.naturalWidth > 0) {
+            ctx.drawImage(img, iX, iY, SZ, SZ);
           } else {
-            ctx.fillStyle = '#000000';
-            ctx.font = 'bold 18px "Bebas Neue", sans-serif';
-
-            const productText = `${i + 1}. ${product.name}`;
-            let displayName = productText;
-            const maxTextWidth = columnWidth;
-
-            if (ctx.measureText(displayName).width > maxTextWidth) {
-              while (ctx.measureText(displayName + '...').width > maxTextWidth && displayName.length > 10) {
-                displayName = displayName.slice(0, -1);
-              }
-              displayName += '...';
-            }
-            ctx.fillText(displayName, columnX, columnY);
-            columnY += 20;
-
-            ctx.font = '14px "Bebas Neue", sans-serif';
-            const detailsText = `Q${product.price.toFixed(2)} x${product.quantity}`;
-            ctx.fillText(detailsText, columnX, columnY);
-
-            if (isLeftColumn) {
-              leftColumnY += 35;
-            } else {
-              rightColumnY += 35;
-            }
+            ctx.fillStyle = '#E8E8E8';
+            ctx.fill();
           }
+          ctx.restore();
+
+          // Borde sutil
+          ctx.strokeStyle = RULE;
+          ctx.lineWidth   = 1;
+          ctx.strokeRect(iX, iY, SZ, SZ);
+
+          nameX = iX + SZ + 14;
         }
 
-        currentY = Math.max(leftColumnY, rightColumnY) + 15;
-      } else {
-        // LAYOUT DE UNA COLUMNA
-        for (let i = 0; i < products.length; i++) {
-          const product = products[i];
-
-          if (product.imageDataUrl) {
-            const img = new Image();
-            img.src = product.imageDataUrl;
-
-            const imgSize = 60;
-            const imgX = 40;
-            const imgY = currentY - 5;
-
-            ctx.fillStyle = '#f5f5f5';
-            ctx.fillRect(imgX, imgY, imgSize, imgSize);
-
-            if (img.complete) {
-              ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
-            }
-
-            ctx.strokeStyle = '#e0e0e0';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(imgX, imgY, imgSize, imgSize);
-
-            const textX = imgX + imgSize + 15;
-
-            ctx.fillStyle = '#000000';
-            ctx.font = 'bold 22px "Bebas Neue", sans-serif';
-            const productText = `${i + 1}. ${product.name}`;
-            ctx.fillText(productText, textX, currentY + 15);
-
-            ctx.font = '18px "Bebas Neue", sans-serif';
-            const detailsText = `CANT: ${product.quantity} • Q${product.price.toFixed(2)}`;
-            ctx.fillText(detailsText, textX, currentY + 38);
-
-            currentY += imgSize + 15;
-          } else {
-            ctx.fillStyle = '#000000';
-            ctx.font = 'bold 24px "Bebas Neue", sans-serif';
-
-            const productText = `${i + 1}. ${product.name}`;
-            ctx.fillText(productText, 40, currentY);
-            currentY += 25;
-
-            ctx.font = '20px "Bebas Neue", sans-serif';
-            const detailsText = `   CANT: ${product.quantity} • Q${product.price.toFixed(2)}`;
-            ctx.fillText(detailsText, 40, currentY);
-            currentY += 30;
-          }
+        // Nombre del producto
+        const maxNW = CX_QTY - 40 - nameX;
+        ctx.font      = `600 13px ${BF}`;
+        ctx.fillStyle = DARK;
+        ctx.textAlign = 'left';
+        let pName = p.name;
+        while (ctx.measureText(pName).width > maxNW && pName.length > 4) {
+          pName = pName.slice(0, -1);
         }
+        if (pName.length < p.name.length) pName += '…';
+        ctx.fillText(pName, nameX, mY);
+
+        // Cantidad
+        ctx.font      = `400 13px ${BF}`;
+        ctx.fillStyle = GRAY;
+        ctx.textAlign = 'center';
+        ctx.fillText(`${p.quantity}`, CX_QTY, mY);
+
+        // Precio unitario
+        ctx.textAlign = 'right';
+        ctx.fillText(`Q ${p.price.toFixed(2)}`, CX_UPR, mY);
+
+        // Total de línea
+        ctx.font      = `600 13px ${BF}`;
+        ctx.fillStyle = DARK;
+        ctx.fillText(`Q ${(p.price * p.quantity).toFixed(2)}`, CX_TOT, mY);
+
+        y += rH;
       }
 
-      currentY += 10;
+      // ── Barra de total ───────────────────────────────────
+      ctx.fillStyle = RED;
+      ctx.fillRect(PAD, y, W - PAD * 2, TOT_H);
 
-      // TOTAL section
-      ctx.fillStyle = '#ff3333';
-      ctx.font = 'bold 40px "Bebas Neue", "Arial Black", sans-serif';
+      // Conteo de ítems (izquierda, sutil)
+      const nItems = getTotalProducts();
+      ctx.font      = `400 10px ${BF}`;
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
       ctx.textAlign = 'left';
-      ctx.fillText('TOTAL:', 40, currentY);
+      ctx.fillText(
+        `${nItems} PRODUCTO${nItems !== 1 ? 'S' : ''}`,
+        CX_NAME + 12,
+        y + TOT_H / 2 + 4
+      );
 
-      ctx.fillStyle = '#000000';
-      ctx.font = 'bold 40px "Bebas Neue", sans-serif';
-      const totalText = `Q. ${getTotalPrice().toFixed(2)}`;
-      ctx.fillText(totalText, 150, currentY);
-      currentY += 50;
+      // Etiqueta + monto (derecha)
+      ctx.font      = `bold 32px ${HF}`;
+      ctx.fillStyle = WHITE;
+      ctx.textAlign = 'right';
+      ctx.fillText(`TOTAL   Q ${getTotalPrice().toFixed(2)}`, CX_TOT, y + TOT_H / 2 + 13);
+
+      y += TOT_H;
     }
 
-    // Footer
+    // ════════════════════════════════════════════════════════
+    // FOOTER
+    // ════════════════════════════════════════════════════════
     if (footerImage && footerImage.complete) {
-      ctx.drawImage(footerImage, 0, 900, canvas.width, 100);
+      ctx.drawImage(footerImage, 0, H - FTR_H, W, FTR_H);
     }
   }
 
   async function downloadImage(): Promise<void> {
-    if (!nombreCliente || !telefono) {
-      alert('POR FAVOR, COMPLETA LOS CAMPOS OBLIGATORIOS: CLIENTE Y TELÉFONO.');
+    if (!nombreCliente) {
+      alert('POR FAVOR, COMPLETA EL NOMBRE DEL CLIENTE.');
       return;
     }
     if (products.length === 0) {
@@ -582,7 +620,7 @@
 </script>
 
 <svelte:head>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo+Black&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <title>Generar Cotización - Fast Lane F1 Shop</title>
 </svelte:head>
 
@@ -626,14 +664,14 @@
           <div class="form-group">
             <label for="telefono" class="flex items-center text-surface-200 font-semibold text-sm uppercase tracking-wider mb-2">
               <LucidePhone class="mr-2 w-4 h-4 text-primary-500" />
-              TELÉFONO
+              TELÉFONO <span class="ml-1 text-surface-400 normal-case font-normal">(opcional)</span>
             </label>
             <input
               id="telefono"
               type="tel"
               bind:value={telefono}
               on:input={(e) => { telefono = toUpperCase(telefono); }}
-              placeholder="NÚMERO DE TELÉFONO"
+              placeholder="NÚMERO DE TELÉFONO (OPCIONAL)"
               class="input bg-surface-700 border-2 border-surface-600
               focus:border-primary-500 focus:ring-2 focus:ring-primary-900
               transition-all duration-200 text-white"
