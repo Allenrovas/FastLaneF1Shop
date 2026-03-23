@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,19 +14,79 @@ body {
 	@apply bg-surface-900 text-surface-50;
 }
 
-/* Dark scrollbar */
+/* ===== Kinetic Monolith Design System ===== */
+
+/* Headline font utility */
+.font-headline {
+	font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+
+/* Racing-style heading: bold, uppercase, tracked */
+.font-racing {
+	font-family: 'Space Grotesk', system-ui, sans-serif;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+/* Glassmorphism navbar */
+.glass-nav {
+	background: rgba(57, 57, 57, 0.6);
+	-webkit-backdrop-filter: blur(24px);
+	backdrop-filter: blur(24px);
+}
+
+/* Kinetic CTA button with gradient */
+.btn-kinetic {
+	@apply font-bold uppercase tracking-wider text-white transition-all duration-200;
+	font-family: 'Space Grotesk', system-ui, sans-serif;
+	background: linear-gradient(135deg, rgb(225, 6, 0), rgb(192, 5, 0));
+}
+.btn-kinetic:hover {
+	background: linear-gradient(135deg, rgb(240, 50, 20), rgb(225, 6, 0));
+	box-shadow: 0 0 20px rgba(225, 6, 0, 0.3);
+}
+
+/* Ghost border for inputs (Telemetry style) */
+.input-telemetry {
+	@apply bg-[#0e0e0e] text-white w-full py-3 outline-none transition-all duration-200;
+	border: none;
+	border-bottom: 2px solid rgba(94, 63, 58, 0.15);
+}
+.input-telemetry:focus {
+	border-bottom-color: rgb(225, 6, 0);
+}
+.input-telemetry::placeholder {
+	@apply text-surface-300;
+}
+
+/* Lap Timer chip (for badges like "Limited Edition", stock) */
+.chip-lap-timer {
+	@apply px-3 py-1 text-xs uppercase tracking-wider font-medium;
+	font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+
+/* Section divider — uses bg shift instead of border */
+.section-carbon {
+	background-color: rgb(28, 27, 27);
+}
+
+.section-dark {
+	background-color: rgb(19, 19, 19);
+}
+
+/* ===== Scrollbar ===== */
 ::-webkit-scrollbar {
 	width: 8px;
 	height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-	background: rgb(15 15 15);
+	background: rgb(19 19 19);
 }
 
 ::-webkit-scrollbar-thumb {
-	background: rgb(50 50 50);
-	border-radius: 4px;
+	background: rgb(53 53 52);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -33,6 +95,6 @@ body {
 
 /* Red selection */
 ::selection {
-	background-color: rgba(226, 41, 40, 0.3);
+	background-color: rgba(225, 6, 0, 0.3);
 	color: white;
 }

@@ -109,19 +109,19 @@
 <AppShell>
   <svelte:fragment slot="header">
     <!-- Promotional Banner -->
-    <div class="bg-primary-500 text-white text-center py-1.5 text-xs sm:text-sm font-medium tracking-wider uppercase">
+    <div class="bg-primary-500 text-white text-center py-1.5 text-xs sm:text-sm font-medium font-headline tracking-[0.15em] uppercase">
       Modelos 100% Auténticos | Envíos a toda Guatemala
     </div>
 
     <AppBar
-      background="bg-white shadow-sm border-b border-gray-200"
+      background="bg-white shadow-sm"
       padding="p-3 lg:p-4"
     >
       <svelte:fragment slot="lead">
         <div class="flex items-center gap-3">
           <!-- Mobile menu button -->
           <button
-            class="lg:hidden btn btn-sm text-gray-700 hover:bg-gray-100 !p-1"
+            class="lg:hidden btn btn-sm text-gray-700 hover:text-primary-500 !p-1"
             on:click={() => mobileMenuOpen.update(v => !v)}
             aria-label="Menú"
           >
@@ -145,7 +145,7 @@
         {#each navLinks as link}
           <a
             href={link.href}
-            class="text-sm uppercase tracking-wider font-medium text-gray-700 hover:text-primary-500 transition-colors duration-200"
+            class="text-sm font-headline uppercase tracking-[0.1em] font-medium text-gray-700 hover:text-primary-500 transition-colors duration-200"
           >
             {link.label}
           </a>
@@ -156,13 +156,13 @@
         <div class="flex items-center gap-3">
           <!-- Cart Button -->
           <button
-            class="btn btn-sm bg-white text-gray-700 border border-gray-300 hover:text-primary-500 hover:border-primary-500 relative transition-all duration-200"
+            class="btn btn-sm bg-gray-100 text-gray-700 hover:text-primary-500 relative transition-all duration-200"
             on:click={() => isCartOpen.set(true)}
           >
             <LucideShoppingCart class="w-4 h-4 sm:mr-2" />
-            <span class="hidden sm:inline font-medium text-sm">Carrito</span>
+            <span class="hidden sm:inline font-headline font-medium text-sm uppercase tracking-wider">Carrito</span>
             {#if $cartItemCount > 0}
-              <span class="absolute -top-2 -right-2 bg-primary-500 text-white text-xs font-bold rounded-full min-w-[1.25rem] h-5 flex items-center justify-center px-1">
+              <span class="absolute -top-2 -right-2 bg-primary-500 text-white text-xs font-bold min-w-[1.25rem] h-5 flex items-center justify-center px-1">
                 {$cartItemCount}
               </span>
             {/if}
@@ -173,12 +173,12 @@
 
     <!-- Mobile Menu -->
     {#if $mobileMenuOpen}
-      <div class="lg:hidden bg-white border-b border-gray-200" transition:fly={{ y: -10, duration: 200 }}>
+      <div class="lg:hidden bg-white shadow-md" transition:fly={{ y: -10, duration: 200 }}>
         <nav class="container mx-auto px-4 py-3 flex flex-col gap-1">
           {#each navLinks as link}
             <a
               href={link.href}
-              class="px-4 py-2.5 text-sm uppercase tracking-wider font-medium text-gray-700 hover:text-primary-500 hover:bg-gray-100 rounded transition-colors duration-200"
+              class="px-4 py-2.5 text-sm font-headline uppercase tracking-[0.1em] font-medium text-gray-700 hover:text-primary-500 hover:bg-gray-50 transition-colors duration-200"
               on:click={() => mobileMenuOpen.set(false)}
             >
               {link.label}
@@ -196,116 +196,117 @@
 
   <!-- Footer -->
   <svelte:fragment slot="pageFooter">
-    <footer class="relative bg-white text-gray-900 overflow-hidden">
-      <!-- Red top line -->
-      <div class="h-0.5 bg-primary-500"></div>
+    <footer class="relative overflow-hidden">
+      <div class="bg-white">
+        <div class="h-0.5 bg-primary-500"></div>
 
-      <div class="container mx-auto px-4 py-16 relative">
-        <!-- Footer Content -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          <!-- Brand Section -->
-          <div class="col-span-1 md:col-span-2">
-            <div class="mb-6">
-              <img src="{base}/F1L-full.png" alt="Fast Lane F1 Shop" class="h-24" />
+        <div class="container mx-auto px-4 py-16 relative">
+          <!-- Footer Content -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <!-- Brand Section -->
+            <div class="col-span-1 md:col-span-2">
+              <div class="mb-6">
+                <img src="{base}/F1L-full.png" alt="Fast Lane F1 Shop" class="h-24" />
+              </div>
+              <p class="text-gray-600 leading-relaxed mb-6 max-w-md">
+                La colección más completa de monoplazas de Fórmula 1. Desde los campeones del mundo hasta las máquinas más icónicas de la historia del automovilismo.
+              </p>
+
+              <!-- Social Links -->
+              <div class="flex gap-3">
+                <button
+                  class="w-10 h-10 bg-gray-100 flex items-center justify-center text-gray-600 hover:text-primary-500 hover:bg-gray-200 transition-all duration-200"
+                  on:click={() => window.open('https://www.facebook.com/share/1GkYFBVWRQ/?mibextid=wwXIfr', '_blank')}
+                  aria-label="Facebook"
+                >
+                  <LucideFacebook class="w-4 h-4" />
+                </button>
+                <button
+                  class="w-10 h-10 bg-gray-100 flex items-center justify-center text-gray-600 hover:text-primary-500 hover:bg-gray-200 transition-all duration-200"
+                  on:click={() => window.open('https://www.tiktok.com/@fastlanef1.shop', '_blank')}
+                  aria-label="TikTok"
+                >
+                  <IcTwotoneTiktok class="w-4 h-4" />
+                </button>
+                <button
+                  class="w-10 h-10 bg-gray-100 flex items-center justify-center text-gray-600 hover:text-primary-500 hover:bg-gray-200 transition-all duration-200"
+                  on:click={() => window.open('https://www.instagram.com/fastlanef1shop/', '_blank')}
+                  aria-label="Instagram"
+                >
+                  <LucideInstagram class="w-4 h-4" />
+                </button>
+                <button
+                  class="w-10 h-10 bg-gray-100 flex items-center justify-center text-gray-600 hover:text-primary-500 hover:bg-gray-200 transition-all duration-200"
+                  on:click={() => window.open('https://wa.me/+50249395444', '_blank')}
+                  aria-label="WhatsApp"
+                >
+                  <TablerBrandWhatsapp class="w-4 h-4" />
+                </button>
+              </div>
             </div>
-            <p class="text-gray-500 leading-relaxed mb-6 max-w-md">
-              La colección más completa de monoplazas de Fórmula 1. Desde los campeones del mundo hasta las máquinas más icónicas de la historia del automovilismo.
-            </p>
 
-            <!-- Social Links -->
-            <div class="flex gap-3">
-              <button
-                class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500 hover:text-primary-500 hover:border-primary-500 transition-all duration-200"
-                on:click={() => window.open('https://www.facebook.com/share/1GkYFBVWRQ/?mibextid=wwXIfr', '_blank')}
-                aria-label="Facebook"
-              >
-                <LucideFacebook class="w-4 h-4" />
-              </button>
-              <button
-                class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500 hover:text-primary-500 hover:border-primary-500 transition-all duration-200"
-                on:click={() => window.open('https://www.tiktok.com/@fastlanef1.shop', '_blank')}
-                aria-label="TikTok"
-              >
-                <IcTwotoneTiktok class="w-4 h-4" />
-              </button>
-              <button
-                class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500 hover:text-primary-500 hover:border-primary-500 transition-all duration-200"
-                on:click={() => window.open('https://www.instagram.com/fastlanef1shop/', '_blank')}
-                aria-label="Instagram"
-              >
-                <LucideInstagram class="w-4 h-4" />
-              </button>
-              <button
-                class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500 hover:text-primary-500 hover:border-primary-500 transition-all duration-200"
-                on:click={() => window.open('https://wa.me/+50249395444', '_blank')}
-                aria-label="WhatsApp"
-              >
-                <TablerBrandWhatsapp class="w-4 h-4" />
-              </button>
+            <!-- Dynamic Categories -->
+            <div>
+              <h3 class="font-headline font-bold text-lg mb-6 uppercase tracking-wider text-gray-900 flex items-center">
+                <LucideHelmet class="mr-2 w-5 h-5 text-primary-500" />
+                Escuderías
+              </h3>
+              <ul class="space-y-3">
+                {#each $categories.filter(c => c.type === 'team').slice(0, 5) as category}
+                  <li>
+                    <a
+                      href={`${base}/categoria/${category.id}`}
+                      class="flex items-center gap-2 text-gray-600 hover:text-primary-500 transition-colors duration-200 group"
+                    >
+                      <div class="w-1.5 h-1.5 bg-primary-500 opacity-50 group-hover:opacity-100 transition-opacity duration-200"></div>
+                      <span>{category.name}</span>
+                    </a>
+                  </li>
+                {/each}
+              </ul>
             </div>
-          </div>
 
-          <!-- Dynamic Categories -->
-          <div>
-            <h3 class="font-bold text-lg mb-6 flex items-center">
-              <LucideHelmet class="mr-2 w-5 h-5 text-primary-500" />
-              Escuderías
-            </h3>
-            <ul class="space-y-3">
-              {#each $categories.filter(c => c.type === 'team').slice(0, 5) as category}
+            <!-- Info Links -->
+            <div>
+              <h3 class="font-headline font-bold text-lg mb-6 uppercase tracking-wider text-gray-900 flex items-center">
+                <LucideInfo class="mr-2 w-5 h-5 text-primary-500" />
+                Información
+              </h3>
+              <ul class="space-y-3">
                 <li>
-                  <a
-                    href={`${base}/categoria/${category.id}`}
-                    class="flex items-center gap-2 text-gray-500 hover:text-primary-500 transition-colors duration-200 group"
-                  >
-                    <div class="w-1.5 h-1.5 bg-current rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-200"></div>
-                    <span>{category.name}</span>
+                  <a href={`${base}/`} class="flex items-center gap-2 text-gray-600 hover:text-primary-500 transition-colors duration-200 group">
+                    <LucideHome class="w-4 h-4 opacity-50 group-hover:opacity-100" />
+                    <span>Inicio</span>
                   </a>
                 </li>
-              {/each}
-            </ul>
+                <li>
+                  <a href={`${base}/catalogo`} class="flex items-center gap-2 text-gray-600 hover:text-primary-500 transition-colors duration-200 group">
+                    <LucideBookOpen class="w-4 h-4 opacity-50 group-hover:opacity-100" />
+                    <span>Catálogo</span>
+                  </a>
+                </li>
+                <li>
+                  <a href={`${base}/shipping`} class="flex items-center gap-2 text-gray-600 hover:text-primary-500 transition-colors duration-200 group">
+                    <LucideTruck class="w-4 h-4 opacity-50 group-hover:opacity-100" />
+                    <span>Envíos</span>
+                  </a>
+                </li>
+                <li>
+                  <a href={`${base}/contact`} class="flex items-center gap-2 text-gray-600 hover:text-primary-500 transition-colors duration-200 group">
+                    <LucideEmail class="w-4 h-4 opacity-50 group-hover:opacity-100" />
+                    <span>Contacto</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          <!-- Info Links -->
-          <div>
-            <h3 class="font-bold text-lg mb-6 flex items-center">
-              <LucideInfo class="mr-2 w-5 h-5 text-primary-500" />
-              Información
-            </h3>
-            <ul class="space-y-3">
-              <li>
-                <a href={`${base}/`} class="flex items-center gap-2 text-gray-500 hover:text-primary-500 transition-colors duration-200 group">
-                  <LucideHome class="w-4 h-4 opacity-50 group-hover:opacity-100" />
-                  <span>Inicio</span>
-                </a>
-              </li>
-              <li>
-                <a href={`${base}/catalogo`} class="flex items-center gap-2 text-gray-500 hover:text-primary-500 transition-colors duration-200 group">
-                  <LucideBookOpen class="w-4 h-4 opacity-50 group-hover:opacity-100" />
-                  <span>Catálogo</span>
-                </a>
-              </li>
-              <li>
-                <a href={`${base}/shipping`} class="flex items-center gap-2 text-gray-500 hover:text-primary-500 transition-colors duration-200 group">
-                  <LucideTruck class="w-4 h-4 opacity-50 group-hover:opacity-100" />
-                  <span>Envíos</span>
-                </a>
-              </li>
-              <li>
-                <a href={`${base}/contact`} class="flex items-center gap-2 text-gray-500 hover:text-primary-500 transition-colors duration-200 group">
-                  <LucideEmail class="w-4 h-4 opacity-50 group-hover:opacity-100" />
-                  <span>Contacto</span>
-                </a>
-              </li>
-            </ul>
+          <!-- Copyright -->
+          <div class="text-center bg-gray-50 -mx-4 px-4 py-8 mt-4">
+            <p class="text-sm text-gray-500 font-headline uppercase tracking-wider">
+              © {new Date().getFullYear()} Fast Lane F1 Shop. Todos los derechos reservados.
+            </p>
           </div>
-        </div>
-
-        <!-- Copyright -->
-        <div class="text-center border-t border-gray-200 pt-8">
-          <p class="text-sm text-gray-400">
-            © {new Date().getFullYear()} Fast Lane F1 Shop. Todos los derechos reservados.
-          </p>
         </div>
       </div>
     </footer>
@@ -317,15 +318,15 @@
   <div class="fixed inset-0 z-50 overflow-hidden" transition:fade={{ duration: 300 }}>
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" on:click={() => isCartOpen.set(false)}></div>
     <div
-      class="absolute right-0 top-0 h-full w-full max-w-lg bg-surface-800 shadow-2xl border-l border-surface-700"
+      class="absolute right-0 top-0 h-full w-full max-w-lg bg-[#1c1b1b] shadow-2xl"
       transition:fly={{ x: 300, duration: 400 }}
     >
       <div class="flex flex-col h-full">
         <!-- Cart Header -->
-        <div class="p-6 border-b border-surface-700 bg-surface-900">
+        <div class="p-6 bg-[#131313]">
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-2xl font-bold text-white flex items-center">
+              <h3 class="text-2xl font-headline font-bold text-white flex items-center uppercase tracking-wider">
                 <LucideShoppingCart class="mr-2 w-6 h-6 text-primary-500" />
                 Mi Carrito
               </h3>
@@ -358,7 +359,7 @@
         <div class="flex-1 overflow-y-auto">
           {#if $cart.length === 0}
             <div class="flex flex-col items-center justify-center h-full px-6 text-center">
-              <div class="w-32 h-32 bg-surface-700 rounded-full flex items-center justify-center mb-6">
+              <div class="w-32 h-32 bg-surface-600 flex items-center justify-center mb-6">
                 <LucideShoppingCart class="w-16 h-16 text-surface-300" />
               </div>
               <h4 class="text-xl font-semibold mb-3 text-white">
@@ -379,13 +380,13 @@
             <div class="p-6 space-y-4">
               {#each $cart as item, i}
                 <div
-                  class="bg-surface-700 border border-surface-600 rounded-lg p-4 hover:border-primary-500/50 transition-all duration-200"
+                  class="bg-[#2a2a2a] p-4 hover:bg-[#353534] transition-all duration-200"
                   in:fly={{ x: 50, duration: 300, delay: i * 50 }}
                 >
                   <div class="flex items-center gap-4">
                     <!-- Product Image -->
                     <div class="relative">
-                      <div class="w-20 h-20 bg-surface-600 rounded-lg overflow-hidden">
+                      <div class="w-20 h-20 bg-surface-600 overflow-hidden">
                         <img
                           src={getProductImageUrl(item, 0)}
                           alt={item.name}
@@ -432,19 +433,19 @@
 
                     <!-- Quantity and Actions -->
                     <div class="flex flex-col items-end gap-2">
-                      <div class="flex items-center bg-surface-800 rounded-full p-1">
+                      <div class="flex items-center bg-[#131313] p-1">
                         <button
-                          class="btn btn-sm variant-ghost-surface w-8 h-8 !p-0 rounded-full"
+                          class="btn btn-sm variant-ghost-surface w-8 h-8 !p-0"
                           on:click={() => updateQuantity(item.id, item.quantity - 1)}
                           disabled={item.quantity <= 1}
                         >
                           <LucideMinus class="w-3 h-3" />
                         </button>
-                        <span class="w-10 text-center font-semibold text-white">
+                        <span class="w-10 text-center font-headline font-semibold text-white">
                           {item.quantity}
                         </span>
                         <button
-                          class="btn btn-sm variant-ghost-surface w-8 h-8 !p-0 rounded-full"
+                          class="btn btn-sm variant-ghost-surface w-8 h-8 !p-0"
                           on:click={() => updateQuantity(item.id, item.quantity + 1)}
                         >
                           <LucidePlus class="w-3 h-3" />
@@ -452,7 +453,7 @@
                       </div>
 
                       <button
-                        class="btn btn-sm variant-ghost-error w-8 h-8 !p-0 rounded-full"
+                        class="btn btn-sm variant-ghost-error w-8 h-8 !p-0"
                         on:click={() => removeFromCart(item.id)}
                         title="Eliminar del carrito"
                       >
@@ -468,22 +469,22 @@
 
         <!-- Cart Footer -->
         {#if $cart.length > 0}
-          <div class="border-t border-surface-700 bg-surface-900 p-6">
+          <div class="bg-[#131313] p-6">
             <div class="space-y-3 mb-6">
               <div class="flex justify-between items-center">
-                <span class="flex items-center text-surface-200">
+                <span class="flex items-center text-surface-300">
                   <LucideCalculator class="mr-2 w-4 h-4" />
                   Subtotal ({$cartItemCount} items):
                 </span>
-                <span class="font-semibold text-white">
+                <span class="font-headline font-semibold text-white">
                   Q. {$cartTotal.toFixed(2)}
                 </span>
               </div>
 
-              <div class="border-t border-surface-700 pt-3">
+              <div class="bg-[#1c1b1b] p-3 mt-3">
                 <div class="flex justify-between items-center">
-                  <span class="text-xl font-bold text-white">Total:</span>
-                  <span class="text-3xl font-bold text-white">
+                  <span class="text-xl font-headline font-bold text-white uppercase tracking-wider">Total:</span>
+                  <span class="text-3xl font-headline font-bold text-white">
                     Q. {$cartTotal.toFixed(2)}
                   </span>
                 </div>
@@ -492,7 +493,7 @@
 
             <div class="space-y-3">
               <button
-                class="btn bg-primary-500 text-white w-full font-semibold text-lg py-4 uppercase tracking-wider hover:bg-primary-600 transition-colors duration-200"
+                class="btn btn-kinetic w-full text-lg py-4"
                 on:click={handleCheckout}
               >
                 <LucideCreditCard class="mr-2 w-5 h-5" />
@@ -500,7 +501,7 @@
               </button>
 
               <button
-                class="btn variant-ghost-surface w-full"
+                class="btn bg-[#2a2a2a] text-surface-100 w-full hover:bg-[#353534] transition-colors font-headline uppercase tracking-wider"
                 on:click={() => isCartOpen.set(false)}
               >
                 <LucideShoppingBag class="mr-2 w-5 h-5" />

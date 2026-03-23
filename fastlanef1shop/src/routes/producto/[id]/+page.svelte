@@ -344,16 +344,16 @@
   <!-- Loading State -->
   <div class="container mx-auto px-4 py-20 text-center" in:fade>
     <div class="flex justify-center items-center mb-8">
-      <div class="w-16 h-16 rounded-full bg-surface-700 animate-pulse"></div>
+      <div class="w-16 h-16 bg-[#2a2a2a] animate-pulse"></div>
     </div>
-    <h3 class="text-2xl font-semibold text-white mb-4">
+    <h3 class="font-headline text-2xl font-semibold text-white mb-4 uppercase tracking-wider">
       Cargando detalles del monoplaza...
     </h3>
     <p class="text-surface-300">Preparando la experiencia premium para ti</p>
   </div>
 {:else if $product}
   <!-- Breadcrumb -->
-  <section class="bg-surface-900 border-b border-surface-800">
+  <section class="bg-[#1c1b1b]">
     <div class="container mx-auto px-4 py-4">
       <nav>
         <ol class="flex items-center gap-2 text-sm">
@@ -395,7 +395,7 @@
         <!-- Product Images -->
         <div class="space-y-4">
           <!-- Main Image -->
-          <div class="relative bg-surface-800 rounded-xl overflow-hidden aspect-square border border-surface-700 group">
+          <div class="relative bg-[#1c1b1b] overflow-hidden aspect-square group">
             <img
               src={getProductImageUrl($product, $selectedImageIndex)}
               alt={$product.name}
@@ -409,7 +409,7 @@
             <!-- Image Controls -->
             <div class="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <button
-                class="w-9 h-9 bg-surface-900/70 backdrop-blur-sm border border-surface-600 rounded-lg flex items-center justify-center text-white hover:bg-surface-800 transition-colors"
+                class="w-9 h-9 bg-[#131313]/70 backdrop-blur-sm flex items-center justify-center text-white hover:bg-[#131313] transition-colors"
                 on:click|stopPropagation={() => {
                   if ($zoomLevel === 1) {
                     zoomLevel.set(2);
@@ -427,7 +427,7 @@
             <!-- Limited Edition Badge -->
             {#if $product.limitedEdition}
               <div class="absolute top-3 left-3">
-                <span class="inline-flex items-center gap-1 bg-primary-500 text-white text-xs font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-md shadow-lg">
+                <span class="chip-lap-timer bg-primary-500 text-white inline-flex items-center gap-1 shadow-lg">
                   <LucideStar class="w-3 h-3" />
                   Edición Limitada
                 </span>
@@ -436,8 +436,8 @@
 
             <!-- Stock Status -->
             <div class="absolute bottom-3 left-3">
-              <span class="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1.5 rounded-md shadow-lg
-                {$product.inStock ? 'bg-success-600 text-white' : 'bg-surface-700 text-surface-300'}">
+              <span class="chip-lap-timer inline-flex items-center gap-1 shadow-lg
+                {$product.inStock ? 'bg-success-600 text-white' : 'bg-[#2a2a2a] text-surface-300'}">
                 {#if $product.inStock}
                   <LucideCheck class="w-3 h-3" />
                   En Stock
@@ -453,8 +453,8 @@
           <div class="flex gap-3 overflow-x-auto pb-2">
             {#each $product.images as image, index}
               <button
-                class="flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 bg-surface-800 rounded-lg overflow-hidden border-2 transition-all duration-200
-                  {$selectedImageIndex === index ? 'border-primary-500' : 'border-surface-700 hover:border-surface-500'}"
+                class="flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 bg-[#1c1b1b] overflow-hidden border-2 transition-all duration-200
+                  {$selectedImageIndex === index ? 'border-primary-500' : 'border-[#2a2a2a] hover:border-surface-400'}"
                 on:click={() => selectedImageIndex.set(index)}
               >
                 <img
@@ -474,35 +474,35 @@
           <!-- MOBILE: Name + Price + CTA first (visible only on mobile) -->
           <div class="lg:hidden" bind:this={ctaSectionEl}>
             <!-- Product Name -->
-            <h1 class="text-2xl font-black font-racing uppercase tracking-wider text-white mb-3 leading-tight">
+            <h1 class="text-2xl font-black font-headline uppercase tracking-[0.08em] text-white mb-3 leading-tight">
               {$product.name}
             </h1>
 
             <!-- Compact meta line -->
-            <div class="flex flex-wrap items-center gap-2 text-xs text-surface-400 uppercase tracking-wider mb-4">
+            <div class="flex flex-wrap items-center gap-2 text-xs text-surface-400 font-headline uppercase tracking-[0.1em] mb-4">
               <span>{$product.team}</span>
-              <span class="w-1 h-1 rounded-full bg-surface-600"></span>
+              <span class="w-px h-3 bg-surface-600"></span>
               <span>{$product.scale}</span>
-              <span class="w-1 h-1 rounded-full bg-surface-600"></span>
+              <span class="w-px h-3 bg-surface-600"></span>
               <span>{$product.manufacturer}</span>
               {#if $product.driver}
-                <span class="w-1 h-1 rounded-full bg-surface-600"></span>
+                <span class="w-px h-3 bg-surface-600"></span>
                 <span>{$product.driver}</span>
               {/if}
-              <span class="w-1 h-1 rounded-full bg-surface-600"></span>
+              <span class="w-px h-3 bg-surface-600"></span>
               <span>{$product.year}</span>
             </div>
 
             <!-- Price -->
             <div class="flex items-baseline gap-3 mb-5">
-              <span class="text-3xl font-black text-primary-500">
+              <span class="text-3xl font-headline font-black text-primary-500">
                 Q. {$product.price.toFixed(2)}
               </span>
               {#if $product.originalPrice && $product.originalPrice > $product.price}
                 <span class="text-lg text-surface-500 line-through">
                   Q. {$product.originalPrice.toFixed(2)}
                 </span>
-                <span class="text-xs font-bold uppercase tracking-wider bg-primary-500/20 text-primary-400 px-2 py-0.5 rounded">
+                <span class="chip-lap-timer bg-primary-500/20 text-primary-400">
                   -{Math.round((1 - $product.price / $product.originalPrice) * 100)}%
                 </span>
               {/if}
@@ -510,7 +510,7 @@
 
             <!-- Mobile CTA Button -->
             <button
-              class="w-full inline-flex items-center justify-center gap-2 bg-primary-500 text-white font-bold py-3.5 uppercase tracking-wider rounded-lg hover:bg-primary-600 transition-colors duration-200 shadow-lg"
+              class="w-full inline-flex items-center justify-center gap-2 btn-kinetic py-3.5"
               on:click={() => $product.inStock ? handleAddToCart($product) : handleNotifyAvailability()}
             >
               {#if $product.inStock}
@@ -552,43 +552,42 @@
               {/each}
             </div>
 
-            <!-- Product detail badges -->
+            <!-- Product detail badges — Lap Timer chips -->
             <div class="flex flex-wrap gap-2 mb-6">
-              <span class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider bg-surface-800 border border-surface-700 text-surface-200 px-3 py-1.5 rounded-lg">
+              <span class="chip-lap-timer bg-[#1c1b1b] text-surface-200 inline-flex items-center gap-1">
                 <LucideHelmet class="w-3 h-3 text-primary-500" />
                 {$product.team}
               </span>
-              <span class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider bg-surface-800 border border-surface-700 text-surface-200 px-3 py-1.5 rounded-lg">
+              <span class="chip-lap-timer bg-[#1c1b1b] text-surface-200">
                 {$product.manufacturer}
               </span>
-              <span class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider bg-surface-800 border border-surface-700 text-surface-200 px-3 py-1.5 rounded-lg">
+              <span class="chip-lap-timer bg-[#1c1b1b] text-surface-200">
                 Escala {$product.scale}
               </span>
               {#if $product.driver}
-                <span class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider bg-surface-800 border border-surface-700 text-surface-200 px-3 py-1.5 rounded-lg">
+                <span class="chip-lap-timer bg-[#1c1b1b] text-surface-200">
                   {$product.driver}
                 </span>
               {/if}
-              <span class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider bg-surface-800 border border-surface-700 text-surface-200 px-3 py-1.5 rounded-lg">
+              <span class="chip-lap-timer bg-[#1c1b1b] text-surface-200">
                 {$product.year}
               </span>
             </div>
 
-            <h1 class="text-4xl font-black font-racing uppercase tracking-wider text-white mb-2 leading-tight">
+            <h1 class="text-4xl font-black font-headline uppercase tracking-[0.08em] text-white mb-6 leading-tight">
               {$product.name}
             </h1>
-            <div class="w-12 h-0.5 bg-primary-500 mb-6"></div>
 
-            <!-- Price -->
+            <!-- Price — Headline font -->
             <div class="flex items-baseline gap-4 mb-6">
-              <span class="text-4xl font-black text-primary-500">
+              <span class="text-4xl font-headline font-black text-primary-500">
                 Q. {$product.price.toFixed(2)}
               </span>
               {#if $product.originalPrice && $product.originalPrice > $product.price}
                 <span class="text-xl text-surface-500 line-through">
                   Q. {$product.originalPrice.toFixed(2)}
                 </span>
-                <span class="text-xs font-bold uppercase tracking-wider bg-primary-500/20 text-primary-400 px-2.5 py-1 rounded">
+                <span class="chip-lap-timer bg-primary-500/20 text-primary-400">
                   -{Math.round((1 - $product.price / $product.originalPrice) * 100)}%
                 </span>
               {/if}
@@ -605,13 +604,13 @@
           <!-- Key Features -->
           {#if $product.features && $product.features.length > 0}
             <div>
-              <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+              <h3 class="font-headline text-sm font-bold text-white uppercase tracking-[0.1em] mb-4 flex items-center gap-2">
                 <LucideCog class="w-4 h-4 text-primary-500" />
                 Características
               </h3>
               <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {#each $product.features as feature}
-                  <li class="flex items-center gap-2.5 p-3 bg-surface-800 rounded-lg border border-surface-700">
+                  <li class="flex items-center gap-2.5 p-3 bg-[#1c1b1b]">
                     <LucideCheck class="text-primary-500 w-4 h-4 flex-shrink-0" />
                     <span class="text-surface-200 text-sm">{feature}</span>
                   </li>
@@ -633,10 +632,10 @@
 
           <!-- Desktop: Add to Cart Section -->
           <div class="hidden lg:block">
-            <div class="bg-surface-800 border border-surface-700 rounded-xl p-6">
+            <div class="bg-[#1c1b1b] p-6">
               <div class="flex items-center justify-between mb-5">
                 <div>
-                  <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-1.5">
+                  <h3 class="font-headline text-sm font-bold text-white uppercase tracking-[0.1em] mb-1.5">
                     Añadir a tu colección
                   </h3>
                   <div class="flex items-center gap-4 text-xs text-surface-400">
@@ -653,7 +652,7 @@
               </div>
 
               <button
-                class="w-full inline-flex items-center justify-center gap-2 bg-primary-500 text-white font-bold py-4 text-lg uppercase tracking-wider rounded-lg hover:bg-primary-600 transition-colors duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                class="w-full inline-flex items-center justify-center gap-2 btn-kinetic py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 on:click={() => $product.inStock ? handleAddToCart($product) : handleNotifyAvailability()}
                 disabled={false}
               >
@@ -681,11 +680,11 @@
           </div>
 
           <!-- Share Section -->
-          <div class="flex items-center justify-between pt-4 border-t border-surface-700">
-            <span class="text-surface-400 text-sm font-medium uppercase tracking-wider">Compartir</span>
+          <div class="flex items-center justify-between pt-4 bg-[#1c1b1b] -mx-0 px-4 py-4 mt-4">
+            <span class="text-surface-400 text-sm font-headline font-medium uppercase tracking-[0.1em]">Compartir</span>
             <div class="flex gap-2">
               <button
-                class="w-9 h-9 bg-surface-800 border border-surface-700 rounded-lg flex items-center justify-center text-surface-300 hover:text-white hover:border-surface-500 transition-all duration-200"
+                class="w-9 h-9 bg-[#2a2a2a] flex items-center justify-center text-surface-300 hover:text-white hover:bg-[#353534] transition-all duration-200"
                 on:click={() => {
                   if (navigator.share) {
                     navigator.share({
@@ -702,7 +701,7 @@
                 <LucideShare class="w-4 h-4" />
               </button>
               <button
-                class="w-9 h-9 bg-surface-800 border border-surface-700 rounded-lg flex items-center justify-center text-surface-300 hover:text-white hover:border-surface-500 transition-all duration-200"
+                class="w-9 h-9 bg-[#2a2a2a] flex items-center justify-center text-surface-300 hover:text-white hover:bg-[#353534] transition-all duration-200"
                 on:click={handleCopyLink}
                 title="Copiar enlace"
               >
@@ -717,19 +716,18 @@
 
   <!-- Technical Specifications -->
   {#if $product.specifications}
-    <section class="bg-surface-800 border-t border-surface-700">
+    <section class="bg-[#1c1b1b]">
       <div class="container mx-auto px-4 py-12 lg:py-16 max-w-4xl">
         <div class="text-center mb-10">
-          <h2 class="text-2xl lg:text-3xl font-bold text-white uppercase tracking-wider mb-3">
+          <h2 class="font-headline text-2xl lg:text-3xl font-bold text-white uppercase tracking-[0.1em] mb-3">
             Especificaciones Técnicas
           </h2>
-          <div class="w-16 h-0.5 bg-primary-500 mx-auto"></div>
         </div>
 
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           {#each Object.entries($product.specifications) as [key, value]}
-            <div class="bg-surface-900 border border-surface-700 rounded-lg p-5 text-center">
-              <div class="w-12 h-12 bg-surface-700 border border-surface-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+            <div class="bg-[#131313] p-5 text-center hover:bg-[#0e0e0e] transition-colors duration-200">
+              <div class="w-12 h-12 bg-[#2a2a2a] flex items-center justify-center mx-auto mb-3">
                 {#if key === 'engine'}
                   <LucideEngine class="w-6 h-6 text-primary-500" />
                 {:else if key === 'power'}
@@ -742,10 +740,10 @@
                   <LucideTimer class="w-6 h-6 text-primary-500" />
                 {/if}
               </div>
-              <h3 class="text-xs font-bold text-surface-400 uppercase tracking-wider mb-1.5">
+              <h3 class="font-headline text-xs font-bold text-surface-400 uppercase tracking-[0.15em] mb-1.5">
                 {specLabels[key] || key.replace(/([A-Z])/g, ' $1').trim()}
               </h3>
-              <p class="text-sm lg:text-base font-bold text-white leading-snug">
+              <p class="font-headline text-sm lg:text-base font-bold text-white leading-snug">
                 {value}
               </p>
             </div>
@@ -757,13 +755,12 @@
 
   <!-- Related Products -->
   {#if $relatedProducts.length > 0}
-    <section class="bg-surface-900 border-t border-surface-700">
+    <section class="bg-[#131313]">
       <div class="container mx-auto px-4 py-12 lg:py-16">
         <div class="text-center mb-10">
-          <h2 class="text-2xl lg:text-3xl font-bold text-white uppercase tracking-wider mb-3">
+          <h2 class="font-headline text-2xl lg:text-3xl font-bold text-white uppercase tracking-[0.1em] mb-4">
             Productos Relacionados
           </h2>
-          <div class="w-16 h-0.5 bg-primary-500 mx-auto mb-4"></div>
           <p class="text-surface-400 text-sm max-w-md mx-auto">
             Otros monoplazas que podrían interesarte
           </p>
@@ -788,7 +785,7 @@
         <div class="text-center mt-12">
           <a
             href="{base}/catalogo"
-            class="inline-flex items-center gap-2 bg-primary-500 text-white font-bold px-8 py-3.5 uppercase tracking-wider rounded-lg hover:bg-primary-600 transition-colors duration-200 shadow-lg"
+            class="inline-flex items-center gap-2 btn-kinetic px-8 py-3.5"
           >
             <LucideEye class="w-5 h-5" />
             Ver Toda la Colección
@@ -801,17 +798,17 @@
   <!-- Sticky Mobile Bottom Bar -->
   {#if showStickyBar && $product}
     <div
-      class="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-surface-900/95 backdrop-blur-md border-t border-surface-700 px-4 py-3 safe-area-bottom"
+      class="fixed bottom-0 left-0 right-0 z-40 lg:hidden glass-nav px-4 py-3 safe-area-bottom"
       in:fly={{ y: 60, duration: 250 }}
       out:fly={{ y: 60, duration: 200 }}
     >
       <div class="flex items-center gap-3">
         <div class="flex-1 min-w-0">
-          <div class="text-xs text-surface-400 truncate">{$product.name}</div>
-          <div class="text-lg font-black text-primary-500">Q. {$product.price.toFixed(2)}</div>
+          <div class="text-xs text-surface-300 truncate font-headline uppercase tracking-wider">{$product.name}</div>
+          <div class="text-lg font-headline font-black text-primary-500">Q. {$product.price.toFixed(2)}</div>
         </div>
         <button
-          class="flex-shrink-0 inline-flex items-center gap-2 bg-primary-500 text-white font-bold px-6 py-3 uppercase tracking-wider text-sm rounded-lg hover:bg-primary-600 transition-colors duration-200 shadow-lg"
+          class="flex-shrink-0 inline-flex items-center gap-2 btn-kinetic px-6 py-3 text-sm"
           on:click={() => $product.inStock ? handleAddToCart($product) : handleNotifyAvailability()}
         >
           {#if $product.inStock}
@@ -829,13 +826,12 @@
   <!-- Product Not Found -->
   <div class="container mx-auto px-4 py-20 text-center" in:fade>
     <div class="max-w-md mx-auto">
-      <div class="w-20 h-20 bg-surface-800 border border-surface-700 rounded-xl flex items-center justify-center mx-auto mb-8">
-        <LucideF1 class="w-10 h-10 text-surface-500" />
+      <div class="w-20 h-20 bg-[#2a2a2a] flex items-center justify-center mx-auto mb-8">
+        <LucideF1 class="w-10 h-10 text-surface-400" />
       </div>
-      <h2 class="text-2xl font-bold text-white uppercase tracking-wider mb-4">
+      <h2 class="font-headline text-2xl font-bold text-white uppercase tracking-[0.1em] mb-6">
         Producto no encontrado
       </h2>
-      <div class="w-12 h-0.5 bg-primary-500 mx-auto mb-6"></div>
       <p class="text-surface-400 mb-8 leading-relaxed">
         El monoplaza que buscas no está disponible o ha sido movido a otra ubicación.
       </p>

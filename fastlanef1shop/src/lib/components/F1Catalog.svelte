@@ -249,12 +249,12 @@
   });
 </script>
 
-<!-- Search and Filter Section -->
+<!-- Search and Filter Section — Kinetic Monolith -->
 <section id="catalogo" class="container mx-auto px-4 py-12">
   <div class="max-w-6xl mx-auto">
-    <!-- Search Bar -->
+    <!-- Search Bar — Telemetry style -->
     <div class="text-center mb-8">
-      <h2 class="text-3xl font-bold text-white mb-4">
+      <h2 class="font-headline text-3xl font-bold text-white mb-4 uppercase tracking-[0.1em]">
         Encuentra tu Monoplaza Perfecto
       </h2>
       <div class="flex items-center gap-3 max-w-md mx-auto">
@@ -262,13 +262,13 @@
           <input
             type="text"
             placeholder="Buscar por nombre, equipo, marca, escala..."
-            class="input w-full pl-12 pr-4 py-3 text-lg rounded-lg bg-surface-800 border-2 border-surface-600 text-white placeholder-surface-500 focus:border-primary-500 transition-all duration-300"
+            class="input-telemetry w-full pl-12 pr-4 py-3 text-lg"
             bind:value={$searchQuery}
           />
           <LucideMagnify class="absolute left-4 top-1/2 transform -translate-y-1/2 text-surface-300 w-5 h-5" />
           {#if $searchQuery}
             <button
-              class="absolute right-3 top-1/2 transform -translate-y-1/2 btn btn-sm variant-ghost-surface rounded-full w-8 h-8 !p-0"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 btn btn-sm variant-ghost-surface w-8 h-8 !p-0"
               on:click={() => searchQuery.set('')}
             >
               <LucideClose class="w-4 h-4" />
@@ -277,13 +277,13 @@
         </div>
         <!-- Mobile Filter Button -->
         <button
-          class="lg:hidden btn bg-surface-800 text-white border border-surface-600 hover:border-primary-500 px-4 py-3 rounded-lg flex items-center gap-2 relative"
+          class="lg:hidden btn bg-[#2a2a2a] text-white hover:bg-[#353534] px-4 py-3 flex items-center gap-2 relative transition-colors"
           on:click={() => isFilterDrawerOpen.set(true)}
         >
           <LucideFilter class="w-5 h-5" />
-          <span class="text-sm font-medium">Filtros</span>
+          <span class="text-sm font-headline font-medium uppercase tracking-wider">Filtros</span>
           {#if $activeFilterCount > 0}
-            <span class="absolute -top-2 -right-2 bg-primary-500 text-white text-xs font-bold rounded-full min-w-[1.25rem] h-5 flex items-center justify-center px-1">
+            <span class="absolute -top-2 -right-2 bg-primary-500 text-white text-xs font-bold min-w-[1.25rem] h-5 flex items-center justify-center px-1">
               {$activeFilterCount}
             </span>
           {/if}
@@ -296,7 +296,7 @@
           {#each $selectedCategories as catId}
             {@const category = $categories.find(c => c.id === catId)}
             {#if category}
-              <span class="badge bg-primary-500 text-white text-xs">
+              <span class="chip-lap-timer bg-primary-500 text-white flex items-center">
                 {category.name}
                 <button class="ml-1" on:click={() => toggleCategory(catId)}>
                   <LucideClose class="w-3 h-3" />
@@ -308,9 +308,9 @@
       {/if}
     </div>
 
-    <!-- Desktop Filter Type Tabs -->
+    <!-- Desktop Filter Type Tabs — Sharp, no radius -->
     <div class="hidden lg:flex justify-center mb-6">
-      <div class="flex bg-surface-800 p-1 rounded-lg">
+      <div class="flex bg-[#1c1b1b] p-1">
         {#each [
           { type: 'general', label: 'General' },
           { type: 'team', label: 'Equipos' },
@@ -318,7 +318,7 @@
           { type: 'scale', label: 'Escalas' }
         ] as tab}
           <button
-            class="px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium {$activeFilterType === tab.type ? 'bg-primary-500 text-white' : 'text-surface-200 hover:text-white'}"
+            class="px-4 py-2 transition-all duration-200 text-sm font-headline font-medium uppercase tracking-wider {$activeFilterType === tab.type ? 'bg-primary-500 text-white' : 'text-surface-200 hover:text-white hover:bg-[#2a2a2a]'}"
             on:click={() => activeFilterType.set(tab.type)}
           >
             {tab.label}
@@ -327,7 +327,7 @@
       </div>
     </div>
 
-    <!-- Desktop Category Filter Pills -->
+    <!-- Desktop Category Filter Chips — Rectangular, no radius -->
     <div class="hidden lg:block">
       {#if $categoriesLoaded && $currentCategories.length > 0}
         <div class="text-center mb-6">
@@ -347,10 +347,10 @@
             {#each $currentCategories as category, i}
               {@const IconComponent = getIconComponent(category.icon)}
               <button
-                class="btn rounded-lg transition-all duration-200 font-medium px-4 py-2 text-sm
+                class="btn transition-all duration-200 font-headline font-medium px-4 py-2 text-sm uppercase tracking-wider
                 {$selectedCategories.includes(category.id)
-                  ? 'bg-primary-500 text-white shadow-lg'
-                  : 'bg-surface-800 text-surface-300 border border-surface-700 hover:border-primary-500/50 hover:text-white'}"
+                  ? 'bg-primary-500 text-white shadow-[0_0_15px_rgba(225,6,0,0.3)]'
+                  : 'bg-[#2a2a2a] text-surface-300 hover:bg-[#353534] hover:text-white'}"
                 on:click={() => toggleCategory(category.id)}
                 in:fly={{ x: -30, duration: 300, delay: i * 50 }}
               >
@@ -382,11 +382,11 @@
           <!-- Selected Categories Display -->
           {#if !$selectedCategories.includes('all') && $selectedCategories.length > 0}
             <div class="mt-4 flex flex-wrap gap-2 justify-center items-center">
-              <span class="text-sm text-surface-300">Filtros activos:</span>
+              <span class="text-sm text-surface-300 font-headline uppercase tracking-wider">Filtros activos:</span>
               {#each $selectedCategories as catId}
                 {@const category = $categories.find(c => c.id === catId)}
                 {#if category}
-                  <span class="badge bg-primary-500 text-white text-xs">
+                  <span class="chip-lap-timer bg-primary-500 text-white flex items-center">
                     {category.name}
                     <button class="ml-1" on:click={() => toggleCategory(catId)}>
                       <LucideClose class="w-3 h-3" />
@@ -395,7 +395,7 @@
                 {/if}
               {/each}
               <button
-                class="text-xs text-primary-500 hover:text-primary-400 transition-colors"
+                class="text-xs text-primary-500 hover:text-primary-400 transition-colors font-headline uppercase tracking-wider"
                 on:click={() => selectedCategories.set(['all'])}
               >
                 Limpiar todos
@@ -409,7 +409,7 @@
           <div class="flex flex-wrap gap-2 justify-center">
             {#each Array(6) as _, i}
               <div class="animate-pulse">
-                <div class="h-9 bg-surface-800 rounded-lg w-24"></div>
+                <div class="h-9 bg-[#2a2a2a] w-24"></div>
               </div>
             {/each}
           </div>
@@ -424,12 +424,12 @@
   <div class="fixed inset-0 z-50 lg:hidden" transition:fade={{ duration: 200 }}>
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" on:click={() => isFilterDrawerOpen.set(false)}></div>
     <div
-      class="absolute right-0 top-0 h-full w-full max-w-sm bg-surface-800 shadow-2xl border-l border-surface-700 flex flex-col"
+      class="absolute right-0 top-0 h-full w-full max-w-sm bg-[#1c1b1b] shadow-2xl flex flex-col"
       transition:fly={{ x: 300, duration: 300 }}
     >
       <!-- Drawer Header -->
-      <div class="p-5 border-b border-surface-700 bg-surface-900 flex items-center justify-between">
-        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+      <div class="p-5 bg-[#131313] flex items-center justify-between">
+        <h3 class="font-headline text-xl font-bold text-white flex items-center gap-2 uppercase tracking-wider">
           <LucideFilter class="w-5 h-5 text-primary-500" />
           Filtros
         </h3>
@@ -454,7 +454,7 @@
               { type: 'scale', label: 'Escalas' }
             ] as tab}
               <button
-                class="px-4 py-3 rounded-lg transition-all duration-200 text-sm font-medium text-center {$activeFilterType === tab.type ? 'bg-primary-500 text-white shadow-lg' : 'bg-surface-700 text-surface-300 border border-surface-600 hover:border-primary-500/50'}"
+                class="px-4 py-3 transition-all duration-200 text-sm font-headline font-medium text-center uppercase tracking-wider {$activeFilterType === tab.type ? 'bg-primary-500 text-white' : 'bg-[#2a2a2a] text-surface-300 hover:bg-[#353534]'}"
                 on:click={() => activeFilterType.set(tab.type)}
               >
                 {tab.label}
@@ -481,10 +481,10 @@
               {#each $currentCategories as category}
                 {@const IconComponent = getIconComponent(category.icon)}
                 <button
-                  class="w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 text-left
+                  class="w-full flex items-center justify-between px-4 py-3 transition-all duration-200 text-left
                   {$selectedCategories.includes(category.id)
                     ? 'bg-primary-500 text-white'
-                    : 'bg-surface-700/50 text-surface-300 hover:bg-surface-700'}"
+                    : 'bg-[#2a2a2a]/50 text-surface-300 hover:bg-[#2a2a2a]'}"
                   on:click={() => toggleCategory(category.id)}
                 >
                   <span class="flex items-center gap-2">
@@ -522,16 +522,16 @@
       </div>
 
       <!-- Drawer Footer -->
-      <div class="p-5 border-t border-surface-700 bg-surface-900 space-y-3">
+      <div class="p-5 bg-[#131313] space-y-3">
         <button
-          class="btn bg-primary-500 text-white w-full font-semibold py-3 uppercase tracking-wider hover:bg-primary-600 transition-colors duration-200"
+          class="btn btn-kinetic w-full py-3"
           on:click={() => isFilterDrawerOpen.set(false)}
         >
           Ver {$filteredProducts.length} Resultados
         </button>
         {#if !$selectedCategories.includes('all')}
           <button
-            class="btn variant-ghost-surface w-full text-sm"
+            class="btn bg-[#2a2a2a] text-surface-100 w-full text-sm hover:bg-[#353534] font-headline uppercase tracking-wider"
             on:click={() => { selectedCategories.set(['all']); activeFilterType.set('general'); }}
           >
             Limpiar Filtros
@@ -546,11 +546,11 @@
 {#if $isLoading}
   <div class="container mx-auto px-4 py-16 text-center" in:fade>
     <div class="flex justify-center items-center gap-3 mb-6">
-      <div class="w-3 h-3 rounded-full bg-primary-500 animate-pulse"></div>
-      <div class="w-3 h-3 rounded-full bg-primary-500 animate-pulse" style="animation-delay: 0.2s"></div>
-      <div class="w-3 h-3 rounded-full bg-primary-500 animate-pulse" style="animation-delay: 0.4s"></div>
+      <div class="w-3 h-3 bg-primary-500 animate-pulse"></div>
+      <div class="w-3 h-3 bg-primary-500 animate-pulse" style="animation-delay: 0.2s"></div>
+      <div class="w-3 h-3 bg-primary-500 animate-pulse" style="animation-delay: 0.4s"></div>
     </div>
-    <p class="text-lg text-surface-300 font-medium">
+    <p class="text-lg text-surface-300 font-headline font-medium uppercase tracking-wider">
       Cargando monoplazas legendarios...
     </p>
   </div>
@@ -559,7 +559,7 @@
 <!-- Products Grid -->
 {#if !$isLoading}
   <section id="products-section" class="px-4 py-4">
-    <div class="container mx-auto max-w-screen-2xl">
+    <div class="mx-auto max-w-[2400px] px-4">
       {#if $filteredProducts.length === 0}
         <div class="text-center py-20" in:fade>
           <div class="text-6xl mb-6 text-surface-700 font-bold font-racing">F1</div>
@@ -594,7 +594,7 @@
       {:else}
         <!-- Products Header -->
         <div class="text-center mb-10">
-          <h2 class="text-2xl font-bold text-white mb-3">
+          <h2 class="font-headline text-2xl font-bold text-white mb-3 uppercase tracking-[0.1em]">
             {$searchQuery
               ? `Resultados para "${$searchQuery}"`
               : $selectedCategories.includes('all')
@@ -602,12 +602,12 @@
                 : 'Filtros Aplicados'
             }
           </h2>
-          <div class="flex items-center justify-center gap-4 text-surface-200 text-sm">
+          <div class="flex items-center justify-center gap-4 text-surface-200 text-sm font-headline">
             <div class="flex items-center gap-1.5">
               <LucidePackage class="w-4 h-4 text-primary-500" />
               <span>{$filteredProducts.length} modelos</span>
             </div>
-            <div class="w-1 h-1 bg-surface-600 rounded-full"></div>
+            <div class="w-px h-4 bg-surface-600"></div>
             <div class="flex items-center gap-1.5">
               <LucideTruck class="w-4 h-4 text-primary-500" />
               <span>Envíos a toda Guatemala</span>
@@ -616,7 +616,7 @@
         </div>
 
         <!-- Products Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 min-[1800px]:grid-cols-5 min-[2200px]:grid-cols-6 gap-6">
           {#each $filteredProducts as product, i}
             <ProductCard
               {product}
@@ -634,7 +634,7 @@
 {/if}
 
 <style lang="postcss">
-  .input:focus {
-    box-shadow: 0 0 0 3px rgba(226, 41, 40, 0.15);
+  .input-telemetry:focus {
+    box-shadow: none;
   }
 </style>

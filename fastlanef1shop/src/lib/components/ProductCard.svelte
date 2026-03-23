@@ -55,10 +55,10 @@
   }
 </script>
 
-<!-- Product Card -->
+<!-- Product Card — Kinetic Monolith: no borders, tonal shift -->
 <div
-  class="group overflow-hidden bg-surface-800 border border-surface-700 rounded-lg
-  transition-all duration-300 hover:shadow-xl hover:border-primary-500/50 hover:-translate-y-1 cursor-pointer
+  class="group overflow-hidden bg-[#2a2a2a] flex flex-col
+  transition-all duration-300 hover:bg-[#353534] hover:shadow-[0_0_40px_rgba(225,6,0,0.08)] hover:-translate-y-1 cursor-pointer
   {variant === 'compact' ? 'max-w-sm' : ''}"
   in:fly={{ y: 30, duration: 400, delay: index * animationDelay }}
   on:click={handleCardClick}
@@ -68,7 +68,7 @@
   aria-label="Ver detalles de {product.name}"
 >
   <!-- Product Image -->
-  <header class="relative overflow-hidden bg-surface-700 {variant === 'compact' ? 'h-48' : 'h-56'}">
+  <header class="relative overflow-hidden bg-[#1c1b1b] {variant === 'compact' ? 'h-48' : 'h-56'}">
     <img
       src={getProductImageUrl(product, 0)}
       alt={product.name}
@@ -76,16 +76,16 @@
       on:error={handleImageError}
     />
 
-    <!-- Product Badges -->
+    <!-- Product Badges — Lap Timer style -->
     <div class="absolute top-3 right-3 space-y-2">
       {#if product.limitedEdition}
-        <span class="badge bg-primary-500 text-white text-xs font-bold shadow-lg block">
+        <span class="chip-lap-timer bg-primary-500 text-white shadow-lg block flex items-center">
           <LucideStar class="mr-1 w-3 h-3" />
           Limitada
         </span>
       {/if}
       {#if product.originalPrice && product.originalPrice > product.price}
-        <span class="badge bg-surface-800/90 text-white text-xs font-bold shadow-lg block">
+        <span class="chip-lap-timer bg-[#131313]/90 text-white shadow-lg block">
           -{Math.round((1 - product.price / product.originalPrice) * 100)}%
         </span>
       {/if}
@@ -93,7 +93,7 @@
 
     <!-- Stock Status -->
     <div class="absolute top-3 left-3">
-      <span class="badge {product.inStock ? 'bg-success-600' : 'bg-surface-600'} text-white text-xs font-medium shadow-lg flex items-center">
+      <span class="chip-lap-timer {product.inStock ? 'bg-success-600' : 'bg-surface-500'} text-white shadow-lg flex items-center">
         {#if product.inStock}
           <LucideCheck class="mr-1 w-3 h-3" />
           Disponible
@@ -109,14 +109,14 @@
     opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
       <div class="text-white w-full">
         <div class="mb-3">
-          <h3 class="font-bold {variant === 'compact' ? 'text-sm' : 'text-base'} leading-tight line-clamp-1">
+          <h3 class="font-headline font-bold {variant === 'compact' ? 'text-sm' : 'text-base'} leading-tight line-clamp-1 uppercase tracking-wide">
             {product.name}
           </h3>
-          <p class="text-sm text-surface-300 mt-0.5">{product.team} &bull; {product.year}</p>
+          <p class="text-sm text-surface-300 mt-0.5 font-headline">{product.team} &bull; {product.year}</p>
         </div>
         <div class="flex gap-2 items-stretch">
           <button
-            class="btn bg-primary-500 text-white flex-1 font-semibold min-h-[40px] text-sm uppercase tracking-wider hover:bg-primary-600 transition-colors"
+            class="btn btn-kinetic flex-1 min-h-[40px] text-sm py-2"
             on:click={handleAddToCart}
             disabled={!product.inStock}
             aria-label="Añadir {product.name} al carrito"
@@ -125,7 +125,7 @@
             {product.inStock ? 'Añadir' : 'Agotado'}
           </button>
           <button
-            class="btn bg-surface-700 text-white w-10 h-10 !p-0 flex-shrink-0 hover:bg-surface-600 transition-colors"
+            class="btn bg-[#353534] text-white w-10 h-10 !p-0 flex-shrink-0 hover:bg-surface-400 transition-colors"
             on:click={handleViewDetails}
             aria-label="Ver detalles de {product.name}"
           >
@@ -137,40 +137,40 @@
   </header>
 
   <!-- Product Info -->
-  <div class="p-5">
-    <!-- Category Tags -->
-    <div class="flex flex-wrap gap-1.5 mb-3">
-      <span class="badge bg-surface-700 text-surface-300 text-xs">
+  <div class="p-5 flex flex-col flex-1">
+    <!-- Category Tags — Lap Timer chips, fixed 2-line height -->
+    <div class="flex flex-wrap gap-1.5 mb-3 h-[54px] overflow-hidden content-start">
+      <span class="chip-lap-timer bg-[#1c1b1b] text-surface-300">
         {product.team}
       </span>
-      <span class="badge bg-surface-700 text-surface-300 text-xs">
+      <span class="chip-lap-timer bg-[#1c1b1b] text-surface-300">
         {product.manufacturer}
       </span>
-      <span class="badge bg-surface-700 text-surface-300 text-xs">
+      <span class="chip-lap-timer bg-[#1c1b1b] text-surface-300">
         {product.scale}
       </span>
       {#if product.driver}
-        <span class="badge bg-surface-700 text-surface-300 text-xs">
+        <span class="chip-lap-timer bg-[#1c1b1b] text-surface-300">
           {product.driver}
         </span>
       {/if}
     </div>
 
     <div class="mb-3 min-h-[48px] flex items-start">
-      <h3 class="font-bold text-white leading-tight line-clamp-2 text-base">
+      <h3 class="font-headline font-bold text-white leading-tight line-clamp-2 text-base">
         {product.name}
       </h3>
     </div>
 
-    <p class="text-surface-200 text-sm mb-4 leading-relaxed {showFullDescription ? '' : 'line-clamp-2'}">
+    <p class="text-surface-200 text-sm mb-4 leading-relaxed line-clamp-2 min-h-[40px]">
       {product.description}
     </p>
 
-    <!-- Price and Actions -->
-    <div class="flex items-end justify-between pt-3 border-t border-surface-700">
+    <!-- Price and Actions — bg shift instead of border-t, pushed to bottom -->
+    <div class="flex items-end justify-between pt-3 bg-[#232323] -mx-5 px-5 -mb-5 pb-5 mt-auto">
       <div class="flex flex-col flex-1 pr-4">
         <div class="flex items-baseline gap-2 mb-1">
-          <span class="text-xl font-bold text-white">
+          <span class="text-xl font-headline font-bold text-white">
             Q. {product.price.toFixed(2)}
           </span>
           {#if product.originalPrice && product.originalPrice > product.price}
@@ -187,7 +187,7 @@
 
       <div class="flex-shrink-0">
         <button
-          class="btn bg-primary-500 text-white font-semibold transition-colors duration-200 shadow hover:bg-primary-600 min-w-[110px] h-[44px] uppercase tracking-wider text-sm"
+          class="btn btn-kinetic min-w-[110px] h-[44px] text-sm"
           on:click={handleAddToCart}
           disabled={!product.inStock}
           aria-label="Añadir {product.name} al carrito"
@@ -217,7 +217,7 @@
 
   /* Focus styles for accessibility */
   [role="button"]:focus-visible {
-    outline: 2px solid rgb(var(--color-primary-500));
+    outline: 2px solid rgb(225, 6, 0);
     outline-offset: 2px;
   }
 </style>

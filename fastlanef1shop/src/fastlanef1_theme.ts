@@ -4,12 +4,12 @@ export const fastlanef1_theme: CustomThemeConfig = {
 	name: 'fastlanef1_theme',
 	properties: {
 		'--theme-font-family-base': "'Inter', system-ui, sans-serif",
-		'--theme-font-family-heading': "'Inter', system-ui, sans-serif",
+		'--theme-font-family-heading': "'Space Grotesk', system-ui, sans-serif",
 		'--theme-font-color-base': '255 255 255',
 		'--theme-font-color-dark': '255 255 255',
-		'--theme-rounded-base': '8px',
-		'--theme-rounded-container': '8px',
-		'--theme-border-base': '1px',
+		'--theme-rounded-base': '0px',
+		'--theme-rounded-container': '0px',
+		'--theme-border-base': '0px',
 		/* =~= Theme On-X Colors =~= */
 		'--on-primary': '255 255 255',
 		'--on-secondary': '255 255 255',
@@ -19,17 +19,17 @@ export const fastlanef1_theme: CustomThemeConfig = {
 		'--on-error': '255 255 255',
 		'--on-surface': '255 255 255',
 		/* =~= Theme Colors =~= */
-		/* primary | #e22928 - F1 Red */
-		'--color-primary-50': '251 223 223' /* ⬅ #fbdfdf */,
-		'--color-primary-100': '249 197 197' /* ⬅ #f9c5c5 */,
-		'--color-primary-200': '243 155 155' /* ⬅ #f39b9b */,
-		'--color-primary-300': '237 113 112' /* ⬅ #ed7170 */,
-		'--color-primary-400': '231 71 70' /* ⬅ #e74746 */,
-		'--color-primary-500': '226 41 40' /* ⬅ #e22928 */,
-		'--color-primary-600': '192 35 34' /* ⬅ #c02322 */,
-		'--color-primary-700': '158 29 28' /* ⬅ #9e1d1c */,
-		'--color-primary-800': '124 22 22' /* ⬅ #7c1616 */,
-		'--color-primary-900': '90 16 16' /* ⬅ #5a1010 */,
+		/* primary | #E10600 - F1 Racing Red */
+		'--color-primary-50': '255 218 212' /* ⬅ #ffdad4 */,
+		'--color-primary-100': '255 180 168' /* ⬅ #ffb4a8 */,
+		'--color-primary-200': '255 140 125' /* ⬅ #ff8c7d */,
+		'--color-primary-300': '245 100 80' /* ⬅ #f56450 */,
+		'--color-primary-400': '240 50 20' /* ⬅ #f03214 */,
+		'--color-primary-500': '225 6 0' /* ⬅ #E10600 */,
+		'--color-primary-600': '192 5 0' /* ⬅ #c00500 */,
+		'--color-primary-700': '147 3 0' /* ⬅ #930300 */,
+		'--color-primary-800': '104 2 0' /* ⬅ #680200 */,
+		'--color-primary-900': '65 1 0' /* ⬅ #410100 */,
 		/* secondary | #1e1e1e - Carbon Dark */
 		'--color-secondary-50': '90 90 90' /* ⬅ #5a5a5a */,
 		'--color-secondary-100': '75 75 75' /* ⬅ #4b4b4b */,
@@ -85,16 +85,16 @@ export const fastlanef1_theme: CustomThemeConfig = {
 		'--color-error-700': '167 48 48' /* ⬅ #a73030 */,
 		'--color-error-800': '131 37 37' /* ⬅ #832525 */,
 		'--color-error-900': '95 27 27' /* ⬅ #5f1b1b */,
-		/* surface | Dark-first */
-		'--color-surface-50': '240 240 240' /* ⬅ #f0f0f0 */,
-		'--color-surface-100': '220 220 220' /* ⬅ #dcdcdc */,
-		'--color-surface-200': '180 180 180' /* ⬅ #b4b4b4 */,
-		'--color-surface-300': '140 140 140' /* ⬅ #8c8c8c */,
-		'--color-surface-400': '100 100 100' /* ⬅ #646464 */,
-		'--color-surface-500': '70 70 70' /* ⬅ #464646 */,
-		'--color-surface-600': '50 50 50' /* ⬅ #323232 */,
-		'--color-surface-700': '38 38 38' /* ⬅ #262626 */,
-		'--color-surface-800': '25 25 25' /* ⬅ #191919 */,
-		'--color-surface-900': '15 15 15' /* ⬅ #0f0f0f */
+		/* surface | Kinetic Monolith Carbon Layers */
+		'--color-surface-50': '229 226 225' /* ⬅ #e5e2e1 */,
+		'--color-surface-100': '200 198 197' /* ⬅ #c8c6c5 */,
+		'--color-surface-200': '150 148 147' /* ⬅ #969493 */,
+		'--color-surface-300': '100 98 98' /* ⬅ #646262 */,
+		'--color-surface-400': '57 57 57' /* ⬅ #393939 */,
+		'--color-surface-500': '53 53 52' /* ⬅ #353534 */,
+		'--color-surface-600': '42 42 42' /* ⬅ #2a2a2a */,
+		'--color-surface-700': '32 31 31' /* ⬅ #201f1f */,
+		'--color-surface-800': '28 27 27' /* ⬅ #1c1b1b */,
+		'--color-surface-900': '19 19 19' /* ⬅ #131313 */
 	}
 };

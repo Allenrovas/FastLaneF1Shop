@@ -198,14 +198,13 @@ ${orderSummary}
 
     <!-- Title -->
     <div class="text-center mb-10" in:fly={{ y: 30, duration: 600, delay: 100 }}>
-      <h1 class="text-4xl md:text-5xl font-black font-racing uppercase tracking-wider text-white mb-4">
+      <h1 class="text-4xl md:text-5xl font-black font-headline uppercase tracking-[0.08em] text-white mb-4">
         Finalizar
         <span class="text-primary-500">Pedido</span>
       </h1>
       <p class="text-surface-300 text-lg max-w-md mx-auto">
         Completa tus datos para procesar tu pedido vía WhatsApp
       </p>
-      <div class="w-16 h-0.5 bg-primary-500 mx-auto mt-6"></div>
     </div>
 
     <!-- Progress Stepper -->
@@ -213,16 +212,16 @@ ${orderSummary}
       <div class="flex items-center gap-3">
         <!-- Step 1 -->
         <button
-          class="flex items-center gap-3 px-5 py-3 rounded-lg transition-all duration-300
+          class="flex items-center gap-3 px-5 py-3 transition-all duration-300
             {currentStep >= 1
-              ? 'bg-surface-800/80 border border-primary-500/30'
-              : 'bg-surface-800/40 border border-surface-700'}"
+              ? 'bg-[#1c1b1b]'
+              : 'bg-[#1c1b1b]/40'}"
           on:click={() => { if (currentStep > 1) currentStep = 1; }}
         >
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-all duration-300
+          <div class="w-8 h-8 flex items-center justify-center text-sm font-headline font-bold transition-all duration-300
             {currentStep >= 1
               ? 'bg-primary-500 text-white'
-              : 'bg-surface-700 text-surface-400'}">
+              : 'bg-[#2a2a2a] text-surface-400'}">
             {#if currentStep > 1}
               <LucideCheck class="w-4 h-4" />
             {:else}
@@ -230,35 +229,35 @@ ${orderSummary}
             {/if}
           </div>
           <div class="text-left">
-            <div class="text-xs uppercase tracking-wider {currentStep >= 1 ? 'text-primary-400' : 'text-surface-500'}">Paso 1</div>
-            <div class="text-sm font-semibold {currentStep >= 1 ? 'text-white' : 'text-surface-400'}">Datos de Entrega</div>
+            <div class="text-xs font-headline uppercase tracking-[0.1em] {currentStep >= 1 ? 'text-primary-400' : 'text-surface-500'}">Paso 1</div>
+            <div class="text-sm font-headline font-semibold {currentStep >= 1 ? 'text-white' : 'text-surface-400'}">Datos de Entrega</div>
           </div>
         </button>
 
         <!-- Connector -->
         <div class="flex items-center gap-1">
-          <div class="w-3 h-0.5 rounded-full {currentStep >= 2 ? 'bg-primary-500' : 'bg-surface-700'}"></div>
+          <div class="w-6 h-0.5 {currentStep >= 2 ? 'bg-primary-500' : 'bg-[#2a2a2a]'}"></div>
           <LucideChevronRight class="w-4 h-4 {currentStep >= 2 ? 'text-primary-500' : 'text-surface-600'}" />
-          <div class="w-3 h-0.5 rounded-full {currentStep >= 2 ? 'bg-primary-500' : 'bg-surface-700'}"></div>
+          <div class="w-6 h-0.5 {currentStep >= 2 ? 'bg-primary-500' : 'bg-[#2a2a2a]'}"></div>
         </div>
 
         <!-- Step 2 -->
         <button
-          class="flex items-center gap-3 px-5 py-3 rounded-lg transition-all duration-300
+          class="flex items-center gap-3 px-5 py-3 transition-all duration-300
             {currentStep >= 2
-              ? 'bg-surface-800/80 border border-primary-500/30'
-              : 'bg-surface-800/40 border border-surface-700'}"
+              ? 'bg-[#1c1b1b]'
+              : 'bg-[#1c1b1b]/40'}"
           disabled={currentStep < 2}
         >
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-all duration-300
+          <div class="w-8 h-8 flex items-center justify-center text-sm font-headline font-bold transition-all duration-300
             {currentStep >= 2
               ? 'bg-primary-500 text-white'
-              : 'bg-surface-700 text-surface-400'}">
+              : 'bg-[#2a2a2a] text-surface-400'}">
             2
           </div>
           <div class="text-left">
-            <div class="text-xs uppercase tracking-wider {currentStep >= 2 ? 'text-primary-400' : 'text-surface-500'}">Paso 2</div>
-            <div class="text-sm font-semibold {currentStep >= 2 ? 'text-white' : 'text-surface-400'}">Confirmar</div>
+            <div class="text-xs font-headline uppercase tracking-[0.1em] {currentStep >= 2 ? 'text-primary-400' : 'text-surface-500'}">Paso 2</div>
+            <div class="text-sm font-headline font-semibold {currentStep >= 2 ? 'text-white' : 'text-surface-400'}">Confirmar</div>
           </div>
         </button>
       </div>
@@ -280,17 +279,17 @@ ${orderSummary}
         {#if currentStep === 1}
           <!-- Step 1: Customer Data -->
           <div
-            class="bg-surface-800 border border-surface-700 rounded-lg overflow-hidden"
+            class="bg-[#1c1b1b] overflow-hidden"
             in:fly={{ x: -20, duration: 400 }}
           >
             <!-- Section header -->
-            <div class="px-8 pt-8 pb-6 border-b border-surface-700">
+            <div class="px-8 pt-8 pb-6 bg-[#131313]">
               <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-surface-700 border border-surface-600 rounded-lg flex items-center justify-center">
+                <div class="w-12 h-12 bg-[#2a2a2a] flex items-center justify-center">
                   <LucideUser class="w-6 h-6 text-primary-500" />
                 </div>
                 <div>
-                  <h2 class="text-xl font-bold text-white uppercase tracking-wider">
+                  <h2 class="font-headline text-xl font-bold text-white uppercase tracking-[0.1em]">
                     Datos del Cliente
                   </h2>
                   <p class="text-surface-300 text-sm mt-0.5">
@@ -313,7 +312,7 @@ ${orderSummary}
                   type="text"
                   bind:value={formData.name}
                   class="checkout-input {errors.name ? 'checkout-input-error' : ''}"
-                  placeholder="Ejemplo: Juan Carlos Pérez"
+                  placeholder="Ejemplo: Juan Pérez"
                   required
                 />
                 {#if errors.name}
@@ -357,7 +356,7 @@ ${orderSummary}
                   bind:value={formData.address}
                   class="checkout-input min-h-[80px] resize-y {errors.address ? 'checkout-input-error' : ''}"
                   rows="3"
-                  placeholder="Ejemplo: 15 Avenida 20-25, Zona 13, Colonia Aurora I"
+                  placeholder="Ejemplo: 19 Avenida 12-25, Zona 13"
                   required
                 ></textarea>
                 {#if errors.address}
@@ -436,7 +435,7 @@ ${orderSummary}
               <div class="flex justify-end pt-4">
                 <button
                   type="submit"
-                  class="inline-flex items-center gap-2 bg-primary-500 text-white font-bold px-8 py-3.5 uppercase tracking-wider rounded-lg hover:bg-primary-600 transition-colors duration-200 shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
+                  class="inline-flex items-center gap-2 btn-kinetic px-8 py-3.5 disabled:opacity-40 disabled:cursor-not-allowed"
                   disabled={!formData.name || !formData.phone || !formData.address || !formData.city || !formData.department}
                 >
                   Continuar al Resumen
@@ -449,17 +448,17 @@ ${orderSummary}
         {:else}
           <!-- Step 2: Order Confirmation -->
           <div
-            class="bg-surface-800 border border-surface-700 rounded-lg overflow-hidden"
+            class="bg-[#1c1b1b] overflow-hidden"
             in:fly={{ x: 20, duration: 400 }}
           >
             <!-- Section header -->
-            <div class="px-8 pt-8 pb-6 border-b border-surface-700">
+            <div class="px-8 pt-8 pb-6 bg-[#131313]">
               <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-surface-700 border border-surface-600 rounded-lg flex items-center justify-center">
+                <div class="w-12 h-12 bg-[#2a2a2a] flex items-center justify-center">
                   <LucideCheck class="w-6 h-6 text-primary-500" />
                 </div>
                 <div>
-                  <h2 class="text-xl font-bold text-white uppercase tracking-wider">
+                  <h2 class="font-headline text-xl font-bold text-white uppercase tracking-[0.1em]">
                     Confirmar Pedido
                   </h2>
                   <p class="text-surface-300 text-sm mt-0.5">
@@ -471,9 +470,9 @@ ${orderSummary}
 
             <div class="p-8">
               <!-- Delivery data summary -->
-              <div class="bg-surface-900/60 border border-surface-700 rounded-lg p-6 mb-6">
+              <div class="bg-[#131313] p-6 mb-6">
                 <div class="flex items-center justify-between mb-4">
-                  <h3 class="font-bold text-sm uppercase tracking-wider flex items-center gap-2 text-white">
+                  <h3 class="font-headline font-bold text-sm uppercase tracking-[0.1em] flex items-center gap-2 text-white">
                     <LucideUser class="w-4 h-4 text-primary-500" />
                     Datos de Entrega
                   </h3>
@@ -515,15 +514,15 @@ ${orderSummary}
               </div>
 
               <!-- Products list (visible in step 2) -->
-              <div class="bg-surface-900/60 border border-surface-700 rounded-lg p-6 mb-6">
-                <h3 class="font-bold text-sm uppercase tracking-wider flex items-center gap-2 text-white mb-4">
+              <div class="bg-[#131313] p-6 mb-6">
+                <h3 class="font-headline font-bold text-sm uppercase tracking-[0.1em] flex items-center gap-2 text-white mb-4">
                   <LucideShoppingCart class="w-4 h-4 text-primary-500" />
                   Productos ({$cartItemCount})
                 </h3>
                 <div class="space-y-3">
                   {#each $cart as item}
-                    <div class="flex items-center gap-3 p-3 bg-surface-800 border border-surface-700 rounded-lg">
-                      <div class="w-14 h-14 bg-surface-700 rounded-lg overflow-hidden flex-shrink-0">
+                    <div class="flex items-center gap-3 p-3 bg-[#1c1b1b]">
+                      <div class="w-14 h-14 bg-[#2a2a2a] overflow-hidden flex-shrink-0">
                         <img
                           src={getProductImageUrl(item, 0)}
                           alt={item.name}
@@ -570,7 +569,7 @@ ${orderSummary}
                 </button>
 
                 <button
-                  class="inline-flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold px-8 py-3.5 uppercase tracking-wider rounded-lg hover:bg-[#20bd5a] transition-all duration-200 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                  class="inline-flex items-center justify-center gap-2 bg-[#25D366] text-white font-headline font-bold px-8 py-3.5 uppercase tracking-wider hover:bg-[#20bd5a] transition-all duration-200 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
                   on:click={submitOrder}
                   disabled={isSubmitting}
                 >
@@ -592,9 +591,9 @@ ${orderSummary}
       <div class="lg:col-span-1">
         <div class="sticky top-8 space-y-6">
           <!-- Cart summary card -->
-          <div class="bg-surface-800 border border-surface-700 rounded-lg overflow-hidden">
-            <div class="px-6 pt-6 pb-4 border-b border-surface-700">
-              <h3 class="font-bold text-sm uppercase tracking-wider flex items-center gap-2 text-white">
+          <div class="bg-[#1c1b1b] overflow-hidden">
+            <div class="px-6 pt-6 pb-4 bg-[#131313]">
+              <h3 class="font-headline font-bold text-sm uppercase tracking-[0.1em] flex items-center gap-2 text-white">
                 <LucideShoppingCart class="w-4 h-4 text-primary-500" />
                 Resumen del Pedido
               </h3>
@@ -603,8 +602,8 @@ ${orderSummary}
             <!-- Products -->
             <div class="p-4 space-y-3 max-h-80 overflow-y-auto">
               {#each $cart as item}
-                <div class="flex items-center gap-3 p-2.5 bg-surface-700/50 rounded-lg">
-                  <div class="w-11 h-11 bg-surface-700 rounded-lg overflow-hidden flex-shrink-0">
+                <div class="flex items-center gap-3 p-2.5 bg-[#2a2a2a]/50">
+                  <div class="w-11 h-11 bg-[#2a2a2a] overflow-hidden flex-shrink-0">
                     <img
                       src={getProductImageUrl(item, 0)}
                       alt={item.name}
@@ -643,21 +642,21 @@ ${orderSummary}
             </div>
 
             <!-- Totals -->
-            <div class="px-6 py-4 border-t border-surface-700 space-y-3">
+            <div class="px-6 py-4 bg-[#131313] space-y-3">
               <div class="flex justify-between items-center text-sm">
                 <span class="text-surface-400 flex items-center gap-1.5">
                   <LucideCalculator class="w-3.5 h-3.5" />
                   Subtotal ({$cartItemCount} items)
                 </span>
-                <span class="font-semibold text-white">
+                <span class="font-headline font-semibold text-white">
                   Q. {$cartTotal.toFixed(2)}
                 </span>
               </div>
 
-              <div class="border-t border-surface-700 pt-3">
+              <div class="bg-[#0e0e0e] p-3">
                 <div class="flex justify-between items-center">
-                  <span class="text-sm font-bold text-white uppercase tracking-wider">Total</span>
-                  <span class="text-xl font-black text-primary-500">
+                  <span class="text-sm font-headline font-bold text-white uppercase tracking-[0.1em]">Total</span>
+                  <span class="text-xl font-headline font-black text-primary-500">
                     Q. {$cartTotal.toFixed(2)}
                   </span>
                 </div>
@@ -666,9 +665,9 @@ ${orderSummary}
           </div>
 
           <!-- WhatsApp info card -->
-          <div class="bg-surface-800 border border-surface-700 rounded-lg p-5">
+          <div class="bg-[#1c1b1b] p-5">
             <div class="flex items-start gap-3">
-              <div class="w-10 h-10 bg-surface-700 border border-surface-600 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div class="w-10 h-10 bg-[#2a2a2a] flex items-center justify-center flex-shrink-0">
                 <TablerBrandWhatsapp class="w-5 h-5 text-[#25D366]" />
               </div>
               <div>
@@ -688,34 +687,36 @@ ${orderSummary}
 </section>
 
 <style>
+  /* Telemetry-style inputs — ghost border, bottom-edge focus */
   .checkout-input {
     width: 100%;
-    background-color: rgb(var(--color-surface-900) / 0.6);
-    border: 1px solid rgb(var(--color-surface-600));
-    border-radius: 0.5rem;
+    background-color: #0e0e0e;
+    border: none;
+    border-bottom: 2px solid rgba(94, 63, 58, 0.15);
+    border-radius: 0;
     padding: 0.75rem 1rem;
     color: white;
     font-size: 0.875rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s;
   }
 
   .checkout-input::placeholder {
-    color: rgb(var(--color-surface-500));
+    color: rgb(var(--color-surface-300));
   }
 
   .checkout-input:focus {
     outline: none;
-    border-color: rgb(var(--color-primary-500));
-    box-shadow: 0 0 0 2px rgb(var(--color-primary-500) / 0.15);
+    border-bottom-color: rgb(225, 6, 0);
+    box-shadow: none;
   }
 
   .checkout-input-error {
-    border-color: rgb(var(--color-error-500));
+    border-bottom-color: rgb(var(--color-error-500));
   }
 
   .checkout-input-error:focus {
-    border-color: rgb(var(--color-error-500));
-    box-shadow: 0 0 0 2px rgb(var(--color-error-500) / 0.15);
+    border-bottom-color: rgb(var(--color-error-500));
+    box-shadow: none;
   }
 
   .line-clamp-1 {
