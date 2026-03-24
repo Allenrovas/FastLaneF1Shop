@@ -39,7 +39,6 @@ export async function loadCategories(): Promise<void> {
     const teams = data.filter(cat => cat.type === 'team');
     teams.forEach(team => {
       team.imagePath = `${GITHUB_REPO_URL}/images/teams/${team.id}.svg`;
-      console.log(`Cargando imagen para ${team.name} desde ${team.imagePath}`);
     });
     
 

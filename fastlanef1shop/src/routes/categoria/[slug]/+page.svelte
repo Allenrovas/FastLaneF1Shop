@@ -74,8 +74,6 @@
       const data: Product[] = await response.json();
       products.set(data);
       
-      console.log(`✓ ${data.length} productos cargados`);
-      
     } catch (error) {
       console.error('Error loading products:', error);
       products.set([]);
