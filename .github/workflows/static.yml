@@ -41,7 +41,7 @@ jobs:
         run: npm run build
       
       - name: Generate Sitemap
-        run: node scripts/generate-sitemap.js
+        run: node fastlanef1shop/scripts/generate-sitemap.js
       
       - name: Copy sitemap to build
         run: cp fastlanef1shop/sitemap.xml fastlanef1shop/build/sitemap.xml
