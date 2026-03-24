@@ -48,6 +48,10 @@
 
 <!-- Hero Banner — Kinetic Monolith -->
 <section class="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-[#131313]">
+  <!-- Background image -->
+  <div class="absolute inset-0">
+    <img src="/Fondo.jpg" alt="" class="w-full h-full object-cover opacity-20" />
+  </div>
   <!-- Subtle grid pattern -->
   <div class="absolute inset-0 opacity-[0.03]" style="background-image: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px); background-size: 60px 60px;"></div>
 
@@ -62,7 +66,7 @@
       </h1>
 
       <p
-        class="text-lg md:text-xl mb-10 text-surface-200 leading-relaxed max-w-xl mx-auto"
+        class="text-lg md:text-xl mb-10 text-white leading-relaxed max-w-xl mx-auto"
         in:fly={{ y: 30, duration: 600, delay: 250 }}
       >
         Colecciona los monoplazas más icónicos de la Fórmula 1.
@@ -76,17 +80,17 @@
       >
         <div class="text-center">
           <div class="text-2xl font-headline font-bold text-white tracking-wider">100%</div>
-          <div class="text-xs text-surface-300 font-headline uppercase tracking-[0.15em]">Auténticos</div>
+          <div class="text-xs text-surface-100 font-headline uppercase tracking-[0.15em]">Auténticos</div>
         </div>
         <div class="w-px h-10 bg-surface-600"></div>
         <div class="text-center">
           <div class="text-2xl font-headline font-bold text-white tracking-wider">Premium</div>
-          <div class="text-xs text-surface-300 font-headline uppercase tracking-[0.15em]">Calidad</div>
+          <div class="text-xs text-surface-100 font-headline uppercase tracking-[0.15em]">Calidad</div>
         </div>
         <div class="w-px h-10 bg-surface-600"></div>
         <div class="text-center">
           <div class="text-2xl font-headline font-bold text-white tracking-wider">GT</div>
-          <div class="text-xs text-surface-300 font-headline uppercase tracking-[0.15em]">Envíos</div>
+          <div class="text-xs text-surface-100 font-headline uppercase tracking-[0.15em]">Envíos</div>
         </div>
       </div>
 

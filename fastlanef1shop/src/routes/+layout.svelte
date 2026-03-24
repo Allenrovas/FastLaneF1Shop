@@ -132,10 +132,7 @@
             class="flex items-center hover:opacity-80 transition-opacity duration-200"
             on:click={() => goto(base || '/')}
           >
-            <!-- Desktop logo -->
-            <img src="{base}/F1L-full.png" alt="Fast Lane F1 Shop" class="h-12 hidden sm:block" />
-            <!-- Mobile logo -->
-            <img src="{base}/F1L.png" alt="Fast Lane F1" class="h-12 sm:hidden" />
+            <img src="{base}/F1L.png" alt="Fast Lane F1" class="h-12" />
           </button>
         </div>
       </svelte:fragment>

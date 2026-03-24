@@ -169,13 +169,13 @@
     <!-- Price and Actions — bg shift instead of border-t, pushed to bottom -->
     <div class="flex items-end justify-between pt-3 bg-[#232323] -mx-5 px-5 -mb-5 pb-5 mt-auto">
       <div class="flex flex-col flex-1 pr-4">
-        <div class="flex items-baseline gap-2 mb-1">
-          <span class="text-xl font-headline font-bold text-white">
-            Q. {product.price.toFixed(2)}
+        <div class="flex items-baseline gap-2 mb-1 flex-wrap">
+          <span class="text-xl font-headline font-bold text-white whitespace-nowrap">
+            Q.{product.price.toFixed(2)}
           </span>
           {#if product.originalPrice && product.originalPrice > product.price}
-            <span class="text-sm text-surface-300 line-through">
-              Q. {product.originalPrice.toFixed(2)}
+            <span class="text-sm text-surface-300 line-through whitespace-nowrap">
+              Q.{product.originalPrice.toFixed(2)}
             </span>
           {/if}
         </div>

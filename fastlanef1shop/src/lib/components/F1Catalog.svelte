@@ -249,176 +249,6 @@
   });
 </script>
 
-<!-- Search and Filter Section — Kinetic Monolith -->
-<section id="catalogo" class="container mx-auto px-4 py-12">
-  <div class="max-w-6xl mx-auto">
-    <!-- Search Bar — Telemetry style -->
-    <div class="text-center mb-8">
-      <h2 class="font-headline text-3xl font-bold text-white mb-4 uppercase tracking-[0.1em]">
-        Encuentra tu Monoplaza Perfecto
-      </h2>
-      <div class="flex items-center gap-3 max-w-md mx-auto">
-        <div class="relative flex-1">
-          <input
-            type="text"
-            placeholder="Buscar por nombre, equipo, marca, escala..."
-            class="input-telemetry w-full pl-12 pr-4 py-3 text-lg"
-            bind:value={$searchQuery}
-          />
-          <LucideMagnify class="absolute left-4 top-1/2 transform -translate-y-1/2 text-surface-300 w-5 h-5" />
-          {#if $searchQuery}
-            <button
-              class="absolute right-3 top-1/2 transform -translate-y-1/2 btn btn-sm variant-ghost-surface w-8 h-8 !p-0"
-              on:click={() => searchQuery.set('')}
-            >
-              <LucideClose class="w-4 h-4" />
-            </button>
-          {/if}
-        </div>
-        <!-- Mobile Filter Button -->
-        <button
-          class="lg:hidden btn bg-[#2a2a2a] text-white hover:bg-[#353534] px-4 py-3 flex items-center gap-2 relative transition-colors"
-          on:click={() => isFilterDrawerOpen.set(true)}
-        >
-          <LucideFilter class="w-5 h-5" />
-          <span class="text-sm font-headline font-medium uppercase tracking-wider">Filtros</span>
-          {#if $activeFilterCount > 0}
-            <span class="absolute -top-2 -right-2 bg-primary-500 text-white text-xs font-bold min-w-[1.25rem] h-5 flex items-center justify-center px-1">
-              {$activeFilterCount}
-            </span>
-          {/if}
-        </button>
-      </div>
-
-      <!-- Mobile Active Filters Summary -->
-      {#if !$selectedCategories.includes('all') && $selectedCategories.length > 0}
-        <div class="lg:hidden mt-3 flex flex-wrap gap-2 justify-center items-center max-w-md mx-auto">
-          {#each $selectedCategories as catId}
-            {@const category = $categories.find(c => c.id === catId)}
-            {#if category}
-              <span class="chip-lap-timer bg-primary-500 text-white flex items-center">
-                {category.name}
-                <button class="ml-1" on:click={() => toggleCategory(catId)}>
-                  <LucideClose class="w-3 h-3" />
-                </button>
-              </span>
-            {/if}
-          {/each}
-        </div>
-      {/if}
-    </div>
-
-    <!-- Desktop Filter Type Tabs — Sharp, no radius -->
-    <div class="hidden lg:flex justify-center mb-6">
-      <div class="flex bg-[#1c1b1b] p-1">
-        {#each [
-          { type: 'general', label: 'General' },
-          { type: 'team', label: 'Equipos' },
-          { type: 'manufacturer', label: 'Marcas' },
-          { type: 'scale', label: 'Escalas' }
-        ] as tab}
-          <button
-            class="px-4 py-2 transition-all duration-200 text-sm font-headline font-medium uppercase tracking-wider {$activeFilterType === tab.type ? 'bg-primary-500 text-white' : 'text-surface-200 hover:text-white hover:bg-[#2a2a2a]'}"
-            on:click={() => activeFilterType.set(tab.type)}
-          >
-            {tab.label}
-          </button>
-        {/each}
-      </div>
-    </div>
-
-    <!-- Desktop Category Filter Chips — Rectangular, no radius -->
-    <div class="hidden lg:block">
-      {#if $categoriesLoaded && $currentCategories.length > 0}
-        <div class="text-center mb-6">
-          <p class="text-surface-200 mb-4 text-sm">
-            {#if $activeFilterType === 'general'}
-              Explora por categorías generales
-            {:else if $activeFilterType === 'team'}
-              Filtra por escudería favorita
-            {:else if $activeFilterType === 'manufacturer'}
-              Descubre por fabricante
-            {:else if $activeFilterType === 'scale'}
-              Encuentra tu escala ideal
-            {/if}
-          </p>
-
-          <div class="flex flex-wrap gap-2 justify-center">
-            {#each $currentCategories as category, i}
-              {@const IconComponent = getIconComponent(category.icon)}
-              <button
-                class="btn transition-all duration-200 font-headline font-medium px-4 py-2 text-sm uppercase tracking-wider
-                {$selectedCategories.includes(category.id)
-                  ? 'bg-primary-500 text-white shadow-[0_0_15px_rgba(225,6,0,0.3)]'
-                  : 'bg-[#2a2a2a] text-surface-300 hover:bg-[#353534] hover:text-white'}"
-                on:click={() => toggleCategory(category.id)}
-                in:fly={{ x: -30, duration: 300, delay: i * 50 }}
-              >
-                <span class="flex items-center gap-1.5">
-                  {#if category.type === 'team' && category.imagePath}
-                    <img
-                      src={category.imagePath}
-                      alt={category.name}
-                      class="w-3.5 h-3.5 brightness-0 invert"
-                    />
-                  {:else}
-                    <svelte:component
-                      this={IconComponent}
-                      class="w-3.5 h-3.5"
-                    />
-                  {/if}
-
-                  <span>{category.name}</span>
-                  {#if category.id !== 'all'}
-                    <span class="text-xs opacity-70">
-                      ({$categoryProductCounts(category.id)})
-                    </span>
-                  {/if}
-                </span>
-              </button>
-            {/each}
-          </div>
-
-          <!-- Selected Categories Display -->
-          {#if !$selectedCategories.includes('all') && $selectedCategories.length > 0}
-            <div class="mt-4 flex flex-wrap gap-2 justify-center items-center">
-              <span class="text-sm text-surface-300 font-headline uppercase tracking-wider">Filtros activos:</span>
-              {#each $selectedCategories as catId}
-                {@const category = $categories.find(c => c.id === catId)}
-                {#if category}
-                  <span class="chip-lap-timer bg-primary-500 text-white flex items-center">
-                    {category.name}
-                    <button class="ml-1" on:click={() => toggleCategory(catId)}>
-                      <LucideClose class="w-3 h-3" />
-                    </button>
-                  </span>
-                {/if}
-              {/each}
-              <button
-                class="text-xs text-primary-500 hover:text-primary-400 transition-colors font-headline uppercase tracking-wider"
-                on:click={() => selectedCategories.set(['all'])}
-              >
-                Limpiar todos
-              </button>
-            </div>
-          {/if}
-        </div>
-      {:else if !$categoriesLoaded}
-        <div class="text-center mb-6">
-          <p class="text-surface-300 mb-4 text-sm">Cargando categorías...</p>
-          <div class="flex flex-wrap gap-2 justify-center">
-            {#each Array(6) as _, i}
-              <div class="animate-pulse">
-                <div class="h-9 bg-[#2a2a2a] w-24"></div>
-              </div>
-            {/each}
-          </div>
-        </div>
-      {/if}
-    </div>
-  </div>
-</section>
-
 <!-- Mobile Filter Drawer -->
 {#if $isFilterDrawerOpen}
   <div class="fixed inset-0 z-50 lg:hidden" transition:fade={{ duration: 200 }}>
@@ -556,53 +386,194 @@
   </div>
 {/if}
 
-<!-- Products Grid -->
+<!-- Main Content: Sidebar Filters + Search + Products -->
 {#if !$isLoading}
-  <section id="products-section" class="px-4 py-4">
-    <div class="mx-auto max-w-[2400px] px-4">
-      {#if $filteredProducts.length === 0}
-        <div class="text-center py-20" in:fade>
-          <div class="text-6xl mb-6 text-surface-700 font-bold font-racing">F1</div>
-          <h3 class="text-2xl font-bold mb-4 text-white">
-            {$searchQuery ? 'No encontramos resultados' : 'No hay productos disponibles'}
+  <section id="catalogo" class="px-4 py-6">
+    <div class="mx-auto max-w-[2400px] px-4 lg:flex lg:gap-8">
+
+      <!-- Desktop Sidebar Filters -->
+      <aside class="hidden lg:block lg:w-64 xl:w-72 flex-shrink-0 lg:sticky lg:top-0 lg:self-start lg:max-h-screen lg:overflow-hidden lg:flex lg:flex-col">
+        <div class="bg-[#1c1b1b] p-4 flex flex-col max-h-screen overflow-hidden">
+          <h3 class="font-headline text-lg font-bold text-white mb-4 uppercase tracking-wider flex items-center gap-2">
+            <LucideFilter class="w-4 h-4 text-primary-500" />
+            Filtros
           </h3>
-          <p class="text-surface-200 mb-8 max-w-md mx-auto">
-            {$searchQuery
-              ? `No encontramos monoplazas que coincidan con "${$searchQuery}". Intenta con otros términos.`
-              : 'Selecciona una categoría diferente para explorar nuestros increíbles monoplazas'
-            }
-          </p>
-          <div class="flex gap-3 justify-center">
-            {#if $searchQuery}
+
+          <!-- Active filters + clear (shown at top when filters are active) -->
+          {#if !$selectedCategories.includes('all') && $selectedCategories.length > 0}
+            <div class="mb-4 pb-4 border-b border-surface-700">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-surface-300 font-headline uppercase tracking-wider">Activos</span>
+                <button
+                  class="text-xs text-primary-500 hover:text-primary-400 transition-colors font-headline uppercase tracking-wider"
+                  on:click={() => selectedCategories.set(['all'])}
+                >
+                  Limpiar
+                </button>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                {#each $selectedCategories as catId}
+                  {@const category = $categories.find(c => c.id === catId)}
+                  {#if category}
+                    <span class="chip-lap-timer bg-primary-500 text-white flex items-center text-xs">
+                      {category.name}
+                      <button class="ml-1" on:click={() => toggleCategory(catId)}>
+                        <LucideClose class="w-3 h-3" />
+                      </button>
+                    </span>
+                  {/if}
+                {/each}
+              </div>
+            </div>
+          {/if}
+
+          <!-- Filter Type Tabs -->
+          <div class="grid grid-cols-2 gap-1.5 mb-4">
+            {#each [
+              { type: 'general', label: 'General' },
+              { type: 'team', label: 'Equipos' },
+              { type: 'manufacturer', label: 'Marcas' },
+              { type: 'scale', label: 'Escalas' }
+            ] as tab}
               <button
-                class="btn bg-primary-500 text-white px-6 py-3 uppercase tracking-wider font-semibold"
-                on:click={() => searchQuery.set('')}
+                class="px-3 py-2 transition-all duration-200 text-xs font-headline font-medium uppercase tracking-wider {$activeFilterType === tab.type ? 'bg-primary-500 text-white' : 'bg-[#2a2a2a] text-surface-300 hover:bg-[#353534] hover:text-white'}"
+                on:click={() => activeFilterType.set(tab.type)}
               >
-                <LucideClose class="mr-2 w-4 h-4" />
-                Limpiar Búsqueda
+                {tab.label}
               </button>
+            {/each}
+          </div>
+
+          <!-- Category description -->
+          <p class="text-surface-100 mb-3 text-xs">
+            {#if $activeFilterType === 'general'}
+              Categorías generales
+            {:else if $activeFilterType === 'team'}
+              Filtra por escudería
+            {:else if $activeFilterType === 'manufacturer'}
+              Descubre por fabricante
+            {:else if $activeFilterType === 'scale'}
+              Encuentra tu escala
             {/if}
+          </p>
+
+          <!-- Category List -->
+          {#if $categoriesLoaded && $currentCategories.length > 0}
+            <div class="space-y-1 flex-1 overflow-y-auto min-h-0 pb-2">
+              {#each $currentCategories as category, i}
+                {@const IconComponent = getIconComponent(category.icon)}
+                <button
+                  class="w-full flex items-center justify-between px-3 py-2 transition-all duration-200 text-left text-sm
+                  {$selectedCategories.includes(category.id)
+                    ? 'bg-primary-500 text-white'
+                    : 'text-surface-300 hover:bg-[#2a2a2a] hover:text-white'}"
+                  on:click={() => toggleCategory(category.id)}
+                  in:fly={{ x: -20, duration: 300, delay: i * 30 }}
+                >
+                  <span class="flex items-center gap-2">
+                    {#if category.type === 'team' && category.imagePath}
+                      <img
+                        src={category.imagePath}
+                        alt={category.name}
+                        class="w-3.5 h-3.5 brightness-0 invert"
+                      />
+                    {:else}
+                      <svelte:component
+                        this={IconComponent}
+                        class="w-3.5 h-3.5"
+                      />
+                    {/if}
+                    <span class="font-medium">{category.name}</span>
+                  </span>
+                  {#if category.id !== 'all'}
+                    <span class="text-xs opacity-70">
+                      {$categoryProductCounts(category.id)}
+                    </span>
+                  {/if}
+                </button>
+              {/each}
+            </div>
+          {:else if !$categoriesLoaded}
+            <div class="space-y-2">
+              {#each Array(6) as _, i}
+                <div class="animate-pulse">
+                  <div class="h-8 bg-[#2a2a2a] w-full"></div>
+                </div>
+              {/each}
+            </div>
+          {/if}
+        </div>
+      </aside>
+
+      <!-- Products Area (includes header + search on top) -->
+      <div class="flex-1 min-w-0">
+        <!-- Catalog Header -->
+        <div class="text-center mb-8 pt-4">
+          <h1 class="text-4xl md:text-5xl font-black text-white uppercase tracking-wider mb-3">
+            Catálogo
+          </h1>
+          <div class="w-16 h-0.5 bg-primary-500 mx-auto mb-4"></div>
+          <p class="text-surface-200 max-w-lg mx-auto">
+            Explora nuestra colección completa de monoplazas de Fórmula 1 a escala
+          </p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mb-6 flex justify-center">
+          <div class="flex items-center gap-3 max-w-lg w-full">
+            <div class="relative flex-1">
+              <input
+          type="text"
+          placeholder="Buscar por nombre, equipo, marca, escala..."
+          class="input-telemetry w-full pl-12 pr-4 py-3"
+          bind:value={$searchQuery}
+              />
+              <LucideMagnify class="absolute left-4 top-1/2 transform -translate-y-1/2 text-surface-300 w-5 h-5" />
+              {#if $searchQuery}
+          <button
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 btn btn-sm variant-ghost-surface w-8 h-8 !p-0"
+            on:click={() => searchQuery.set('')}
+          >
+            <LucideClose class="w-4 h-4" />
+          </button>
+              {/if}
+            </div>
+            <!-- Mobile Filter Button -->
             <button
-              class="btn bg-surface-800 text-white border border-surface-700 px-6 py-3"
-              on:click={() => selectedCategories.set(['all'])}
+              class="lg:hidden btn bg-[#2a2a2a] text-white hover:bg-[#353534] px-4 py-3 flex items-center gap-2 relative transition-colors"
+              on:click={() => isFilterDrawerOpen.set(true)}
             >
-              <LucideGrid class="mr-2 w-4 h-4" />
-              Ver Todos
+              <LucideFilter class="w-5 h-5" />
+              <span class="text-sm font-headline font-medium uppercase tracking-wider">Filtros</span>
+              {#if $activeFilterCount > 0}
+          <span class="absolute -top-2 -right-2 bg-primary-500 text-white text-xs font-bold min-w-[1.25rem] h-5 flex items-center justify-center px-1">
+            {$activeFilterCount}
+          </span>
+              {/if}
             </button>
           </div>
+
+          <!-- Mobile Active Filters Summary -->
+          {#if !$selectedCategories.includes('all') && $selectedCategories.length > 0}
+            <div class="lg:hidden mt-3 flex flex-wrap gap-2 items-center justify-center">
+              {#each $selectedCategories as catId}
+          {@const category = $categories.find(c => c.id === catId)}
+          {#if category}
+            <span class="chip-lap-timer bg-primary-500 text-white flex items-center">
+              {category.name}
+              <button class="ml-1" on:click={() => toggleCategory(catId)}>
+                <LucideClose class="w-3 h-3" />
+              </button>
+            </span>
+          {/if}
+              {/each}
+            </div>
+          {/if}
         </div>
-      {:else}
-        <!-- Products Header -->
-        <div class="text-center mb-10">
-          <h2 class="font-headline text-2xl font-bold text-white mb-3 uppercase tracking-[0.1em]">
-            {$searchQuery
-              ? `Resultados para "${$searchQuery}"`
-              : $selectedCategories.includes('all')
-                ? 'Toda la Colección'
-                : 'Filtros Aplicados'
-            }
-          </h2>
-          <div class="flex items-center justify-center gap-4 text-surface-200 text-sm font-headline">
+
+        <!-- Results info bar -->
+        <div class="flex items-center justify-center mb-6">
+          <div class="flex items-center gap-4 text-surface-200 text-sm font-headline">
             <div class="flex items-center gap-1.5">
               <LucidePackage class="w-4 h-4 text-primary-500" />
               <span>{$filteredProducts.length} modelos</span>
@@ -615,20 +586,53 @@
           </div>
         </div>
 
-        <!-- Products Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 min-[1800px]:grid-cols-5 min-[2200px]:grid-cols-6 gap-6">
-          {#each $filteredProducts as product, i}
-            <ProductCard
-              {product}
-              index={i}
-              animationDelay={80}
-              onCardClick={handleProductClick}
-              on:addToCart={handleAddToCart}
-              on:viewDetails={handleViewDetails}
-            />
-          {/each}
-        </div>
-      {/if}
+        {#if $filteredProducts.length === 0}
+          <div class="text-center py-20" in:fade>
+            <div class="text-6xl mb-6 text-surface-700 font-bold font-racing">F1</div>
+            <h3 class="text-2xl font-bold mb-4 text-white">
+              {$searchQuery ? 'No encontramos resultados' : 'No hay productos disponibles'}
+            </h3>
+            <p class="text-surface-200 mb-8 max-w-md mx-auto">
+              {$searchQuery
+                ? `No encontramos monoplazas que coincidan con "${$searchQuery}". Intenta con otros términos.`
+                : 'Selecciona una categoría diferente para explorar nuestros increíbles monoplazas'
+              }
+            </p>
+            <div class="flex gap-3 justify-center">
+              {#if $searchQuery}
+                <button
+                  class="btn bg-primary-500 text-white px-6 py-3 uppercase tracking-wider font-semibold"
+                  on:click={() => searchQuery.set('')}
+                >
+                  <LucideClose class="mr-2 w-4 h-4" />
+                  Limpiar Búsqueda
+                </button>
+              {/if}
+              <button
+                class="btn bg-surface-800 text-white border border-surface-700 px-6 py-3"
+                on:click={() => selectedCategories.set(['all'])}
+              >
+                <LucideGrid class="mr-2 w-4 h-4" />
+                Ver Todos
+              </button>
+            </div>
+          </div>
+        {:else}
+          <!-- Products Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 min-[1800px]:grid-cols-5 gap-6">
+            {#each $filteredProducts as product, i}
+              <ProductCard
+                {product}
+                index={i}
+                animationDelay={80}
+                onCardClick={handleProductClick}
+                on:addToCart={handleAddToCart}
+                on:viewDetails={handleViewDetails}
+              />
+            {/each}
+          </div>
+        {/if}
+      </div>
     </div>
   </section>
 {/if}

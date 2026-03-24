@@ -20,18 +20,5 @@
   <meta name="twitter:description" content={pageDescription} />
 </svelte:head>
 
-<!-- Catalog Header -->
-<section class="bg-surface-900 pt-10 pb-4 px-4">
-  <div class="container mx-auto max-w-screen-xl text-center">
-    <h1 class="text-4xl md:text-5xl font-black text-white uppercase tracking-wider mb-3">
-      Catálogo
-    </h1>
-    <div class="w-16 h-0.5 bg-primary-500 mx-auto mb-4"></div>
-    <p class="text-surface-200 max-w-lg mx-auto">
-      Explora nuestra colección completa de monoplazas de Fórmula 1 a escala
-    </p>
-  </div>
-</section>
-
-<!-- Full Catalog -->
+<!-- Full Catalog (header is inside the component) -->
 <F1Catalog />
