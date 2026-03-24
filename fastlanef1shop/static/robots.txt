@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fastlanef1shop.com/sitemap.xml
+
+Crawl-delay: 1
+Request-rate: 1/1s
