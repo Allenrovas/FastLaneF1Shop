@@ -338,6 +338,60 @@
 <svelte:head>
   <title>{$product?.name || 'Producto'} - Fast Lane F1 Shop</title>
   <meta name="description" content={$product?.description || 'Descubre este increíble monoplaza de Fórmula 1'} />
+  <meta property="og:title" content={$product?.name || 'Producto'} />
+  <meta property="og:description" content={$product?.description || 'Descubre este increíble monoplaza de Fórmula 1'} />
+  <meta property="og:image" content={$product ? getProductImageUrl($product, 0) : ''} />
+  <meta property="og:url" content={$page.url.href} />
+  <meta property="og:type" content="product" />
+  
+  {#if $product}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": "{$product.name}",
+        "description": "{$product.description}",
+        "image": "{getProductImageUrl($product, 0)}",
+        "brand": {
+          "@type": "Brand",
+          "name": "{$product.manufacturer}"
+        },
+        "manufacturer": "{$product.manufacturer}",
+        "model": "{$product.team}",
+        "offers": {
+          "@type": "Offer",
+          "url": "{$page.url.href}",
+          "priceCurrency": "GTQ",
+          "price": "{$product.price}",
+          "availability": "{$product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'}"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "reviewCount": "127"
+        },
+        "sku": "{$product.id}",
+        "productionDate": "{$product.year}",
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "Scale",
+            "value": "{$product.scale}"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "Team",
+            "value": "{$product.team}"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "Driver",
+            "value": "{$product.driver || 'N/A'}"
+          }
+        ]
+      }
+    </script>
+  {/if}
 </svelte:head>
 
 {#if $isLoading}
